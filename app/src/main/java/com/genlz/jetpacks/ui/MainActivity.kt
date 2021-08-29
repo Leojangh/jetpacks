@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnticipateInterpolator
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
@@ -23,7 +22,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
-import com.genlz.jetpacks.utility.UiModeInspector
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,13 +43,6 @@ class MainActivity : AppCompatActivity() {
         edge2edge()
 
         Log.d(TAG, "onCreate: $this")
-        UiModeInspector.getInstance().darkModeLiveData.observe(this) {
-            if (it == true) {
-                Toast.makeText(this.applicationContext, "dark mode on", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this.applicationContext, "dark mode off", Toast.LENGTH_SHORT).show()
-            }
-        }
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
