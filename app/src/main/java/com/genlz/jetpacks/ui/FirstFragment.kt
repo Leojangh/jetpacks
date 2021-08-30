@@ -1,9 +1,9 @@
 package com.genlz.jetpacks.ui
 
-import android.annotation.SuppressLint
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -28,12 +28,16 @@ class FirstFragment : Fragment() {
     @Inject
     internal lateinit var connectivityManager: ConnectivityManager
 
-    @SuppressLint("FragmentLiveDataObserve")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonFirst.setOnClickListener {
-            navController.navigate(R.id.action_FirstFragment_to_SecondFragment)
+            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment()
+            navController.navigate(action)
+        }
+
+        binding.showDialog.setOnClickListener {
+            navController.navigate(R.id.FirstFragmentDialog, bundleOf("title" to "Hello"))
         }
 
         binding.thumbUp.setOnClickListener {

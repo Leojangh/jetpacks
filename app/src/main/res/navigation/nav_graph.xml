@@ -22,4 +22,16 @@
         tools:layout="@layout/fragment_second">
 
     </fragment>
+
+    <dialog
+        android:id="@+id/FirstFragmentDialog"
+        android:name="com.genlz.jetpacks.ui.BottomDialogFragment">
+        <argument
+            android:name="title"
+            android:defaultValue="Notice" />
+        <action
+            android:id="@+id/showDialog"
+            app:destination="@id/SecondFragment" />
+    </dialog>
+
 </navigation>

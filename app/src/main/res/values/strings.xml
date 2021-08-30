@@ -13,4 +13,9 @@
     <string name="act">Act</string>
     <string name="good">Good</string>
     <string name="bad">Bad</string>
+    <string name="toast">Toast</string>
+    <string name="long_text">
+        由于列表出现在对话框的内容区域，因此对话框无法同时显示消息和列表，您应通过 setTitle() 为对话框设置标题。如需为列表指定项目，请调用 setItems()，并传递数组。或者，您可以使用 setAdapter() 来指定列表。如此一来，您便可借助 ListAdapter 使用动态数据（如来自数据库的数据）来支持列表。
+        如果您选择通过 ListAdapter 来支持列表，请务必使用 Loader，这样内容便可以异步方式进行加载。使用适配器构建布局和加载器指南中对此做了进一步描述。
+    </string>
 </resources>

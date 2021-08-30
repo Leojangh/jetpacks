@@ -5,5 +5,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 rootProject.name = "jetpacks"
-include ':app'
+include(":app")

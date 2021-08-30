@@ -17,6 +17,15 @@
     <style name="Theme.Jetpacks.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
+        <!--BottomSheetDialog-->
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+    </style>
+
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/ThemeOverlay.MaterialComponents.BottomSheetDialog
+        </item>
+        <item name="android:backgroundDimAmount">.4</item>
     </style>
 
     <!--    androidx.core.splashscreen compat lib-->
@@ -29,6 +38,14 @@
         <item name="windowSplashScreenBackground">@color/twitter_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo_twitter_icon</item>
         <item name="postSplashScreenTheme">@style/Theme.Jetpacks.NoActionBar</item>
+    </style>
+
+    <style name="RadiusCorner">
+        <item name="cornerFamilyTopLeft">rounded</item>
+        <item name="cornerFamilyTopRight">rounded</item>
+
+        <item name="cornerSizeTopLeft">20dp</item>
+        <item name="cornerSizeTopRight">20dp</item>
     </style>
 
     <style name="Theme.Jetpacks.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
