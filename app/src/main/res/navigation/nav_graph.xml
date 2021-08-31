@@ -25,13 +25,16 @@
 
     <dialog
         android:id="@+id/FirstFragmentDialog"
-        android:name="com.genlz.jetpacks.ui.BottomDialogFragment">
-        <argument
-            android:name="title"
-            android:defaultValue="Notice" />
+        android:name="com.genlz.jetpacks.ui.BottomDialogFragment"
+        tools:layout="@layout/bottom_sheet_layout">
+
         <action
             android:id="@+id/showDialog"
             app:destination="@id/SecondFragment" />
+
+        <argument
+            android:name="titles"
+            app:argType="string[]" />
     </dialog>
 
 </navigation>

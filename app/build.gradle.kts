@@ -1,3 +1,8 @@
+val java_version = JavaVersion.VERSION_11
+val kotlin_version: String by project
+val hilt_version: String by project
+val nav_version: String by project
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -5,11 +10,6 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("androidx.navigation.safeargs.kotlin")
 }
-
-val java_version = JavaVersion.VERSION_11
-val kotlin_version: String by project
-val hilt_version: String by project
-val nav_version: String by project
 
 android {
     compileSdk = 31

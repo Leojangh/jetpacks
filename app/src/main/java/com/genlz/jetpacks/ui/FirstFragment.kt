@@ -37,7 +37,9 @@ class FirstFragment : Fragment() {
         }
 
         binding.showDialog.setOnClickListener {
-            navController.navigate(R.id.FirstFragmentDialog, bundleOf("title" to "Hello"))
+            navController.navigate(
+                R.id.FirstFragmentDialog,
+                bundleOf("titles" to arrayOf("page1", "page2")))
         }
 
         binding.thumbUp.setOnClickListener {
