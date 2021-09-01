@@ -1,12 +1,16 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
 
-    val java_version = JavaVersion.VERSION_11
     val kotlin_version: String by project
     val hilt_version: String by project
     val nav_version: String by project
 
     repositories {
+        maven {
+            setUrl("https://maven.aliyun.com/repository/central")
+        }
+        google {
+            setUrl("https://maven.aliyun.com/repository/google")
+        }
         google()
         mavenCentral()
     }

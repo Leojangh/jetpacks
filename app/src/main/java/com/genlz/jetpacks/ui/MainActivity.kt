@@ -1,7 +1,10 @@
 package com.genlz.jetpacks.ui
 
+import android.Manifest
 import android.animation.ObjectAnimator
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -9,9 +12,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnticipateInterpolator
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.*
@@ -36,14 +42,50 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         splashScreen = installSplashScreen()
-//        window.decorView.setBackgroundResource(R.drawable.pawel_unsplash)
         waitForReady()
         setContentView(binding.root)
         customExitAnimation()
         edge2edge()
 
-        Log.d(TAG, "onCreate: $this")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions()
+        }
 
+        setupNavigation()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun requestPermissions() {
+        val requestPermissionLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                if (isGranted) {
+                    //perform action
+                    Log.d(TAG, "requestPermissions: perform")
+                } else {
+                    Log.d(TAG, "requestPermissions: denied")
+                }
+            }
+
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                Log.d(TAG, "requestPermissions: perform")
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
+                Log.d(TAG, "requestPermissions: show rationale")
+            }
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                Log.d(TAG, "requestPermissions: request")
+            }
+        }
+    }
+
+    private fun setupNavigation() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
