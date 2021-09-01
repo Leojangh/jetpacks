@@ -19,9 +19,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Jetpacks"
         tools:targetApi="n">
+        <meta-data
+            android:name="android.allow_multiple_resumed_activities"
+            android:value="true" />
+
+
+        <!--
+        It's default options for activity
+        android:resizeableActivity="true"
+
+        Foldables unfolding triggers a configuration change for smallestScreenSize screenLayout and screenSize
+        -->
         <activity
             android:name=".ui.MainActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/NewSplash">
