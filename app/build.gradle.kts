@@ -17,7 +17,7 @@ android {
     defaultConfig {
         applicationId = "com.genlz.jetpacks"
         minSdk = 21
-        targetSdk = 30
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
 
@@ -58,6 +58,10 @@ android {
 }
 
 dependencies {
+
+    val window_version = "1.0.0-beta01"
+    implementation("androidx.window:window:$window_version")
+    androidTestImplementation("androidx.window:window-testing:$window_version")
 
     implementation("androidx.core:core-splashscreen:1.0.0-alpha01")
 
