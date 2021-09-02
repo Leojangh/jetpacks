@@ -21,14 +21,23 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.window.layout.DisplayFeature
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoRepository
+import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -39,6 +48,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var splashScreen: SplashScreen
 
+    private lateinit var windowInfoRepo: WindowInfoRepository
+
+    /**
+     * 未适配连续性时，Fold折叠后会销毁并重新创建一个Activity，再次打开又会创建一个Activity。
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         splashScreen = installSplashScreen()
@@ -47,11 +61,44 @@ class MainActivity : AppCompatActivity() {
         customExitAnimation()
         edge2edge()
 
+        Log.d(TAG, "onCreate: $this")
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions()
         }
 
         setupNavigation()
+
+        val STAG = "slfsjfksjfk"
+        windowInfoRepo = windowInfoRepository()
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                windowInfoRepo.currentWindowMetrics.collect {
+                    Log.d(STAG, "onCreate:width ${it.bounds.width()}")
+                    Log.d(STAG, "onCreate:height ${it.bounds.height()}")
+                }
+            }
+//            windowInfoRepo.currentWindowMetrics.flowWithLifecycle(lifecycle).collect {
+//                Log.d(STAG, "onCreate:width ${it.bounds.width()}")
+//                Log.d(STAG, "onCreate:height ${it.bounds.height()}")
+//            }
+        }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                windowInfoRepo.windowLayoutInfo.collect {
+                    Log.d(STAG, "onCreate: No display features detected")
+                    for (displayFeature: DisplayFeature in it.displayFeatures) {
+                        if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.NONE) {
+                            Log.d(STAG, "onCreate: App is spanned across a fold")
+                        }
+                        if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.FULL) {
+                            Log.d(STAG, "onCreate: App is spanned across a hinge")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -153,6 +200,18 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
+    }
+
+    /**
+     * MultiResume
+     */
+    override fun onTopResumedActivityChanged(isTopResumedActivity: Boolean) {
+        super.onTopResumedActivityChanged(isTopResumedActivity)
+        if (isTopResumedActivity) {
+            Log.d(TAG, "onTopResumedActivityChanged: top resume")
+        } else {
+            Log.d(TAG, "onTopResumedActivityChanged: no longer top resume")
+        }
     }
 
     private fun hideSystemBars() {
