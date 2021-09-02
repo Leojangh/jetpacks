@@ -4,6 +4,9 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -38,7 +41,24 @@ class BottomDialogFragment : BottomSheetDialogFragment() {
 
         TabLayoutMediator(binding.tab, binding.pager) { tab, position ->
             tab.text = titles[position]
+            tab.setIcon(R.drawable.pager_tab_selector)
+            tab.customView?.apply {
+                setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.pager_tab_selector
+                    )
+                )
+            }
         }.attach()
+    }
+
+    private fun getTabIcon(position: Int): Int {
+        return when (position) {
+            0 -> R.drawable.pager_tab_selector
+            1 -> R.drawable.pager_tab_selector
+            else -> throw IndexOutOfBoundsException()
+        }
     }
 
     override fun onCancel(dialog: DialogInterface) {
