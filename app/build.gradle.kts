@@ -35,9 +35,13 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
+
+            proguardFiles += getDefaultProguardFile("proguard-android-optimize.txt")
+            proguardFiles += project.file("proguard-rules.pro")
         }
         getByName("debug") {
             isMinifyEnabled = false
+
             proguardFiles += getDefaultProguardFile("proguard-android-optimize.txt")
             proguardFiles += project.file("proguard-rules.pro")
         }
@@ -59,8 +63,9 @@ android {
 
 dependencies {
 
-    val window_version = "1.0.0-beta01"
+    val window_version = "1.0.0-beta02"
     implementation("androidx.window:window:$window_version")
+    implementation("androidx.window:window-java:$window_version")
     androidTestImplementation("androidx.window:window-testing:$window_version")
 
     implementation("androidx.core:core-splashscreen:1.0.0-alpha01")

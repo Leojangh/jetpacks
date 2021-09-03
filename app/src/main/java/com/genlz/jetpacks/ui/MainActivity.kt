@@ -21,9 +21,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.*
-import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -71,30 +70,25 @@ class MainActivity : AppCompatActivity() {
 
         val STAG = "slfsjfksjfk"
         windowInfoRepo = windowInfoRepository()
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                windowInfoRepo.currentWindowMetrics.collect {
-                    Log.d(STAG, "onCreate:width ${it.bounds.width()}")
-                    Log.d(STAG, "onCreate:height ${it.bounds.height()}")
-                }
-            }
-//            windowInfoRepo.currentWindowMetrics.flowWithLifecycle(lifecycle).collect {
-//                Log.d(STAG, "onCreate:width ${it.bounds.width()}")
-//                Log.d(STAG, "onCreate:height ${it.bounds.height()}")
-//            }
-        }
 
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                windowInfoRepo.windowLayoutInfo.collect {
-                    Log.d(STAG, "onCreate: No display features detected")
-                    for (displayFeature: DisplayFeature in it.displayFeatures) {
-                        if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.NONE) {
-                            Log.d(STAG, "onCreate: App is spanned across a fold")
-                        }
-                        if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.FULL) {
-                            Log.d(STAG, "onCreate: App is spanned across a hinge")
-                        }
+            windowInfoRepo.currentWindowMetrics.flowWithLifecycle(lifecycle)
+                .collect {
+                Log.d(STAG, "onCreate:width ${it.bounds.width()} height${it.bounds.height()}")
+            }
+        }
+
+        //WindowManager 会在应用跨屏显示（以物理或虚拟方式）时提供 LayoutInfo 数据（设备功能类型、设备功能边界和设备折叠状态）。
+        // 因此，在上图中，应用在单屏模式下运行时，WindowLayoutInfo 为空。
+        lifecycleScope.launch {
+            windowInfoRepo.windowLayoutInfo.flowWithLifecycle(lifecycle).collect {
+                Log.d(STAG, "onCreate: No display features detected")
+                for (displayFeature: DisplayFeature in it.displayFeatures) {
+                    if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.NONE) {
+                        Log.d(STAG, "onCreate: App is spanned across a fold")
+                    }
+                    if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.FULL) {
+                        Log.d(STAG, "onCreate: App is spanned across a hinge")
                     }
                 }
             }
