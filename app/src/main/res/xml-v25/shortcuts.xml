@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_twitter"
+        android:shortcutDisabledMessage="@string/second_fragment_shortcuts_message"
+        android:shortcutId="second_fragment"
+        android:shortcutLongLabel="@string/second_fragment_shortcut_label_long"
+        android:shortcutShortLabel="@string/second_fragment_shortcut_label">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="jetpacks://android.genlz.com/secondfragment" />
+    </shortcut>
+</shortcuts>

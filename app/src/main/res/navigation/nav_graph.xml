@@ -15,12 +15,17 @@
             android:id="@+id/action_FirstFragment_to_SecondFragment"
             app:destination="@id/SecondFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/SecondFragment"
         android:name="com.genlz.jetpacks.ui.SecondFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second">
 
+        <!--uri 无法引用string-->
+        <deepLink
+            app:action="ACTION_VIEW"
+            app:uri="jetpacks://android.genlz.com/secondfragment" />
     </fragment>
 
     <dialog
