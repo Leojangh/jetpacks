@@ -2,6 +2,7 @@ package com.genlz.jetpacks.ui
 
 import android.Manifest
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
@@ -23,6 +24,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.*
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -42,6 +44,8 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var navController: NavController
+
     private val binding by viewBinding<ActivityMainBinding>()
     private val viewModel by viewModels<MainActivityViewModel>()
 
@@ -74,8 +78,8 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             windowInfoRepo.currentWindowMetrics.flowWithLifecycle(lifecycle)
                 .collect {
-                Log.d(STAG, "onCreate:width ${it.bounds.width()} height${it.bounds.height()}")
-            }
+                    Log.d(STAG, "onCreate:width ${it.bounds.width()} height${it.bounds.height()}")
+                }
         }
 
         //WindowManager 会在应用跨屏显示（以物理或虚拟方式）时提供 LayoutInfo 数据（设备功能类型、设备功能边界和设备折叠状态）。
@@ -127,7 +131,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
     }
@@ -206,6 +210,12 @@ class MainActivity : AppCompatActivity() {
         } else {
             Log.d(TAG, "onTopResumedActivityChanged: no longer top resume")
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+//        if launch mode is not standard,handle it manually like this
+//        navController.handleDeepLink(intent)
     }
 
     private fun hideSystemBars() {
