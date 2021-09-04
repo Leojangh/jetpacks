@@ -65,7 +65,6 @@ dependencies {
 
     val window_version = "1.0.0-beta02"
     implementation("androidx.window:window:$window_version")
-    implementation("androidx.window:window-java:$window_version")
     androidTestImplementation("androidx.window:window-testing:$window_version")
 
     implementation("androidx.core:core-splashscreen:1.0.0-alpha01")
@@ -85,9 +84,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
 
-    val work_version = "2.5.0"
-    // Kotlin + coroutines
-    implementation("androidx.work:work-runtime-ktx:$work_version")
+    implementation("androidx.work:work-runtime-ktx:2.7.0-alpha05")//for tageting S+
 
     val retrofit_version = "2.9.0"
     //retrofit
