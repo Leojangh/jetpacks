@@ -7,9 +7,6 @@ import android.content.res.Configuration
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
-/**
- * @param context Application context
- */
 class UiModeInspector private constructor(
     context: Context,
 ) {
@@ -18,7 +15,7 @@ class UiModeInspector private constructor(
 
         context.registerComponentCallbacks(object : ComponentCallbacks {
             override fun onConfigurationChanged(newConfig: Configuration) {
-                getInstance().parseNewConfiguration(newConfig)
+                getInstance(context).parseNewConfiguration(newConfig)
             }
 
             override fun onLowMemory() {
@@ -26,6 +23,7 @@ class UiModeInspector private constructor(
             }
         })
     }
+
 
     private val _darkModeLiveData = MutableLiveData(context.isDarkMode)
     val darkModeLiveData: LiveData<Boolean> = _darkModeLiveData
@@ -49,21 +47,19 @@ class UiModeInspector private constructor(
         @JvmStatic
         private var INSTANCE: UiModeInspector? = null
 
-        /**
-         * Call this at [Application.onCreate].Alternatively use androidx startup lib to init it.
-         * Nothing happens if invoke again.
-         */
         @JvmStatic
-        fun init(context: Context) {
+        fun getInstance(context: Context): UiModeInspector {
             if (INSTANCE == null) {
                 synchronized(UiModeInspector::class.java) {
                     if (INSTANCE == null)
-                        INSTANCE = UiModeInspector(context)
+                        INSTANCE = UiModeInspector(context.applicationContext)
                 }
             }
+            return INSTANCE!!
         }
 
         @JvmStatic
+        @Deprecated("Use getInstance(context) instead", ReplaceWith("getInstance(context)"))
         fun getInstance(): UiModeInspector {
             return INSTANCE ?: error("Not initialize yet!")
         }
