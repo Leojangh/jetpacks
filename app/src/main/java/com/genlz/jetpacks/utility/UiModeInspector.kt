@@ -15,7 +15,7 @@ class UiModeInspector private constructor(
 
         context.registerComponentCallbacks(object : ComponentCallbacks {
             override fun onConfigurationChanged(newConfig: Configuration) {
-                getInstance(context).parseNewConfiguration(newConfig)
+                getInstance().parseNewConfiguration(newConfig)
             }
 
             override fun onLowMemory() {
