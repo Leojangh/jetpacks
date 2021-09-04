@@ -23,14 +23,12 @@
         <meta-data
             android:name="android.allow_multiple_resumed_activities"
             android:value="true" />
-
-
         <!--
-        It's default options for activity
-        android:resizeableActivity="true"
+                It's default options for activity
+                android:resizeableActivity="true"
 
-        Foldables unfolding triggers a configuration change for smallestScreenSize screenLayout and screenSize
-        -->
+                Foldables unfolding triggers a configuration change for smallestScreenSize screenLayout and screenSize
+                -->
         <activity
             android:name=".ui.MainActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
@@ -49,6 +47,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.web.WebActivity"
+            android:exported="true" />
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
@@ -58,6 +60,7 @@
                 android:name="com.genlz.jetpacks.utility.UiModeInspectorInitializer"
                 android:value="androidx.startup" />
         </provider>
+
     </application>
 
 </manifest>

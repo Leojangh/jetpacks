@@ -15,6 +15,8 @@ class App : Application() {
 
     companion object {
 
+        const val TAG = "App"
+
         /**
          * Get application context everywhere.
          *
