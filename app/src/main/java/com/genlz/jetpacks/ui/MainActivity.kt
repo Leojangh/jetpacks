@@ -69,11 +69,14 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions()
         }
-
         setupNavigation()
-
-        val STAG = "slfsjfksjfk"
         windowInfoRepo = windowInfoRepository()
+
+        listenWindowInfo()
+    }
+
+    private fun listenWindowInfo() {
+        val STAG = "slfsjfksjfk"
 
         lifecycleScope.launch {
             windowInfoRepo.currentWindowMetrics.flowWithLifecycle(lifecycle)
