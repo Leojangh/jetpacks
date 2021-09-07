@@ -24,7 +24,9 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
             adapter = it
         }
         TabLayoutMediator(tab, pager) { t, p ->
-            t.setText((adapter.createFragment(p) as? Titleable)?.titleStringResId ?: 0)
+            //TODO:How to get current fragment?
+            t.setText((adapter.createFragment(p) as? Titleable)?.titleStringResId
+                ?: error("Not title defined!"))
         }.attach()
     }
 

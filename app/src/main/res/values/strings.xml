@@ -30,5 +30,11 @@
     <string name="vip">VIP</string>
     <string name="recommend">Recommend</string>
     <string name="follow">Follow</string>
+    <string name="post_thumbnail">post thumbnail</string>
+    <string name="avatar">avatar</string>
+    <string name="long_text">
+        要显示非默认屏幕滑动动画，请实现 ViewPager2.PageTransformer 接口并将其提供给 ViewPager2 对象。该接口只会公开一个方法 transformPage()。在屏幕切换的每个点，系统会针对每个可见页面（通常只有一个可见页面）和刚刚离开屏幕的相邻页面调用此方法。 例如，如果第 3 页可见且用户拖向第 4 页，则在手势的每个步骤，会针对第 2 页、第 3 页和第 4 页调用 transformPage()。
+然后在您的 transformPage() 实现中，您可以根据页面在屏幕上的位置确定需要切换哪些页面，从而创建自定义滑动动画。页面位置取自 transformPage() 方法的 position 参数。
+    </string>
 
 </resources>
