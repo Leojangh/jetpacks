@@ -22,11 +22,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.*
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
@@ -41,9 +37,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var navController: NavController
 
     private val binding by viewBinding<ActivityMainBinding>()
     private val viewModel by viewModels<MainActivityViewModel>()
@@ -60,7 +53,6 @@ class MainActivity : AppCompatActivity() {
         splashScreen = installSplashScreen()
         waitForReady()
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
 
         customExitAnimation()
         edge2edge()
@@ -77,12 +69,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun listenWindowInfo() {
-        val STAG = "slfsjfksjfk"
 
         lifecycleScope.launch {
             windowInfoRepo.currentWindowMetrics.flowWithLifecycle(lifecycle)
                 .collect {
-                    Log.d(STAG, "onCreate:width ${it.bounds.width()} height${it.bounds.height()}")
+                    Log.d(TAG, "onCreate:width ${it.bounds.width()} height${it.bounds.height()}")
                 }
         }
 
@@ -90,13 +81,13 @@ class MainActivity : AppCompatActivity() {
         // 因此，在上图中，应用在单屏模式下运行时，WindowLayoutInfo 为空。
         lifecycleScope.launch {
             windowInfoRepo.windowLayoutInfo.flowWithLifecycle(lifecycle).collect {
-                Log.d(STAG, "onCreate: No display features detected")
+                Log.d(TAG, "onCreate: No display features detected")
                 for (displayFeature: DisplayFeature in it.displayFeatures) {
                     if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.NONE) {
-                        Log.d(STAG, "onCreate: App is spanned across a fold")
+                        Log.d(TAG, "onCreate: App is spanned across a fold")
                     }
                     if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.FULL) {
-                        Log.d(STAG, "onCreate: App is spanned across a hinge")
+                        Log.d(TAG, "onCreate: App is spanned across a hinge")
                     }
                 }
             }
@@ -135,12 +126,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
-        navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.vipFragment,
-            R.id.serviceFragment,
-            R.id.productsFragment,
-            R.id.communityFragment))
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
         binding.bottomNavigation.setupWithNavController(navController)
     }
 
@@ -171,11 +157,6 @@ class MainActivity : AppCompatActivity() {
     //TODO fix not working
     private fun edge2edge() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, i ->
-            val insets = i.getInsets(WindowInsetsCompat.Type.statusBars())
-            v.updatePadding(top = 1000)
-            i
-        }
         val initialMarginBottom = binding.bottomNavigation.marginBottom
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavigation) { v, i ->
             val insets = i.getInsets(WindowInsetsCompat.Type.navigationBars())
@@ -196,12 +177,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
-    }
-
     /**
      * MultiResume
      */
@@ -218,13 +193,6 @@ class MainActivity : AppCompatActivity() {
         super.onNewIntent(intent)
 //        if launch mode is not standard,handle it manually like this
 //        navController.handleDeepLink(intent)
-    }
-
-    private fun hideSystemBars() {
-        val controllerCompat = WindowInsetsControllerCompat(window, window.decorView)
-        controllerCompat.hide(WindowInsetsCompat.Type.systemBars())
-        controllerCompat.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 
     companion object {
