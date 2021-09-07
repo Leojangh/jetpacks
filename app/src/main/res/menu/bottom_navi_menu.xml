@@ -2,24 +2,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/page_1"
+        android:id="@+id/communityFragment"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_fiber_new_24"
         android:title="@string/community" />
     <item
-        android:id="@+id/page_2"
+        android:id="@+id/productsFragment"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_shopping_bag_24"
         android:title="@string/products" />
 
     <item
-        android:id="@+id/page_3"
+        android:id="@+id/serviceFragment"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_emoji_objects_24"
         android:title="@string/service" />
 
     <item
-        android:id="@+id/page_4"
+        android:id="@+id/vipFragment"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_account_circle_24"
         android:title="@string/vip" />

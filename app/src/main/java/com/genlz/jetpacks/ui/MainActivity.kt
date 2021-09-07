@@ -27,6 +27,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository
@@ -135,8 +136,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNavigation() {
         navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.vipFragment,
+            R.id.serviceFragment,
+            R.id.productsFragment,
+            R.id.communityFragment))
         setupActionBarWithNavController(navController, appBarConfiguration)
+        binding.bottomNavigation.setupWithNavController(navController)
     }
 
     private fun waitForReady() {

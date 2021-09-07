@@ -63,6 +63,8 @@ android {
 
 dependencies {
 
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
     val window_version = "1.0.0-beta02"
     implementation("androidx.window:window:$window_version")
     androidTestImplementation("androidx.window:window-testing:$window_version")

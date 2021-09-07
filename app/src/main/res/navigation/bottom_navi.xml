@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_navi"
+    app:startDestination="@id/communityFragment">
+
+    <fragment
+        android:id="@+id/communityFragment"
+        android:name="com.genlz.jetpacks.ui.community.CommunityFragment"
+        android:label="CommunityFragment"
+        tools:layout="@layout/fragment_community" />
+    <fragment
+        android:id="@+id/productsFragment"
+        android:name="com.genlz.jetpacks.ui.products.ProductsFragment"
+        android:label="ProductsFragment"
+        tools:layout="@layout/fragment_products" />
+    <fragment
+        android:id="@+id/serviceFragment"
+        android:name="com.genlz.jetpacks.ui.service.ServiceFragment"
+        android:label="ServiceFragment"
+        tools:layout="@layout/fragment_service" />
+    <fragment
+        android:id="@+id/vipFragment"
+        android:name="com.genlz.jetpacks.ui.vip.VipFragment"
+        android:label="VipFragment"
+        tools:layout="@layout/fragment_vip" />
+</navigation>
