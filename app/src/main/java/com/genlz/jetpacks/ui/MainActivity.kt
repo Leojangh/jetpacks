@@ -4,14 +4,12 @@ import android.Manifest
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -61,6 +59,8 @@ class MainActivity : AppCompatActivity() {
         splashScreen = installSplashScreen()
         waitForReady()
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
+
         customExitAnimation()
         edge2edge()
 
@@ -163,24 +163,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //TODO fix not working
     private fun edge2edge() {
-        setSupportActionBar(binding.toolbar)
-        window.statusBarColor = Color.TRANSPARENT
-        window.navigationBarColor = Color.TRANSPARENT
         WindowCompat.setDecorFitsSystemWindows(window, false)
         ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, i ->
             val insets = i.getInsets(WindowInsetsCompat.Type.statusBars())
-            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                this.topMargin = insets.top
-            }
-            WindowInsetsCompat.CONSUMED
+            v.updatePadding(top = 1000)
+            i
         }
-        val initialMarginBottom = binding.fab.marginBottom
-        ViewCompat.setOnApplyWindowInsetsListener(binding.fab) { v, i ->
-            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                bottomMargin =
-                    i.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + initialMarginBottom
-            }
+        val initialMarginBottom = binding.bottomNavigation.marginBottom
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavigation) { v, i ->
+            val insets = i.getInsets(WindowInsetsCompat.Type.navigationBars())
+            v.updatePadding(bottom = insets.bottom + initialMarginBottom)
             i
         }
     }
