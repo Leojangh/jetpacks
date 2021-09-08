@@ -2,6 +2,7 @@ package com.genlz.jetpacks.ui.community.recommend
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RecommendFragment(
+    @StringRes
     override val titleStringResId: Int = R.string.recommend,
 ) : Fragment(R.layout.fragment_recommend), Titleable {
 

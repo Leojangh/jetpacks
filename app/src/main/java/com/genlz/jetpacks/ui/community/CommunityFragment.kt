@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentCommunityBinding
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class CommunityFragment : Fragment(R.layout.fragment_community) {
@@ -20,14 +21,17 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
         val pager = binding.contentView.pager
         val tab = binding.contentView.tab
         val adapter: CommunityPagerAdapter
+
         pager.adapter = CommunityPagerAdapter(this).also {
             adapter = it
         }
-        TabLayoutMediator(tab, pager) { t, p ->
-            //TODO:How to get current fragment?
-            t.setText((adapter.createFragment(p) as? Titleable)?.titleStringResId
-                ?: error("Not title defined!"))
-        }.attach()
+
+        pager.offscreenPageLimit = adapter.itemCount
+        pager.post {
+            TabLayoutMediator(tab, pager) { t, p ->
+                t.setText(adapter.titles[p].titleStringResId)
+            }.attach()
+        }
     }
 
     companion object {
