@@ -6,8 +6,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
+import com.genlz.jetpacks.adapter.CommunityPagerAdapter
 import com.genlz.jetpacks.databinding.FragmentCommunityBinding
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class CommunityFragment : Fragment(R.layout.fragment_community) {

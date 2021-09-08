@@ -6,15 +6,13 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
+import com.genlz.jetpacks.adapter.RecommendAdapter
 import com.genlz.jetpacks.databinding.FragmentRecommendBinding
 import com.genlz.jetpacks.ui.community.Titleable
-import com.genlz.jetpacks.ui.community.recommend.adapter.RecommendAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

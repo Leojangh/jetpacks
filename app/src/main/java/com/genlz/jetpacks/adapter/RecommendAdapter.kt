@@ -1,4 +1,4 @@
-package com.genlz.jetpacks.ui.community.recommend.adapter
+package com.genlz.jetpacks.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

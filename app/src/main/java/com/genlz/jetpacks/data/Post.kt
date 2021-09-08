@@ -20,7 +20,6 @@ data class Post(
     val thumbs: Int,
 )
 
-
 /**
  * Dedicate into network domain,such as serializing to JSON or inverse.
  */
