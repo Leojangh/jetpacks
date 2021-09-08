@@ -63,7 +63,7 @@ android {
 
 dependencies {
 
-    implementation("androidx.paging:paging-runtime:3.0.1")
+    implementation("androidx.paging:paging-runtime-ktx:3.0.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     val window_version = "1.0.0-beta02"
@@ -85,7 +85,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
 
-    implementation("androidx.work:work-runtime-ktx:2.7.0-alpha05")//for tageting S+
+    implementation("androidx.work:work-runtime-ktx:2.7.0-beta01")//for tageting S+
 
     val retrofit_version = "2.9.0"
     //retrofit
