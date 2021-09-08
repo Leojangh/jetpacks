@@ -39,19 +39,11 @@ data class NetworkPostEntity(
 
 /**
  * Dedicate into persistence domain,such as representing RECORD.
+ * TODO
  */
 @Entity(tableName = "post")
 data class PersistencePostEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
-    val title: String,
-    val abstraction: String,
-    val thumbnails: List<String>,
-    val tags: List<String>,
-    val user: User,
-    val postTime: LocalDateTime,
-    val views: Int,
-    val comments: Int,
-    val thumbs: Int,
+    var id: Long,
 )
 

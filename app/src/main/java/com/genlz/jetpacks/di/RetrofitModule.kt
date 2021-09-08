@@ -1,6 +1,7 @@
 package com.genlz.jetpacks.di
 
 import com.genlz.jetpacks.api.AdApi
+import com.genlz.jetpacks.api.RecommendApi
 import com.genlz.jetpacks.api.ThumbApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -19,6 +20,8 @@ object RetrofitModule {
     private const val BASE_URL = "http://192.168.18.219:8080/"
 
     const val SPLASH_BASE_URL = "https://source.unsplash.com/"
+
+    const val RECOMMEND_BASE_URL = BASE_URL
 
     @Provides
     fun provideGson(): Gson {
@@ -53,5 +56,13 @@ object RetrofitModule {
             .baseUrl(SPLASH_BASE_URL)
             .build()
             .create(AdApi::class.java)
+    }
+
+    @Provides
+    fun provideRecommendApi(retrofit: Retrofit.Builder): RecommendApi {
+        return retrofit
+            .baseUrl(RECOMMEND_BASE_URL)
+            .build()
+            .create(RecommendApi::class.java)
     }
 }

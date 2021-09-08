@@ -8,7 +8,6 @@ interface RecommendApi {
 
     @GET("recommend")
     suspend fun loadRecommendData(
-        @Query("query") query: String,
         @Query("page") page: Int,
         @Query("per_page") perPage: Int,
     ): RecommendResponse
