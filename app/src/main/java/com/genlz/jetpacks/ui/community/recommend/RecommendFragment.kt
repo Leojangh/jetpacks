@@ -2,6 +2,7 @@ package com.genlz.jetpacks.ui.community.recommend
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentRecommendBinding
@@ -12,6 +13,8 @@ class RecommendFragment(
 ) : Fragment(R.layout.fragment_recommend), Titleable {
 
     private val binding by viewBinding(FragmentRecommendBinding::bind)
+
+    private val viewModel by viewModels<RecommendFragmentViewModel>()
 
     companion object {
         fun newInstance(): RecommendFragment {

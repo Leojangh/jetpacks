@@ -63,6 +63,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.paging:paging-runtime:3.0.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     val window_version = "1.0.0-beta02"
@@ -72,8 +73,6 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.0-alpha01")
 
     implementation("io.coil-kt:coil:1.3.2")
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    kapt("com.github.bumptech.glide:compiler:4.12.0")
 
     implementation("androidx.startup:startup-runtime:1.1.0")
 
