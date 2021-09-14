@@ -6,6 +6,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_baseline_fiber_new_24"
         android:title="@string/community" />
+
     <item
         android:id="@+id/productsFragment"
         android:enabled="true"
