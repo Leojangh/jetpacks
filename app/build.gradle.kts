@@ -66,7 +66,7 @@ dependencies {
     implementation("androidx.paging:paging-runtime-ktx:3.0.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
-    val window_version = "1.0.0-beta02"
+    val window_version = "1.0.0-beta+"
     implementation("androidx.window:window:$window_version")
     androidTestImplementation("androidx.window:window-testing:$window_version")
 
@@ -85,7 +85,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
 
-    implementation("androidx.work:work-runtime-ktx:2.7.0-beta01")//for tageting S+
+    implementation("androidx.work:work-runtime-ktx:2.7.0-beta01")//for targeting S+
 
     val retrofit_version = "2.9.0"
     //retrofit
@@ -115,4 +115,12 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+}
+
+configurations.all {
+
+    resolutionStrategy {
+        cacheDynamicVersionsFor(10, "minutes")
+        cacheChangingModulesFor(4, "hours")
+    }
 }
