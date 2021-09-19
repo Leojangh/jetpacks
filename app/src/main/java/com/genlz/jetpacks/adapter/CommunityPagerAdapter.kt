@@ -7,20 +7,20 @@ import com.genlz.jetpacks.ui.community.follow.FollowFragment
 import com.genlz.jetpacks.ui.community.recommend.RecommendFragment
 import kotlin.reflect.KFunction0
 
-class CommunityPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+class CommunityPagerAdapter(
+    fragment: Fragment,
+    val titles: List<Int>,
+) : FragmentStateAdapter(fragment) {
 
     override fun getItemCount(): Int = pageFactory.size
 
-    val titles = mutableListOf<Titleable>()
-
     override fun createFragment(position: Int): Fragment {
-        val f = pageFactory[position]()
-        titles += f
+        val f = pageFactory[position](titles[position])
         return f as Fragment
     }
 
     companion object {
-        private val pageFactory: List<KFunction0<Titleable>> = listOf(
+        private val pageFactory = listOf(
             RecommendFragment::newInstance,
             FollowFragment::newInstance
         )

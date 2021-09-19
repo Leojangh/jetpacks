@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class RecommendFragment(
     @StringRes
-    override val titleStringResId: Int = R.string.recommend,
+    override val titleStringResId: Int,
 ) : Fragment(R.layout.fragment_recommend), Titleable {
 
     private val binding by viewBinding(FragmentRecommendBinding::bind)
@@ -46,10 +46,13 @@ class RecommendFragment(
     }
 
     companion object {
-        fun newInstance(): RecommendFragment {
+        fun newInstance(
+            @StringRes
+            titleStringResId: Int = R.string.recommend
+        ): RecommendFragment {
             val args = Bundle()
 
-            val fragment = RecommendFragment()
+            val fragment = RecommendFragment(titleStringResId)
             fragment.arguments = args
             return fragment
         }

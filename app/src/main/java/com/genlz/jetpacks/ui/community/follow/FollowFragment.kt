@@ -10,15 +10,18 @@ import com.genlz.jetpacks.ui.community.Titleable
 
 class FollowFragment(
     @StringRes
-    override val titleStringResId: Int = R.string.follow,
+    override val titleStringResId: Int,
 ) : Fragment(R.layout.fragment_follow), Titleable {
 
     private val binding by viewBinding<FragmentFollowBinding>()
 
     companion object {
-        fun newInstance(): FollowFragment {
+        fun newInstance(
+            @StringRes
+            titleStringResId: Int = R.string.follow
+        ): FollowFragment {
             val args = Bundle()
-            val fragment = FollowFragment()
+            val fragment = FollowFragment(titleStringResId)
             fragment.arguments = args
             return fragment
         }

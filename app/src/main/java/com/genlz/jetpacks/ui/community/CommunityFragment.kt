@@ -22,16 +22,14 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
         val tab = binding.contentView.tab
         val adapter: CommunityPagerAdapter
 
-        pager.adapter = CommunityPagerAdapter(this).also {
-            adapter = it
-        }
+        pager.adapter = CommunityPagerAdapter(
+            this,
+            listOf(R.string.recommend, R.string.follow)
+        ).also { adapter = it }
 
-        pager.offscreenPageLimit = adapter.itemCount
-        pager.post {
-            TabLayoutMediator(tab, pager) { t, p ->
-                t.setText(adapter.titles[p].titleStringResId)
-            }.attach()
-        }
+        TabLayoutMediator(tab, pager) { t, p ->
+            t.setText(adapter.titles[p])
+        }.attach()
     }
 
     companion object {
