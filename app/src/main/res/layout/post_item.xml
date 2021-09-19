@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="post"
             type="com.genlz.jetpacks.data.Post" />
@@ -21,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/avatar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -29,6 +31,8 @@
                 android:src="@drawable/ic_baseline_account_circle_24"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/CircularShape"
+                app:srcUri="@{post.user.avatar}"
                 tools:srcCompat="@tools:sample/avatars" />
 
             <TextView
@@ -36,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="@string/mock_leojangh"
+                android:text="@{post.user.username}"
                 app:layout_constraintStart_toEndOf="@+id/avatar"
                 app:layout_constraintTop_toTopOf="@+id/avatar"
                 tools:text="用户名" />
@@ -46,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/mock_device"
+                android:text="@{post.user.postDevice}"
                 app:layout_constraintStart_toStartOf="@+id/username"
                 app:layout_constraintTop_toBottomOf="@+id/username"
                 tools:text="发帖设备" />
@@ -55,7 +59,7 @@
                 android:id="@+id/identified_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
+                app:identified="@{post.user.identified}"
                 app:layout_constraintBottom_toBottomOf="@+id/avatar"
                 app:layout_constraintEnd_toEndOf="@+id/avatar"
                 app:srcCompat="@drawable/ic_baseline_verified_24"
@@ -89,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:maxLines="1"
-                android:text="@string/mock_title"
+                android:text="@{post.title}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/post_thumbnail"
@@ -102,7 +106,7 @@
                 android:layout_marginTop="8dp"
                 android:ellipsize="end"
                 android:maxLines="3"
-                android:text="@string/long_text"
+                android:text="@{post.abstraction}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -114,7 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/moment"
+                android:text="@{post.tags.get(0)}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/post_abstract"
                 tools:text="标签" />
@@ -124,7 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:text="@string/great"
+                android:text="@{post.comments+``}"
                 app:layout_constraintBottom_toBottomOf="@+id/ic_comment"
                 app:layout_constraintEnd_toStartOf="@+id/ic_thumbs"
                 app:layout_constraintTop_toTopOf="@+id/ic_comment"
@@ -135,7 +139,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="@string/views"
+                android:text="@{post.views+``}"
                 app:layout_constraintBottom_toBottomOf="@+id/post_time"
                 app:layout_constraintStart_toEndOf="@+id/post_time"
                 app:layout_constraintTop_toTopOf="@+id/post_time"
@@ -146,7 +150,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/mock_time"
+                android:text="@{post.postTime.toString()}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/post_tag"
                 tools:text="时间" />
@@ -155,7 +159,7 @@
                 android:id="@+id/post_thumbs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/mock_thumbs"
+                android:text="@{post.thumbs+``}"
                 app:layout_constraintBottom_toBottomOf="@+id/ic_thumbs"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/ic_thumbs"

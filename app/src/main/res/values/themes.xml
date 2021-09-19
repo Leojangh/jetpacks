@@ -56,6 +56,10 @@
         <item name="cornerSizeTopRight">20dp</item>
     </style>
 
+    <style name="CircularShape">
+        <item name="cornerSize">.5</item>
+    </style>
+
     <style name="Theme.Jetpacks.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Jetpacks.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

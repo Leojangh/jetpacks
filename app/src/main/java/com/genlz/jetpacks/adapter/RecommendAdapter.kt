@@ -28,9 +28,6 @@ class RecommendAdapter :
     class PostViewHolder(
         private val binding: PostItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        init {
-            binding
-        }
 
         fun bind(item: Post) {
             binding.apply {
