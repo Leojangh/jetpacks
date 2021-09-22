@@ -57,7 +57,7 @@
     </style>
 
     <style name="CircularShape">
-        <item name="cornerSize">.5</item>
+        <item name="cornerSize">50%</item>
     </style>
 
     <style name="Theme.Jetpacks.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
