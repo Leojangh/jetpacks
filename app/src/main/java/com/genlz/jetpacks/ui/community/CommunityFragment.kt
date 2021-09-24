@@ -37,6 +37,10 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
         ).also { adapter = it }
         TabLayoutMediator(tab, pager) { t, p ->
             t.setText(adapter.titles[p])
+            t.orCreateBadge.apply {
+                number = 10
+            }
+            t.setIcon(R.drawable.pager_tab_selector)
         }.attach()
     }
 
