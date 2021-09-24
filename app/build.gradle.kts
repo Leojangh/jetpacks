@@ -1,12 +1,12 @@
-val java_version = JavaVersion.VERSION_11
+val java_version: String by project
 val kotlin_version: String by project
 val hilt_version: String by project
 val nav_version: String by project
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
+    kotlin("android")
+    kotlin("kapt")
     id("dagger.hilt.android.plugin")
     id("androidx.navigation.safeargs.kotlin")
 }
@@ -33,27 +33,22 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        release {
+
             isMinifyEnabled = true
 
             proguardFiles += getDefaultProguardFile("proguard-android-optimize.txt")
-            proguardFiles += project.file("proguard-rules.pro")
-        }
-        getByName("debug") {
-            isMinifyEnabled = false
-
-            proguardFiles += getDefaultProguardFile("proguard-android-optimize.txt")
-            proguardFiles += project.file("proguard-rules.pro")
+            proguardFiles("proguard-rules.pro")
         }
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
 
-        sourceCompatibility = java_version
-        targetCompatibility = java_version
+        sourceCompatibility(java_version)
+        targetCompatibility(java_version)
     }
     kotlinOptions {
-        jvmTarget = "$java_version"
+        jvmTarget = java_version
     }
     buildFeatures {
         viewBinding = true
