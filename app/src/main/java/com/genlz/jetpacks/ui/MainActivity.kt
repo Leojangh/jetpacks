@@ -70,6 +70,19 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.getOrCreateBadge(R.id.communityFragment).apply {
             number = 20
         }
+
+        binding.bottomNavigation.setOnItemSelectedListener {
+            val fab = binding.fab
+
+            when (it.itemId) {
+                R.id.vipFragment -> fab.hide()
+                else -> {
+                    fab.show()
+                    fab.setImageDrawable(it.icon)
+                }
+            }
+            true
+        }
     }
 
     private fun listenWindowInfo() {

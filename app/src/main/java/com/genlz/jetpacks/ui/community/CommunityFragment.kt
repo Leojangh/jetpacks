@@ -28,19 +28,19 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
 
     private fun mediateTabWithPager(
         pager: ViewPager2,
-        tab: TabLayout
+        tabLayout: TabLayout
     ) {
         val adapter: CommunityPagerAdapter
         pager.adapter = CommunityPagerAdapter(
             this,
             listOf(R.string.recommend, R.string.follow)
         ).also { adapter = it }
-        TabLayoutMediator(tab, pager) { t, p ->
-            t.setText(adapter.titles[p])
-            t.orCreateBadge.apply {
+        TabLayoutMediator(tabLayout, pager) { tab, position ->
+            tab.setText(adapter.titles[position])
+            tab.orCreateBadge.apply {
                 number = 10
             }
-            t.setIcon(R.drawable.pager_tab_selector)
+            tab.setIcon(R.drawable.pager_tab_selector)
         }.attach()
     }
 
