@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="app_bar_fragment_ids">
+        <item>@id/communityFragment</item>
+        <item>@id/productsFragment</item>
+        <item>@id/serviceFragment</item>
+        <item>@id/vipFragment</item>
+    </array>
+
+</resources>

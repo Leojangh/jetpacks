@@ -10,7 +10,7 @@ import com.genlz.jetpacks.databinding.FragmentProductsBinding
 
 class ProductsFragment : Fragment(R.layout.fragment_products) {
 
-    private val binding by viewBinding<FragmentProductsBinding>()
+    private val binding by viewBinding(FragmentProductsBinding::bind)
 
     private val viewModel by viewModels<ProductsFragmentViewModel>()
 

@@ -13,6 +13,11 @@
         android:icon="@drawable/ic_baseline_shopping_bag_24"
         android:title="@string/products" />
 
+    <!--Just a placeholder-->
+    <item
+        android:enabled="false"
+        android:title="" />
+
     <item
         android:id="@+id/serviceFragment"
         android:enabled="true"

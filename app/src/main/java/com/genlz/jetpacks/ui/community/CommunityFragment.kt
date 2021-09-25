@@ -14,7 +14,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class CommunityFragment : Fragment(R.layout.fragment_community) {
 
-    private val binding by viewBinding<FragmentCommunityBinding>()
+    private val binding by viewBinding(FragmentCommunityBinding::bind)
 
     private val viewModel by viewModels<CommunityFragmentViewModel>()
 

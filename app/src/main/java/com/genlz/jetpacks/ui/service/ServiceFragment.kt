@@ -8,7 +8,7 @@ import com.genlz.jetpacks.databinding.FragmentServiceBinding
 
 class ServiceFragment : Fragment(R.layout.fragment_service) {
 
-    private val binding by viewBinding<FragmentServiceBinding>()
+    private val binding by viewBinding(FragmentServiceBinding::bind)
 
     private val viewModel by viewModels<ServiceFragmentViewModel>()
 

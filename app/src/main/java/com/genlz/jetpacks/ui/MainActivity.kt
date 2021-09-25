@@ -23,12 +23,13 @@ import androidx.core.view.*
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository
 import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
-import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,7 +39,8 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val binding by viewBinding<ActivityMainBinding>()
+    private lateinit var binding: ActivityMainBinding
+
     private val viewModel by viewModels<MainActivityViewModel>()
 
     private lateinit var splashScreen: SplashScreen
@@ -52,10 +54,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         splashScreen = installSplashScreen()
         waitForReady()
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         customExitAnimation()
-        edge2edge()
+//        edge2edge()
 
         Log.d(TAG, "onCreate: $this")
 
@@ -131,8 +134,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        setSupportActionBar(binding.toolbar)
+        val navController = findNavController(R.id.content_main)
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.communityFragment,
+                R.id.productsFragment,
+                R.id.serviceFragment,
+                R.id.vipFragment
+            )
+        )
         binding.bottomNavigation.setupWithNavController(navController)
+        setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
     private fun waitForReady() {
