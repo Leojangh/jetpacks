@@ -15,15 +15,14 @@ class RecommendAdapter :
         getItem(position)?.let(holder::bind)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        return PostViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        PostViewHolder(
             PostItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
             )
         )
-    }
 
     class PostViewHolder(
         private val binding: PostItemBinding

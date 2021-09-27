@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="NewSplash" parent="Theme.SplashScreen">
+    <style name="EdgeToEdge.NewSplash" parent="Theme.SplashScreen">
         <!--        <item name="android:windowBackground">@drawable/pawel_unsplash</item>-->
         <item name="android:windowSplashScreenBackground">@color/twitter_background</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_logo_twitter_icon</item>
         <!--        <item name="android:windowSplashScreenBrandingImage">@drawable/ic_xiaomi_logo</item>-->
         <item name="postSplashScreenTheme">@style/Theme.Jetpacks.NoActionBar</item>
 
-        <item name="android:fitsSystemWindows">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 </resources>

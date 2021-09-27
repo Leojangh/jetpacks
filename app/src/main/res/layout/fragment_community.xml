@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="?attr/actionBarSize">
+    android:background="@android:color/holo_blue_bright">
 
     <include
         android:id="@+id/content_view"
         layout="@layout/pager2_with_tab_layout" />
+
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

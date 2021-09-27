@@ -31,7 +31,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend), Titleable {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.recyclerView.adapter = adapter
+        binding.root.adapter = adapter
         loadRecommendData()
     }
 
@@ -54,5 +54,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend), Titleable {
     }
 
     override val titleStringResId: Int
-        get() = arguments?.getInt(TITLE_RES_KEY) ?: error("Not title resource passed in as parameter")
+        get() = arguments?.getInt(TITLE_RES_KEY)
+            ?: error("Not title resource passed in as parameter")
 }

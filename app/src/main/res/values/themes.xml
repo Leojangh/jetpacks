@@ -19,6 +19,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <!--BottomSheetDialog-->
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
     </style>
@@ -37,27 +39,12 @@
     </style>
 
     <!--    androidx.core.splashscreen compat lib-->
-    <style name="NewSplash" parent="Theme.SplashScreen">
-        <item name="android:fitsSystemWindows">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+    <style name="EdgeToEdge.NewSplash" parent="Theme.SplashScreen">
         <!--old way-->
         <!--        <item name="android:windowBackground">@drawable/pawel_unsplash</item>-->
         <item name="windowSplashScreenBackground">@color/twitter_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo_twitter_icon</item>
         <item name="postSplashScreenTheme">@style/Theme.Jetpacks.NoActionBar</item>
-    </style>
-
-    <style name="RadiusCorner">
-        <item name="cornerFamilyTopLeft">rounded</item>
-        <item name="cornerFamilyTopRight">rounded</item>
-
-        <item name="cornerSizeTopLeft">20dp</item>
-        <item name="cornerSizeTopRight">20dp</item>
-    </style>
-
-    <style name="CircularShape">
-        <item name="cornerSize">50%</item>
     </style>
 
     <style name="Theme.Jetpacks.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

@@ -4,6 +4,7 @@ import android.Manifest
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -22,7 +23,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.*
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -30,6 +33,7 @@ import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository
 import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
+import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,7 +43,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private val binding by viewBinding(ActivityMainBinding::class.java)
 
     private val viewModel by viewModels<MainActivityViewModel>()
 
@@ -47,18 +51,24 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var windowInfoRepo: WindowInfoRepository
 
+    private lateinit var navController: NavController
+
     /**
      * 未适配连续性时，Fold折叠后会销毁并重新创建一个Activity，再次打开又会创建一个Activity。
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         splashScreen = installSplashScreen()
-        waitForReady()
-        binding = ActivityMainBinding.inflate(layoutInflater)
+//        waitForReady()
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.content_main) as NavHostFragment
+        navController = navHostFragment.navController
 
         customExitAnimation()
-//        edge2edge()
+        edge2edge()
 
         Log.d(TAG, "onCreate: $this")
 
@@ -134,8 +144,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
-        setSupportActionBar(binding.toolbar)
-        val navController = findNavController(R.id.content_main)
+
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.communityFragment,
@@ -172,13 +181,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //TODO fix not working
     private fun edge2edge() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        val initialMarginBottom = binding.bottomNavigation.marginBottom
-        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavigation) { v, i ->
-            val insets = i.getInsets(WindowInsetsCompat.Type.navigationBars())
-            v.updatePadding(bottom = insets.bottom + initialMarginBottom)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, i ->
+            val insets = i.getInsets(WindowInsetsCompat.Type.statusBars())
+            v.updatePadding(top = insets.top)
+            binding.contentMain.updatePadding(top = insets.top)
             i
         }
     }
