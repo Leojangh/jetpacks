@@ -41,8 +41,11 @@
     <string name="moment">动态</string>
     <string name="great">666</string>
     <string name="views">浏览1.7万+</string>
-    <string name="mock_time">2021-09-01</string>
+    <string name="mock_time">2021–09–01</string>
     <string name="mock_thumbs">9.3万+</string>
     <string name="mock_title">标题</string>
+    <string name="origin_image">Origin image</string>
+
+    <string name="image_transition_name" translatable="false">image_transition_name</string>
 
 </resources>

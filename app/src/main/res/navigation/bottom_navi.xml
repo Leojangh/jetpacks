@@ -15,6 +15,7 @@
         android:name="com.genlz.jetpacks.ui.products.ProductsFragment"
         android:label="ProductsFragment"
         tools:layout="@layout/fragment_products" />
+
     <fragment
         android:id="@+id/serviceFragment"
         android:name="com.genlz.jetpacks.ui.service.ServiceFragment"
@@ -25,4 +26,5 @@
         android:name="com.genlz.jetpacks.ui.vip.VipFragment"
         android:label="VipFragment"
         tools:layout="@layout/fragment_vip" />
+
 </navigation>

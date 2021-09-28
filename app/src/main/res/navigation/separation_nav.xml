@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/separate_nav">
+
+    <!--大图预览目的地-->
+    <fragment
+        android:id="@+id/imagesFragment"
+        android:name="com.genlz.jetpacks.ui.ImagesFragment"
+        android:label="ImagesFragment"
+        tools:layout="@layout/fragment_images">
+
+        <argument
+            android:name="image_uris"
+            app:argType="android.net.Uri[]"
+            app:nullable="false" />
+
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_imagesFragment"
+        app:destination="@id/imagesFragment" />
+</navigation>
