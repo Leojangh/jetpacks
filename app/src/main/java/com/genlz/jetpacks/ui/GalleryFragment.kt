@@ -2,19 +2,25 @@ package com.genlz.jetpacks.ui
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.children
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
+import androidx.navigation.NavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.navArgs
-import androidx.navigation.ui.navigateUp
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionInflater
+import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import com.genlz.android.viewbinding.viewBinding
+import com.genlz.jetpacks.GalleryDirections
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentGalleryBinding
 import com.genlz.jetpacks.databinding.SimplePagerItemImageBinding
@@ -27,21 +33,43 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val transition =
+        val move =
             TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
-        sharedElementEnterTransition = transition
-        sharedElementReturnTransition = transition
+        val explode = TransitionInflater.from(requireContext())
+            .inflateTransition(android.R.transition.explode)
+        sharedElementEnterTransition = explode
+        sharedElementReturnTransition = move
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.imagePager.adapter = ImagesAdapter(args.imageUris)
+        val uris = args.imageUris
+        binding.imagePager.adapter = ImagesAdapter(uris)
+        repeat(uris.size) {
+//            LayoutInflater.from(requireContext())
+//                .inflate(R.layout.simple_radio_button, binding.pagerIndicator, true)
+            binding.pagerIndicator.addView(RadioButton(requireContext()))
+        }
+        binding.imagePager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                val rb = binding.pagerIndicator[position] as RadioButton
+                rb.isChecked = true
+                clearOthers(position)
+            }
+
+            private fun clearOthers(position: Int) {
+                binding.pagerIndicator.children.forEachIndexed { index, view ->
+                    if (index != position)
+                        (view as RadioButton).isChecked = false
+                }
+            }
+        })
     }
 
 
     companion object {
 
-        const val IMAGE_URIS = "image_uris"
+        private const val IMAGE_URIS = "image_uris"
 
         /**
          * For no navigation support.
@@ -51,6 +79,18 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 IMAGE_URIS to uris
             )
         }
+
+        /**
+         * For navigation support
+         */
+        fun navigate(navController: NavController, view: View, imageUris: Array<Uri>) {
+            navController.navigate(
+                GalleryDirections.gallery(imageUris),
+                FragmentNavigatorExtras(
+                    view to navController.context.getString(R.string.image_origin)
+                )
+            )
+        }
     }
 }
 
@@ -58,12 +98,13 @@ private class ImagesAdapter(
     private val uris: Array<Uri>
 ) : RecyclerView.Adapter<ImagesAdapter.ImagesViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImagesViewHolder {
-        val binding = SimplePagerItemImageBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+        return ImagesViewHolder(
+            SimplePagerItemImageBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
-        return ImagesViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ImagesViewHolder, position: Int) {
