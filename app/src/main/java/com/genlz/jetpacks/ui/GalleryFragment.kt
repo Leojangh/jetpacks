@@ -2,25 +2,28 @@ package com.genlz.jetpacks.ui
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.navigateUp
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionInflater
 import coil.load
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
-import com.genlz.jetpacks.databinding.FragmentImagesBinding
+import com.genlz.jetpacks.databinding.FragmentGalleryBinding
 import com.genlz.jetpacks.databinding.SimplePagerItemImageBinding
 
-class ImagesFragment : Fragment(R.layout.fragment_images) {
+class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
-    private val args by navArgs<ImagesFragmentArgs>()
+    private val args by navArgs<GalleryFragmentArgs>()
 
-    private val binding by viewBinding(FragmentImagesBinding::bind)
+    private val binding by viewBinding(FragmentGalleryBinding::bind)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,11 +38,15 @@ class ImagesFragment : Fragment(R.layout.fragment_images) {
         binding.imagePager.adapter = ImagesAdapter(args.imageUris)
     }
 
+
     companion object {
+
+        const val IMAGE_URIS = "image_uris"
+
         /**
          * For no navigation support.
          */
-        fun newInstance(uris: Array<Uri>) = ImagesFragment().apply {
+        fun newInstance(uris: Array<Uri>) = GalleryFragment().apply {
             arguments = bundleOf(
                 IMAGE_URIS to uris
             )
@@ -77,5 +84,5 @@ private class ImagesAdapter(
     }
 }
 
+private const val TAG = "GalleryFragment"
 
-const val IMAGE_URIS = "image_uris"

@@ -27,4 +27,8 @@
         android:label="VipFragment"
         tools:layout="@layout/fragment_vip" />
 
+    <include app:graph="@navigation/bottom_dialog" />
+
+    <include app:graph="@navigation/gallery" />
+
 </navigation>

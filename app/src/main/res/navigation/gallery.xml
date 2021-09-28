@@ -2,14 +2,15 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/separate_nav">
+    android:id="@+id/gallery"
+    app:startDestination="@id/galleryFragment">
 
     <!--大图预览目的地-->
     <fragment
-        android:id="@+id/imagesFragment"
-        android:name="com.genlz.jetpacks.ui.ImagesFragment"
-        android:label="ImagesFragment"
-        tools:layout="@layout/fragment_images">
+        android:id="@+id/galleryFragment"
+        android:name="com.genlz.jetpacks.ui.GalleryFragment"
+        android:label="@string/gallery_fragment"
+        tools:layout="@layout/fragment_gallery">
 
         <argument
             android:name="image_uris"
@@ -19,6 +20,6 @@
     </fragment>
 
     <action
-        android:id="@+id/action_global_imagesFragment"
-        app:destination="@id/imagesFragment" />
+        android:id="@+id/gallery"
+        app:destination="@id/galleryFragment" />
 </navigation>
