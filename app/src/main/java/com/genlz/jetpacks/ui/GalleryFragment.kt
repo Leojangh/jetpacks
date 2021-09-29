@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.view.children
-import androidx.core.view.get
+import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -46,22 +46,16 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         val uris = args.imageUris
         binding.imagePager.adapter = ImagesAdapter(uris)
         repeat(uris.size) {
-//            LayoutInflater.from(requireContext())
-//                .inflate(R.layout.simple_radio_button, binding.pagerIndicator, true)
-            binding.pagerIndicator.addView(RadioButton(requireContext()))
+            LayoutInflater.from(context).inflate(
+                R.layout.simple_radio_button,
+                binding.pagerIndicator,
+                true
+            )
         }
         binding.imagePager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 val rb = binding.pagerIndicator[position] as RadioButton
                 rb.isChecked = true
-                clearOthers(position)
-            }
-
-            private fun clearOthers(position: Int) {
-                binding.pagerIndicator.children.forEachIndexed { index, view ->
-                    if (index != position)
-                        (view as RadioButton).isChecked = false
-                }
             }
         })
     }
