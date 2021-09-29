@@ -9,7 +9,7 @@
 
         <variable
             name="post"
-            type="com.genlz.jetpacks.data.Post" />
+            type="com.genlz.jetpacks.pojo.Post" />
 
     </data>
 

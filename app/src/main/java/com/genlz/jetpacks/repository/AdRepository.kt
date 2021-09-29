@@ -1,6 +1,6 @@
 package com.genlz.jetpacks.repository
 
-import com.genlz.jetpacks.api.SplashDataSource
+import com.genlz.jetpacks.datasource.SplashDataSource
 import com.genlz.jetpacks.di.IoDispatcher
 import com.genlz.jetpacks.utility.Fail
 import com.genlz.jetpacks.utility.Loading

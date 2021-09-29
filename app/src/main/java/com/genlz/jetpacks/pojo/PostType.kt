@@ -1,4 +1,4 @@
-package com.genlz.jetpacks.data
+package com.genlz.jetpacks.pojo
 
 enum class PostType {
     MOMENT,//动态

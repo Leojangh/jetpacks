@@ -85,7 +85,9 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 GalleryDirections.gallery(imageUris),
                 extras
             )
+
         }
+
 
         fun localResUri(resource: Int): Uri =
             Uri.parse("android.resource://${App.INSTANCE.packageName}/$resource")

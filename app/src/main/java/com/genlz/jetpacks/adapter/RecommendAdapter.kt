@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.genlz.jetpacks.data.Post
+import com.genlz.jetpacks.pojo.Post
 import com.genlz.jetpacks.databinding.PostItemBinding
 
 class RecommendAdapter :

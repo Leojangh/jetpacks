@@ -1,4 +1,4 @@
-package com.genlz.jetpacks.api
+package com.genlz.jetpacks.datasource
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -20,17 +20,21 @@ class SplashDataSource @Inject constructor(
     @ApplicationContext
     private val context: Context,
 ) {
-    private val url = RetrofitModule.SPLASH_BASE_URL + "random"
 
     suspend fun getRandomSplash(): Drawable? {
         return withContext(dispatcher) {
             val imgRequest = ImageRequest.Builder(context)
-                .data(url)
+                .data(SPLASH_RANDOM_URL)
                 .size(1080, 1920)
                 .crossfade(true)
                 .build()
             val result = imageLoader.execute(imgRequest)
             result.drawable
         }
+    }
+
+    companion object {
+
+        const val SPLASH_RANDOM_URL = RetrofitModule.SPLASH_BASE_URL + "random"
     }
 }

@@ -3,7 +3,7 @@ package com.genlz.jetpacks.persistence
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import com.genlz.jetpacks.data.PersistencePostEntity
+import com.genlz.jetpacks.pojo.PersistencePostEntity
 
 @Dao
 interface PostDao {

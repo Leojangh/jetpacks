@@ -13,6 +13,7 @@ class UiModeInspector private constructor(
     init {
         if (context !is Application) throw IllegalArgumentException("$context is not a application context")
 
+        @Suppress("DEPRECATED")
         context.registerComponentCallbacks(object : ComponentCallbacks {
             override fun onConfigurationChanged(newConfig: Configuration) {
                 getInstance().parseNewConfiguration(newConfig)

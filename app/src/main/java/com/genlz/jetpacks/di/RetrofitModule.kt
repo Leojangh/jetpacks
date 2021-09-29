@@ -1,6 +1,5 @@
 package com.genlz.jetpacks.di
 
-import com.genlz.jetpacks.api.AdApi
 import com.genlz.jetpacks.api.RecommendApi
 import com.genlz.jetpacks.api.ThumbApi
 import com.google.gson.Gson
@@ -48,14 +47,6 @@ object RetrofitModule {
             .baseUrl(BASE_URL)
             .build()
             .create(ThumbApi::class.java)
-    }
-
-    @Provides
-    fun provideAdApi(retrofit: Retrofit.Builder): AdApi {
-        return retrofit
-            .baseUrl(SPLASH_BASE_URL)
-            .build()
-            .create(AdApi::class.java)
     }
 
     @Provides

@@ -3,9 +3,8 @@ package com.genlz.jetpacks.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.genlz.jetpacks.api.RecommendApi
-import com.genlz.jetpacks.data.Post
-import com.genlz.jetpacks.data.RecommendDataSource
+import com.genlz.jetpacks.datasource.RecommendDataSource
+import com.genlz.jetpacks.pojo.Post
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

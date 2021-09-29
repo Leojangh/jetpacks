@@ -3,7 +3,7 @@ package com.genlz.jetpacks.persistence
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.genlz.jetpacks.data.PersistencePostEntity
+import com.genlz.jetpacks.pojo.PersistencePostEntity
 
 @Database(entities = [PersistencePostEntity::class], version = 1)
 @TypeConverters(Converter::class)

@@ -1,4 +1,4 @@
-package com.genlz.jetpacks.data
+package com.genlz.jetpacks.pojo
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

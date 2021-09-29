@@ -1,8 +1,9 @@
-package com.genlz.jetpacks.data
+package com.genlz.jetpacks.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.genlz.jetpacks.api.RecommendApi
+import com.genlz.jetpacks.pojo.Post
 import javax.inject.Inject
 
 class RecommendDataSource @Inject constructor(
