@@ -47,6 +47,7 @@
 
     <string name="image_origin" translatable="false">origin image</string>
     <string name="image_thumbnail" translatable="false">image_thumbnail</string>
+    <string name="image_placeholder_uri" translatable="false">android.resource://com.genlz.jetpacks/%d</string>
     <string name="gallery_fragment">Gallery Fragment</string>
 
 </resources>

@@ -1,5 +1,6 @@
 package com.genlz.jetpacks.ui
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import androidx.transition.TransitionInflater
 import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import com.genlz.android.viewbinding.viewBinding
+import com.genlz.jetpacks.App
 import com.genlz.jetpacks.GalleryDirections
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentGalleryBinding
@@ -31,9 +33,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         super.onCreate(savedInstanceState)
         val move =
             TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
-        val explode = TransitionInflater.from(requireContext())
-            .inflateTransition(android.R.transition.explode)
-        sharedElementEnterTransition = explode
+        sharedElementEnterTransition = move
         sharedElementReturnTransition = move
     }
 
@@ -85,6 +85,9 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 )
             )
         }
+
+        fun localResUri(resource: Int): Uri =
+            Uri.parse("android.resource://${App.INSTANCE.packageName}/$resource")
     }
 }
 
