@@ -26,11 +26,13 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.img.load(RetrofitModule.SPLASH_BASE_URL + "random")
+//        binding.img.setImageResource(R.mipmap.pawel_unsplash)
         binding.img.setOnClickListener {
             val imageUris = arrayOf(
                 "https://source.unsplash.com/random".toUri(),
                 localResUri(R.mipmap.pawel_unsplash)
             )
+//            postponeEnterTransition()
             GalleryFragment.navigate(findNavController(), it, imageUris)
         }
     }

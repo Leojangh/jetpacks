@@ -38,6 +38,7 @@ import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepositor
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
+import com.google.android.material.badge.BadgeDrawable
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -88,6 +89,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigation.getOrCreateBadge(R.id.communityFragment).apply {
             number = 20
+            setBounds(50, 50, 100, 100)
         }
 
     }

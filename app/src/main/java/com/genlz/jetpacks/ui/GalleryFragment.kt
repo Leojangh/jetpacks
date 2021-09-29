@@ -1,6 +1,5 @@
 package com.genlz.jetpacks.ui
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -31,18 +30,18 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val move =
-            TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
+        val inflater = TransitionInflater.from(requireContext())
+        val move = inflater.inflateTransition(android.R.transition.move)
+
         sharedElementEnterTransition = move
-        sharedElementReturnTransition = move
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val uris = args.imageUris
         binding.imagePager.apply {
-            adapter = ImagesAdapter(uris)
-            offscreenPageLimit = uris.size
+            adapter = ImagesAdapter(this@GalleryFragment, uris)
+//            offscreenPageLimit = uris.size //影响动画
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     val rb = binding.pagerIndicator[position] as android.widget.Checkable
@@ -50,6 +49,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 }
             })
         }
+
+        postponeEnterTransition()
 
         repeat(uris.size) {
             LayoutInflater.from(context).inflate(
@@ -59,7 +60,6 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             )
         }
     }
-
 
     companion object {
 
@@ -78,11 +78,12 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
          * For navigation support
          */
         fun navigate(navController: NavController, view: View, imageUris: Array<Uri>) {
+            val extras = FragmentNavigatorExtras(
+                view to navController.context.getString(R.string.image_origin)
+            )
             navController.navigate(
                 GalleryDirections.gallery(imageUris),
-                FragmentNavigatorExtras(
-                    view to navController.context.getString(R.string.image_origin)
-                )
+                extras
             )
         }
 
@@ -92,6 +93,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 }
 
 private class ImagesAdapter(
+    private val fragment: Fragment,
     private val uris: Array<Uri>
 ) : RecyclerView.Adapter<ImagesAdapter.ImagesViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImagesViewHolder {
@@ -111,13 +113,12 @@ private class ImagesAdapter(
     override fun getItemCount(): Int = uris.size
 
     inner class ImagesViewHolder(
-        binding: SimplePagerItemImageBinding
-    ) : RecyclerView.ViewHolder(binding.simpleImage) {
-
-        private val img = binding.simpleImage
+        private val binding: SimplePagerItemImageBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun onBind(position: Int) {
-            img.load(uris[position])
+            binding.simpleImage.load(uris[position])
+            fragment.startPostponedEnterTransition()
         }
     }
 }
