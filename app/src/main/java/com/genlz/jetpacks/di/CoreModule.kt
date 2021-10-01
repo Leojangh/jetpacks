@@ -2,10 +2,12 @@ package com.genlz.jetpacks.di
 
 import android.app.AlarmManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
 import androidx.core.content.ContextCompat
+import com.genlz.jetpacks.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +19,8 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
+import javax.inject.Qualifier
+import javax.inject.Singleton
 
 /**
  * In most cases, they are not necessary.
@@ -27,8 +31,10 @@ object CoreModule {
 
     @Provides
     fun provideConnectivityManager(@ApplicationContext context: Context): ConnectivityManager {
-        return ContextCompat.getSystemService(context,
-            ConnectivityManager::class.java) as ConnectivityManager
+        return ContextCompat.getSystemService(
+            context,
+            ConnectivityManager::class.java
+        ) as ConnectivityManager
     }
 
     @Provides

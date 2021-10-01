@@ -36,9 +36,9 @@ import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository
 import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
 import com.genlz.android.viewbinding.viewBinding
+import com.genlz.jetpacks.BuildConfig
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
-import com.google.android.material.badge.BadgeDrawable
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -73,7 +73,6 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.content_main) as NavHostFragment
         navController = navHostFragment.navController
 
-        Log.d(TAG, "onCreate: $navController")
         customExitAnimation()
         edge2edge()
 
@@ -92,6 +91,7 @@ class MainActivity : AppCompatActivity() {
             setBounds(50, 50, 100, 100)
         }
 
+        Log.d(TAG, "onCreate: ${BuildConfig.FLAVOR}")
     }
 
     private fun listenWindowInfo() {

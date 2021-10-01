@@ -1,5 +1,6 @@
 package com.genlz.jetpacks.di
 
+import com.genlz.jetpacks.BuildConfig
 import com.genlz.jetpacks.api.RecommendApi
 import com.genlz.jetpacks.api.ThumbApi
 import com.google.gson.Gson
@@ -14,7 +15,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object RetrofitModule {
+object NetworkModule {
+
+    private val subDomain = BuildConfig.ENV
 
     private const val BASE_URL = "http://192.168.18.219:8080/"
 

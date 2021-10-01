@@ -5,12 +5,6 @@ buildscript {
     val nav_version: String by project
 
     repositories {
-        maven {
-            setUrl("https://maven.aliyun.com/repository/central")
-        }
-        google {
-            setUrl("https://maven.aliyun.com/repository/google")
-        }
         google()
         mavenCentral()
     }

@@ -30,6 +30,32 @@ android {
         }
 
         vectorDrawables.useSupportLibrary = true
+
+    }
+
+    flavorDimensions += "env"
+
+    productFlavors {
+
+        create("alpha") {
+            isDefault = true
+            versionNameSuffix = "-$name"
+            buildConfigField("String", "ENV", """"$name"""")
+        }
+        create("beta") {
+//            dimension = "env" //only one dimension,optional
+            versionNameSuffix = "-$name"
+            buildConfigField("String", "ENV", """"$name"""")
+        }
+
+        create("rc") {
+            buildConfigField("String", "ENV", """"$name"""")
+            versionNameSuffix = "-$name"
+        }
+
+        create("stable") {
+            buildConfigField("String", "ENV", """"$name"""")
+        }
     }
 
     buildTypes {
@@ -40,19 +66,37 @@ android {
             proguardFiles += getDefaultProguardFile("proguard-android-optimize.txt")
             proguardFiles("proguard-rules.pro")
         }
+
+        debug {
+            applicationIdSuffix = "debug"
+        }
     }
+
+    androidComponents {
+        beforeVariants {
+            println(it.productFlavors)
+        }
+    }
+
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
 
         sourceCompatibility(java_version)
         targetCompatibility(java_version)
     }
+
     kotlinOptions {
         jvmTarget = java_version
     }
+
     buildFeatures {
         viewBinding = true
         dataBinding = true
+    }
+
+    lint {
+        // if true, only report errors.
+        isIgnoreWarnings = true
     }
 }
 
@@ -67,7 +111,7 @@ dependencies {
     implementation("androidx.window:window:$window_version")
     androidTestImplementation("androidx.window:window-testing:$window_version")
 
-    implementation("androidx.core:core-splashscreen:1.0.0-alpha01")
+    implementation("androidx.core:core-splashscreen:1.0.0-alpha02")
 
     implementation("io.coil-kt:coil:1.3.2")
 

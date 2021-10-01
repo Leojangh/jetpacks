@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable
 import coil.ImageLoader
 import coil.request.ImageRequest
 import com.genlz.jetpacks.di.IoDispatcher
-import com.genlz.jetpacks.di.RetrofitModule
+import com.genlz.jetpacks.di.NetworkModule
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -35,6 +35,6 @@ class SplashDataSource @Inject constructor(
 
     companion object {
 
-        const val SPLASH_RANDOM_URL = RetrofitModule.SPLASH_BASE_URL + "random"
+        const val SPLASH_RANDOM_URL = NetworkModule.SPLASH_BASE_URL + "random"
     }
 }
