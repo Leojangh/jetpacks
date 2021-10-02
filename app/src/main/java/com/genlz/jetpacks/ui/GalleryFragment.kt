@@ -1,12 +1,15 @@
 package com.genlz.jetpacks.ui
 
+import android.animation.ValueAnimator
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
 import androidx.annotation.AnyRes
-import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -35,13 +38,14 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition =
             TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
+                .apply {
+                    duration = TRANSITION_DURATION
+                }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val cacheKeys = args.cacheKeys
-
-        (requireActivity() as MainActivity).fullscreen(true)
 
         binding.imagePager.apply {
             adapter = ImagesAdapter(this@GalleryFragment, cacheKeys)
@@ -65,23 +69,33 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        (requireActivity() as MainActivity).fullscreen(false)
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        Log.d(TAG, "onCreateAnimation: $enter")
+        Log.d(TAG, "onCreateAnimation: $transit")
+        Log.d(TAG, "onCreateAnimation: $nextAnim")
+
+        if (enter) {
+            (requireActivity() as MainActivity).fullscreen(true)
+            ValueAnimator.ofArgb(Color.BLACK).apply {
+                duration = TRANSITION_DURATION
+                addUpdateListener {
+                    binding.root.setBackgroundColor(it.animatedValue as Int)
+                }
+            }.start()
+        } else {
+            (requireActivity() as MainActivity).fullscreen(false)
+            //crash because binding is invalidated after view destroyed.
+//            ValueAnimator.ofArgb(Color.WHITE).apply {
+//                duration = 500L
+//                addUpdateListener {
+//                    binding.root.setBackgroundColor(it.animatedValue as Int)
+//                }
+//            }.start()
+        }
+        return super.onCreateAnimation(transit, enter, nextAnim)
     }
 
     companion object {
-
-        private const val IMAGE_URIS = "image_uris"
-
-        /**
-         * For no navigation support.
-         */
-        fun newInstance(uris: Array<Uri>) = GalleryFragment().apply {
-            arguments = bundleOf(
-                IMAGE_URIS to uris
-            )
-        }
 
         /**
          * For navigation support
@@ -142,4 +156,6 @@ private class ImagesAdapter(
 }
 
 private const val TAG = "GalleryFragment"
+
+private const val TRANSITION_DURATION = 300L
 

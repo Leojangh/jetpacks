@@ -5,23 +5,19 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.view.animation.AnticipateInterpolator
-import android.view.animation.LayoutAnimationController
-import android.view.animation.Transformation
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
@@ -99,8 +95,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fab.setOnClickListener {
-            fullscreen(true)
+            ValueAnimator.ofArgb(Color.BLACK).apply {
+                duration = 500
+                addUpdateListener {
+                    binding.contentMain.setBackgroundColor(it.animatedValue as Int)
+                }
+            }.start()
         }
+        Log.d(TAG, "onCreate: ${binding.contentMain.background}")
     }
 
     fun fullscreen(fullscreen: Boolean) {
@@ -114,19 +116,25 @@ class MainActivity : AppCompatActivity() {
                     0f,
                     -appBarLayout.height.toFloat()
                 ).apply {
-                    duration = 300L
+                    duration = TRANSITION_DURATION
                 }.start()
                 bottomAppBar.performHide()
                 fab.hide()
                 contentMainTopMargin = contentMain.marginTop
-                ValueAnimator.ofInt(contentMain.marginTop, 0).apply {
-                    duration = 300L
+                ValueAnimator.ofInt(0).apply {
+                    duration = TRANSITION_DURATION
                     addUpdateListener {
                         contentMain.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                             topMargin = it.animatedValue as Int
                         }
                     }
                 }.start()
+//                ValueAnimator.ofArgb(Color.BLACK).apply {
+//                    duration = TRANSITION_DURATION
+//                    addUpdateListener {
+//                        binding.contentMain.setBackgroundColor(it.animatedValue as Int)
+//                    }
+//                }.start()
                 controller.hide(WindowInsetsCompat.Type.systemBars())
                 controller.systemBarsBehavior =
                     WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -138,28 +146,27 @@ class MainActivity : AppCompatActivity() {
                     -appBarLayout.height.toFloat(),
                     0f
                 ).apply {
-                    duration = 300L
+                    duration = TRANSITION_DURATION
                 }.start()
                 bottomAppBar.performShow()
                 fab.show()
-                ValueAnimator.ofInt(contentMain.marginTop, contentMainTopMargin).apply {
-                    duration = 300L
+                ValueAnimator.ofInt(contentMainTopMargin).apply {
+                    duration = TRANSITION_DURATION
                     addUpdateListener {
                         contentMain.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                             topMargin = it.animatedValue as Int
                         }
                     }
                 }.start()
-                contentMain.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                    topMargin = contentMainTopMargin
-                }
+//                ValueAnimator.ofArgb(Color.WHITE).apply {
+//                    duration = 500
+//                    addUpdateListener {
+//                        binding.contentMain.setBackgroundColor(it.animatedValue as Int)
+//                    }
+//                }.start()
                 controller.show(WindowInsetsCompat.Type.systemBars())
             }
         }
-    }
-
-    override fun onBackPressed() {
-        fullscreen(false)
     }
 
     private fun listenWindowInfo() {
@@ -263,7 +270,6 @@ class MainActivity : AppCompatActivity() {
 //        typedValue.data
         ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, i ->
             val insets = i.getInsets(WindowInsetsCompat.Type.statusBars())
-            Log.d(TAG, "edge2edge: $insets")
             v.updatePadding(top = insets.top)
             binding.contentMain.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top + marginTop
@@ -313,5 +319,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "MainActivity"
         const val SPLASH_DISPLAY_TIME = 1000L
+
+        private const val TRANSITION_DURATION = 200L
     }
 }
