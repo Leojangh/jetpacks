@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -106,8 +107,15 @@ class MainActivity : AppCompatActivity() {
         val controller = WindowInsetsControllerCompat(window, binding.contentMain)
         binding.apply {
             if (fullscreen) {
-                Log.d(TAG, "fullscreen: ${appBarLayout.setLifted(true)}")
-//                appBarLayout.visibility = View.GONE
+                //slide up
+                ObjectAnimator.ofFloat(
+                    appBarLayout,
+                    View.TRANSLATION_Y,
+                    0f,
+                    -appBarLayout.height.toFloat()
+                ).apply {
+                    duration = 300L
+                }.start()
                 bottomAppBar.performHide()
                 fab.hide()
                 contentMainTopMargin = contentMain.marginTop
@@ -119,10 +127,19 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }.start()
-//                controller.hide(WindowInsetsCompat.Type.systemBars())
-//                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                controller.hide(WindowInsetsCompat.Type.systemBars())
+                controller.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             } else {
-                appBarLayout.visibility = View.VISIBLE
+                //slide down
+                ObjectAnimator.ofFloat(
+                    appBarLayout,
+                    View.TRANSLATION_Y,
+                    -appBarLayout.height.toFloat(),
+                    0f
+                ).apply {
+                    duration = 300L
+                }.start()
                 bottomAppBar.performShow()
                 fab.show()
                 ValueAnimator.ofInt(contentMain.marginTop, contentMainTopMargin).apply {
@@ -225,7 +242,7 @@ class MainActivity : AppCompatActivity() {
         splashScreen.setOnExitAnimationListener { provider ->
             val splashScreenView = provider.view
 
-            val slideUp = ObjectAnimator.ofFloat(
+            ObjectAnimator.ofFloat(
                 splashScreenView,
                 View.TRANSLATION_Y,
                 0f,
@@ -234,16 +251,19 @@ class MainActivity : AppCompatActivity() {
                 interpolator = AnticipateInterpolator()
                 duration = 300L
                 doOnEnd { provider.remove() }
-            }
-            slideUp.start()
+            }.start()
         }
     }
 
     private fun edge2edge() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val marginTop = binding.contentMain.marginTop
+//        val typedValue = TypedValue()
+//        theme.resolveAttribute(R.attr.actionBarSize,typedValue,true)
+//        typedValue.data
         ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, i ->
             val insets = i.getInsets(WindowInsetsCompat.Type.statusBars())
+            Log.d(TAG, "edge2edge: $insets")
             v.updatePadding(top = insets.top)
             binding.contentMain.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.top + marginTop
