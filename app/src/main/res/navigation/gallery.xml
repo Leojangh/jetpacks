@@ -12,9 +12,10 @@
         android:label="@string/gallery_fragment"
         tools:layout="@layout/fragment_gallery">
 
+        <!--XML里内部类用$,IDE尚未完善支持-->
         <argument
-            android:name="image_uris"
-            app:argType="android.net.Uri[]"
+            android:name="cache_keys"
+            app:argType="coil.memory.MemoryCache$Key[]"
             app:nullable="false" />
 
     </fragment>

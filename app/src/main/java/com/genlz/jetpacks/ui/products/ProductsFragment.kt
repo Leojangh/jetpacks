@@ -1,6 +1,7 @@
 package com.genlz.jetpacks.ui.products
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -8,6 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
+import coil.memory.MemoryCache
+import coil.metadata
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentProductsBinding
@@ -35,16 +38,17 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch {
+            val img = binding.img
             val randomSplash = splashDataSource.getRandomSplash()
-            binding.img.load(randomSplash)
-        }
-
-        binding.img.setOnClickListener {
-            val imageUris = arrayOf(
-                "https://source.unsplash.com/random".toUri(),
-                localResUri(R.mipmap.pawel_unsplash)
-            )
-            GalleryFragment.navigate(findNavController(), it, imageUris)
+            img.load(randomSplash) {
+                memoryCacheKey(MemoryCache.Key("thumbnail"))
+                listener { _, metadata ->
+                    val memoryCacheKey = metadata.memoryCacheKey
+                    img.setOnClickListener {
+                        GalleryFragment.navigate(findNavController(), it, arrayOf(memoryCacheKey!!))
+                    }
+                }
+            }
         }
     }
 }

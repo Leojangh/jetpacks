@@ -91,7 +91,6 @@ class MainActivity : AppCompatActivity() {
             setBounds(50, 50, 100, 100)
         }
 
-        Log.d(TAG, "onCreate: ${BuildConfig.FLAVOR}")
     }
 
     private fun listenWindowInfo() {

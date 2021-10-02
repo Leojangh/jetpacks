@@ -12,6 +12,8 @@ class ProductsFragmentViewModel @Inject constructor(
     private val adRepository: AdRepository
 ) : ViewModel() {
 
+
+
     fun loadRandomImage() {
         viewModelScope.launch {
             adRepository.loadSplash()
