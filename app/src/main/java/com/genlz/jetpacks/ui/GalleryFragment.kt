@@ -115,6 +115,7 @@ private class ImagesAdapter(
     }
 
     override fun onBindViewHolder(holder: ImagesViewHolder, position: Int) {
+
         holder.onBind(position)
     }
 
