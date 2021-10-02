@@ -40,6 +40,9 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val cacheKeys = args.cacheKeys
+
+        (requireActivity() as MainActivity).fullscreen(true)
+
         binding.imagePager.apply {
             adapter = ImagesAdapter(this@GalleryFragment, cacheKeys)
 //            offscreenPageLimit = uris.size //影响动画
@@ -60,6 +63,11 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 true
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (requireActivity() as MainActivity).fullscreen(false)
     }
 
     companion object {

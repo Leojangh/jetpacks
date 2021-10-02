@@ -16,10 +16,12 @@
         app:navGraph="@navigation/bottom_navi" />
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:theme="@style/Theme.Jetpacks.AppBarOverlay">
+        android:theme="@style/Theme.Jetpacks.AppBarOverlay"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"

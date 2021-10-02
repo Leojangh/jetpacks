@@ -2,6 +2,7 @@ package com.genlz.jetpacks.ui
 
 import android.Manifest
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -10,19 +11,21 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
+import android.view.animation.Animation
 import android.view.animation.AnticipateInterpolator
+import android.view.animation.LayoutAnimationController
+import android.view.animation.Transformation
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
+import androidx.core.view.*
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -36,7 +39,6 @@ import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository
 import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
 import com.genlz.android.viewbinding.viewBinding
-import com.genlz.jetpacks.BuildConfig
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,6 +60,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
+    /**
+     * The field to record top margin of content main view.
+     */
+    private var contentMainTopMargin = 0
 
     /**
      * 未适配连续性时，Fold折叠后会销毁并重新创建一个Activity，再次打开又会创建一个Activity。
@@ -91,6 +97,52 @@ class MainActivity : AppCompatActivity() {
             setBounds(50, 50, 100, 100)
         }
 
+        binding.fab.setOnClickListener {
+            fullscreen(true)
+        }
+    }
+
+    fun fullscreen(fullscreen: Boolean) {
+        val controller = WindowInsetsControllerCompat(window, binding.contentMain)
+        binding.apply {
+            if (fullscreen) {
+                Log.d(TAG, "fullscreen: ${appBarLayout.setLifted(true)}")
+//                appBarLayout.visibility = View.GONE
+                bottomAppBar.performHide()
+                fab.hide()
+                contentMainTopMargin = contentMain.marginTop
+                ValueAnimator.ofInt(contentMain.marginTop, 0).apply {
+                    duration = 300L
+                    addUpdateListener {
+                        contentMain.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                            topMargin = it.animatedValue as Int
+                        }
+                    }
+                }.start()
+//                controller.hide(WindowInsetsCompat.Type.systemBars())
+//                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            } else {
+                appBarLayout.visibility = View.VISIBLE
+                bottomAppBar.performShow()
+                fab.show()
+                ValueAnimator.ofInt(contentMain.marginTop, contentMainTopMargin).apply {
+                    duration = 300L
+                    addUpdateListener {
+                        contentMain.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                            topMargin = it.animatedValue as Int
+                        }
+                    }
+                }.start()
+                contentMain.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    topMargin = contentMainTopMargin
+                }
+                controller.show(WindowInsetsCompat.Type.systemBars())
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        fullscreen(false)
     }
 
     private fun listenWindowInfo() {
@@ -189,10 +241,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun edge2edge() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        val marginTop = binding.contentMain.marginTop
         ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, i ->
             val insets = i.getInsets(WindowInsetsCompat.Type.statusBars())
             v.updatePadding(top = insets.top)
-            binding.contentMain.updatePadding(top = insets.top)
+            binding.contentMain.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = insets.top + marginTop
+            }
             i
         }
     }
