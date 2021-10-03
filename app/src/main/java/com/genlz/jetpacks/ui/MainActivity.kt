@@ -95,12 +95,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fab.setOnClickListener {
-            ValueAnimator.ofArgb(Color.BLACK).apply {
-                duration = 500
-                addUpdateListener {
-                    binding.contentMain.setBackgroundColor(it.animatedValue as Int)
-                }
-            }.start()
+            fullscreen(true)
         }
         Log.d(TAG, "onCreate: ${binding.contentMain.background}")
     }
@@ -109,61 +104,16 @@ class MainActivity : AppCompatActivity() {
         val controller = WindowInsetsControllerCompat(window, binding.contentMain)
         binding.apply {
             if (fullscreen) {
-                //slide up
-                ObjectAnimator.ofFloat(
-                    appBarLayout,
-                    View.TRANSLATION_Y,
-                    0f,
-                    -appBarLayout.height.toFloat()
-                ).apply {
-                    duration = TRANSITION_DURATION
-                }.start()
+                motionLayout.transitionToEnd()
                 bottomAppBar.performHide()
                 fab.hide()
-                contentMainTopMargin = contentMain.marginTop
-                ValueAnimator.ofInt(0).apply {
-                    duration = TRANSITION_DURATION
-                    addUpdateListener {
-                        contentMain.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                            topMargin = it.animatedValue as Int
-                        }
-                    }
-                }.start()
-//                ValueAnimator.ofArgb(Color.BLACK).apply {
-//                    duration = TRANSITION_DURATION
-//                    addUpdateListener {
-//                        binding.contentMain.setBackgroundColor(it.animatedValue as Int)
-//                    }
-//                }.start()
-                controller.hide(WindowInsetsCompat.Type.systemBars())
-                controller.systemBarsBehavior =
-                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+//                controller.hide(WindowInsetsCompat.Type.systemBars())
+//                controller.systemBarsBehavior =
+//                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             } else {
-                //slide down
-                ObjectAnimator.ofFloat(
-                    appBarLayout,
-                    View.TRANSLATION_Y,
-                    -appBarLayout.height.toFloat(),
-                    0f
-                ).apply {
-                    duration = TRANSITION_DURATION
-                }.start()
+                motionLayout.transitionToStart()
                 bottomAppBar.performShow()
                 fab.show()
-                ValueAnimator.ofInt(contentMainTopMargin).apply {
-                    duration = TRANSITION_DURATION
-                    addUpdateListener {
-                        contentMain.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                            topMargin = it.animatedValue as Int
-                        }
-                    }
-                }.start()
-//                ValueAnimator.ofArgb(Color.WHITE).apply {
-//                    duration = 500
-//                    addUpdateListener {
-//                        binding.contentMain.setBackgroundColor(it.animatedValue as Int)
-//                    }
-//                }.start()
                 controller.show(WindowInsetsCompat.Type.systemBars())
             }
         }
@@ -264,16 +214,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun edge2edge() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        val marginTop = binding.contentMain.marginTop
-//        val typedValue = TypedValue()
-//        theme.resolveAttribute(R.attr.actionBarSize,typedValue,true)
-//        typedValue.data
         ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, i ->
             val insets = i.getInsets(WindowInsetsCompat.Type.statusBars())
             v.updatePadding(top = insets.top)
-            binding.contentMain.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                topMargin = insets.top + marginTop
-            }
             i
         }
     }
@@ -320,6 +263,5 @@ class MainActivity : AppCompatActivity() {
         private const val TAG = "MainActivity"
         const val SPLASH_DISPLAY_TIME = 1000L
 
-        private const val TRANSITION_DURATION = 200L
     }
 }
