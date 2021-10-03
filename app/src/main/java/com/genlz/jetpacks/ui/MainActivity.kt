@@ -102,6 +102,11 @@ class MainActivity : AppCompatActivity(), FullscreenController {
             fab.hide()
             motionLayout.transitionToEnd()
         }
+//        WindowInsetsControllerCompat(window, binding.root).run {
+//            hide(WindowInsetsCompat.Type.systemBars())
+//            systemBarsBehavior =
+//                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+//        }
     }
 
     override fun exitFullscreen() {
@@ -110,6 +115,9 @@ class MainActivity : AppCompatActivity(), FullscreenController {
             fab.show()
             motionLayout.transitionToStart()
         }
+//        WindowInsetsControllerCompat(window, binding.root).run {
+//            show(WindowInsetsCompat.Type.systemBars())
+//        }
     }
 
     private fun listenWindowInfo() {

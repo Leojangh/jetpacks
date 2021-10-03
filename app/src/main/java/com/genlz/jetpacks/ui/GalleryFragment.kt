@@ -1,10 +1,7 @@
 package com.genlz.jetpacks.ui
 
-import android.animation.ValueAnimator
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +11,7 @@ import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionInflater
@@ -36,11 +34,26 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedElementEnterTransition =
-            TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
-                .apply {
-                    duration = TRANSITION_DURATION
-                }
+        sharedElementEnterTransition = TransitionInflater.from(requireContext())
+            .inflateTransition(android.R.transition.move).apply {
+                duration = resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
+            }
+        postponeEnterTransition()
+    }
+
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        controlFullscreen(enter)
+        return super.onCreateAnimation(transit, enter, nextAnim)
+    }
+
+    //adb shell settings put global transition_duration_scale 20
+    private fun controlFullscreen(enter: Boolean) {
+        val fullscreenController = activity as? FullscreenController ?: return
+        if (enter) {
+            fullscreenController.enterFullscreen()
+        } else {
+            fullscreenController.exitFullscreen()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,7 +62,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
         binding.imagePager.apply {
             adapter = ImagesAdapter(this@GalleryFragment, cacheKeys)
-//            offscreenPageLimit = uris.size //影响动画
+//            offscreenPageLimit = cacheKeys.size //影响动画
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     val rb = binding.pagerIndicator[position] as android.widget.Checkable
@@ -57,9 +70,6 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 }
             })
         }
-
-        postponeEnterTransition()
-
         repeat(cacheKeys.size) {
             LayoutInflater.from(context).inflate(
                 R.layout.simple_radio_button,
@@ -67,22 +77,6 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 true
             )
         }
-    }
-
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        val fullscreenController = requireActivity() as? FullscreenController ?: return null
-        if (enter) {
-            fullscreenController.enterFullscreen()
-            ValueAnimator.ofArgb(Color.BLACK).apply {
-                duration = TRANSITION_DURATION
-                addUpdateListener {
-                    binding.root.setBackgroundColor(it.animatedValue as Int)
-                }
-            }.start()
-        } else {
-            fullscreenController.exitFullscreen()
-        }
-        return super.onCreateAnimation(transit, enter, nextAnim)
     }
 
     companion object {
@@ -137,6 +131,12 @@ private class ImagesAdapter(
         private val binding: SimplePagerItemImageBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
+        init {
+            binding.root.setOnClickListener {
+                fragment.findNavController().navigateUp()
+            }
+        }
+
         fun onBind(position: Int) {
             val bitmap = fragment.requireContext().imageLoader.memoryCache[keys[position]]
             binding.simpleImage.load(bitmap)
@@ -153,6 +153,3 @@ interface FullscreenController {
 }
 
 private const val TAG = "GalleryFragment"
-
-private const val TRANSITION_DURATION = 300L
-
