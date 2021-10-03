@@ -40,8 +40,8 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             val img = binding.img
-            val randomSplash = splashDataSource.getRandomSplash()
-            img.load(randomSplash) {
+//            val randomSplash = splashDataSource.getRandomSplash()
+            img.load(R.mipmap.pawel_unsplash) {
                 memoryCacheKey(MemoryCache.Key("thumbnail"))
                 listener { _, metadata ->
                     val memoryCacheKey = metadata.memoryCacheKey

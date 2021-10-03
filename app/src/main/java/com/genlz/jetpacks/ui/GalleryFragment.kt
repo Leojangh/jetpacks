@@ -70,12 +70,9 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        Log.d(TAG, "onCreateAnimation: $enter")
-        Log.d(TAG, "onCreateAnimation: $transit")
-        Log.d(TAG, "onCreateAnimation: $nextAnim")
-
+        val fullscreenController = requireActivity() as? FullscreenController ?: return null
         if (enter) {
-            (requireActivity() as MainActivity).fullscreen(true)
+            fullscreenController.enterFullscreen()
             ValueAnimator.ofArgb(Color.BLACK).apply {
                 duration = TRANSITION_DURATION
                 addUpdateListener {
@@ -83,14 +80,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 }
             }.start()
         } else {
-            (requireActivity() as MainActivity).fullscreen(false)
-            //crash because binding is invalidated after view destroyed.
-//            ValueAnimator.ofArgb(Color.WHITE).apply {
-//                duration = 500L
-//                addUpdateListener {
-//                    binding.root.setBackgroundColor(it.animatedValue as Int)
-//                }
-//            }.start()
+            fullscreenController.exitFullscreen()
         }
         return super.onCreateAnimation(transit, enter, nextAnim)
     }
@@ -153,6 +143,13 @@ private class ImagesAdapter(
             fragment.startPostponedEnterTransition()
         }
     }
+}
+
+interface FullscreenController {
+
+    fun enterFullscreen()
+
+    fun exitFullscreen()
 }
 
 private const val TAG = "GalleryFragment"

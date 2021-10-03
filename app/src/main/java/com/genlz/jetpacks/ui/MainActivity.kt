@@ -2,17 +2,14 @@ package com.genlz.jetpacks.ui
 
 import android.Manifest
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -43,7 +40,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), FullscreenController {
 
     private val binding by viewBinding(ActivityMainBinding::class.java)
 
@@ -95,27 +92,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fab.setOnClickListener {
-            fullscreen(true)
+
         }
-        Log.d(TAG, "onCreate: ${binding.contentMain.background}")
     }
 
-    fun fullscreen(fullscreen: Boolean) {
-        val controller = WindowInsetsControllerCompat(window, binding.contentMain)
+    override fun enterFullscreen() {
         binding.apply {
-            if (fullscreen) {
-                motionLayout.transitionToEnd()
-                bottomAppBar.performHide()
-                fab.hide()
-//                controller.hide(WindowInsetsCompat.Type.systemBars())
-//                controller.systemBarsBehavior =
-//                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            } else {
-                motionLayout.transitionToStart()
-                bottomAppBar.performShow()
-                fab.show()
-                controller.show(WindowInsetsCompat.Type.systemBars())
-            }
+            bottomAppBar.performHide()
+            fab.hide()
+            motionLayout.transitionToEnd()
+        }
+    }
+
+    override fun exitFullscreen() {
+        binding.apply {
+            bottomAppBar.performShow()
+            fab.show()
+            motionLayout.transitionToStart()
         }
     }
 
