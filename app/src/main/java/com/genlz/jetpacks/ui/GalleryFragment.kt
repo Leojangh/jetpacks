@@ -2,18 +2,22 @@ package com.genlz.jetpacks.ui
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import androidx.annotation.AnyRes
+import androidx.core.app.SharedElementCallback
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Transition
 import androidx.transition.TransitionInflater
 import androidx.viewpager2.widget.ViewPager2
 import coil.imageLoader
@@ -25,6 +29,8 @@ import com.genlz.jetpacks.GalleryDirections
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentGalleryBinding
 import com.genlz.jetpacks.databinding.SimplePagerItemImageBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
@@ -34,10 +40,12 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = TransitionInflater.from(requireContext())
+        val move = TransitionInflater.from(requireContext())
             .inflateTransition(android.R.transition.move).apply {
-                duration = resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
+                duration =
+                    resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
             }
+        sharedElementEnterTransition = move
         postponeEnterTransition()
     }
 
@@ -50,7 +58,10 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     private fun controlFullscreen(enter: Boolean) {
         val fullscreenController = activity as? FullscreenController ?: return
         if (enter) {
-            fullscreenController.enterFullscreen()
+            //The animation of motion layout is incompatible with shared animation?
+            requireView().postDelayed({
+                fullscreenController.enterFullscreen()
+            }, (sharedElementEnterTransition as Transition).duration)
         } else {
             fullscreenController.exitFullscreen()
         }
