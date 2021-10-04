@@ -2,9 +2,11 @@ package com.genlz.jetpacks.ui.products
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.util.lruCache
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.memory.MemoryCache
 import com.genlz.android.viewbinding.viewBinding
@@ -41,11 +43,7 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
                     img.setOnClickListener {
                         val keys = arrayOf(memoryCacheKey!!)
 //                        GalleryFragment.navigate(findNavController(), it, arrayOf(memoryCacheKey!!))
-//                        GalleryFragment.navigate(
-//                            childFragmentManager,
-//                            it,
-//                            keys
-//                        )
+//                        GalleryFragment.navigate(childFragmentManager, it, keys)
                         GalleryFragment.navigate(requireActivity(), it, keys)
                     }
                 }

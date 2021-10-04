@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.AnyRes
 import androidx.core.os.bundleOf
 import androidx.core.view.get
@@ -50,10 +51,21 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             }
         sharedElementEnterTransition = move
         postponeEnterTransition()
+
+        val activity = requireActivity()
+        activity.onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    activity.supportFragmentManager.popBackStack(
+                        TAG,
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE
+                    )
+                }
+            })
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-//        controlFullscreen(enter)
+        controlFullscreen(enter)
         return super.onCreateAnimation(transit, enter, nextAnim)
     }
 
@@ -135,8 +147,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 //TODO fix shared element transition not working.
                 setReorderingAllowed(true)
                 addSharedElement(view, view.context.getString(R.string.image_origin))
-                add(R.id.root, fragment, null)
-                addToBackStack("gallery")
+                add(R.id.root, fragment, TAG)
+                addToBackStack(TAG)
             }
         }
 
@@ -156,9 +168,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             activity.supportFragmentManager.commit {
                 setReorderingAllowed(true)
                 addSharedElement(view, activity.getString(R.string.image_origin))
-                //TODO fix back press.
-                add(android.R.id.content, fragment, null)
-                addToBackStack("gallery")
+                add(android.R.id.content, fragment, TAG)
+                addToBackStack(TAG)
             }
         }
 
@@ -190,6 +201,12 @@ private class ImagesAdapter(
     inner class ImagesViewHolder(
         private val binding: SimplePagerItemImageBinding
     ) : RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener {
+                fragment.requireActivity().onBackPressed()
+            }
+        }
 
         fun onBind(position: Int) {
             val bitmap = fragment.requireContext().imageLoader.memoryCache[keys[position]]
