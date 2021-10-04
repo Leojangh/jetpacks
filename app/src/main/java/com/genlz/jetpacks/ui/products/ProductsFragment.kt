@@ -41,8 +41,9 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
                     val memoryCacheKey = metadata.memoryCacheKey
                     img.setOnClickListener {
                         val keys = arrayOf(memoryCacheKey!!)
-                        GalleryFragment.navigate(findNavController(), it, arrayOf(memoryCacheKey))
-//                        GalleryFragment.navigate(requireActivity(), it, keys)
+                        GalleryFragment.navigate(findNavController(), it, 0, keys)
+                        //TODO fix shared element transition.
+//                        GalleryFragment.navigate(requireActivity(), it, 0, keys)
                     }
                 }
             }

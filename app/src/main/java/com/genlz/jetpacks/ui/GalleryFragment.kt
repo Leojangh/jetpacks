@@ -10,6 +10,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.AnyRes
 import androidx.annotation.IntDef
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -51,14 +53,14 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                     resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
             }
         sharedElementEnterTransition = move
-        postponeEnterTransition()
 
         val activity = requireActivity()
         activity.onBackPressedDispatcher.addCallback(this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     if (args.showOptions == SHOW_OPTIONS_NORMAL) {
-                        isEnabled = false //must set false to disable this callback.otherwise stackoverflow.
+                        isEnabled =
+                            false //must set false to disable this callback.otherwise stackoverflow.
                         activity.onBackPressed()
                         return
                     }
@@ -110,6 +112,16 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 true
             )
         }
+
+        // Note: When using a shared element transition from a fragment using a RecyclerView
+        // to another fragment, you must still postpone the fragment using a RecyclerView
+        // to ensure that the returning shared element transition functions correctly
+        // when popping back to the RecyclerView.
+        postponeEnterTransition()
+
+        (view.parent as? ViewGroup)?.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
     }
 
     companion object {
@@ -134,10 +146,11 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         fun navigate(
             navController: NavController,
             view: View,
+            position: Int,
             keys: Array<MemoryCache.Key>
         ) {
             val extras = FragmentNavigatorExtras(
-                view to navController.context.getString(R.string.image_origin)
+                view to navController.context.getString(R.string.image_origin) + position
             )
             navController.navigate(
                 GalleryDirections.gallery(keys),
@@ -151,6 +164,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         fun navigate(
             activity: FragmentActivity,
             view: View,
+            position: Int,
             keys: Array<MemoryCache.Key>
         ) {
             val fragment = GalleryFragment().apply {
@@ -161,7 +175,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             }
             activity.supportFragmentManager.commit {
                 setReorderingAllowed(true)
-                addSharedElement(view, activity.getString(R.string.image_origin))
+                addSharedElement(view, activity.getString(R.string.image_origin) + position)
                 add(android.R.id.content, fragment, TAG)
                 addToBackStack(TAG)
             }
@@ -203,9 +217,17 @@ private class ImagesAdapter(
         }
 
         fun onBind(position: Int) {
+            // Transition name must unique,so cannot set in XML.
+            // Another point to consider when using shared element transitions with a RecyclerView
+            // is that you cannot set the transition name in the RecyclerView item's XML layout
+            // because an arbitrary number of items share that layout. A unique transition name
+            // must be assigned so that the transition animation uses the correct view.
+            ViewCompat.setTransitionName(
+                binding.simpleImage,
+                fragment.resources.getString(R.string.image_origin) + position
+            )
             val bitmap = fragment.requireContext().imageLoader.memoryCache[keys[position]]
             binding.simpleImage.load(bitmap)
-            fragment.startPostponedEnterTransition()
         }
     }
 }
