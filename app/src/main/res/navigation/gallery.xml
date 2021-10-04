@@ -18,6 +18,11 @@
             app:argType="coil.memory.MemoryCache$Key[]"
             app:nullable="false" />
 
+        <argument
+            android:name="showOptions"
+            android:defaultValue="0"
+            app:argType="integer" />
+
     </fragment>
 
     <action

@@ -2,7 +2,6 @@ package com.genlz.jetpacks.ui.products
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.util.lruCache
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -42,9 +41,8 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
                     val memoryCacheKey = metadata.memoryCacheKey
                     img.setOnClickListener {
                         val keys = arrayOf(memoryCacheKey!!)
-//                        GalleryFragment.navigate(findNavController(), it, arrayOf(memoryCacheKey!!))
-//                        GalleryFragment.navigate(childFragmentManager, it, keys)
-                        GalleryFragment.navigate(requireActivity(), it, keys)
+                        GalleryFragment.navigate(findNavController(), it, arrayOf(memoryCacheKey))
+//                        GalleryFragment.navigate(requireActivity(), it, keys)
                     }
                 }
             }

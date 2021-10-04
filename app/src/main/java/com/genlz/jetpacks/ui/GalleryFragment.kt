@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.AnyRes
+import androidx.annotation.IntDef
 import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
@@ -56,6 +57,11 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         activity.onBackPressedDispatcher.addCallback(this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
+                    if (args.showOptions == SHOW_OPTIONS_NORMAL) {
+                        isEnabled = false //must set false to disable this callback.otherwise stackoverflow.
+                        activity.onBackPressed()
+                        return
+                    }
                     activity.supportFragmentManager.popBackStack(
                         TAG,
                         FragmentManager.POP_BACK_STACK_INCLUSIVE
@@ -65,7 +71,9 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        controlFullscreen(enter)
+        if (args.showOptions == SHOW_OPTIONS_NORMAL) {
+            controlFullscreen(enter)
+        }
         return super.onCreateAnimation(transit, enter, nextAnim)
     }
 
@@ -106,6 +114,16 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     companion object {
 
+        @Retention(AnnotationRetention.SOURCE)
+        @IntDef(
+            value = [SHOW_OPTIONS_FULLSCREEN, SHOW_OPTIONS_NORMAL]
+        )
+        annotation class ShowOptions
+
+        const val SHOW_OPTIONS_FULLSCREEN = 1
+
+        const val SHOW_OPTIONS_NORMAL = 0
+
         /**
          * For navigation support.
          *
@@ -128,32 +146,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         }
 
         /**
-         * For no navigation support.
-         *
-         * @param fragmentManager The child fragment manager.
-         *
-         */
-        fun navigate(
-            fragmentManager: FragmentManager,
-            view: View,
-            keys: Array<MemoryCache.Key>
-        ) {
-            val fragment = GalleryFragment().apply {
-                arguments = bundleOf(
-                    "cacheKeys" to keys
-                )
-            }
-            fragmentManager.commit {
-                //TODO fix shared element transition not working.
-                setReorderingAllowed(true)
-                addSharedElement(view, view.context.getString(R.string.image_origin))
-                add(R.id.root, fragment, TAG)
-                addToBackStack(TAG)
-            }
-        }
-
-        /**
-         * Modal background.
+         * For no navigation support and with decor with Modal background.
          */
         fun navigate(
             activity: FragmentActivity,
@@ -162,7 +155,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         ) {
             val fragment = GalleryFragment().apply {
                 arguments = bundleOf(
-                    "cacheKeys" to keys
+                    "cacheKeys" to keys,
+                    "showOptions" to SHOW_OPTIONS_FULLSCREEN
                 )
             }
             activity.supportFragmentManager.commit {
