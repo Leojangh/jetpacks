@@ -14,7 +14,7 @@
 
         <!--XML里内部类用$,IDE尚未完善支持-->
         <argument
-            android:name="cache_keys"
+            android:name="cacheKeys"
             app:argType="coil.memory.MemoryCache$Key[]"
             app:nullable="false" />
 

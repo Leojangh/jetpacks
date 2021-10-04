@@ -1,24 +1,17 @@
 package com.genlz.jetpacks.ui.products
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ListAdapter
 import coil.load
 import coil.memory.MemoryCache
-import coil.metadata
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentProductsBinding
 import com.genlz.jetpacks.datasource.SplashDataSource
-import com.genlz.jetpacks.datasource.SplashDataSource.Companion.SPLASH_RANDOM_URL
 import com.genlz.jetpacks.ui.GalleryFragment
-import com.genlz.jetpacks.ui.GalleryFragment.Companion.localResUri
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -46,7 +39,14 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
                 listener { _, metadata ->
                     val memoryCacheKey = metadata.memoryCacheKey
                     img.setOnClickListener {
-                        GalleryFragment.navigate(findNavController(), it, arrayOf(memoryCacheKey!!))
+                        val keys = arrayOf(memoryCacheKey!!)
+//                        GalleryFragment.navigate(findNavController(), it, arrayOf(memoryCacheKey!!))
+//                        GalleryFragment.navigate(
+//                            childFragmentManager,
+//                            it,
+//                            keys
+//                        )
+                        GalleryFragment.navigate(requireActivity(), it, keys)
                     }
                 }
             }

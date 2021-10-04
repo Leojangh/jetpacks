@@ -2,19 +2,19 @@ package com.genlz.jetpacks.ui
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import androidx.annotation.AnyRes
-import androidx.core.app.SharedElementCallback
+import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Transition
@@ -29,11 +29,14 @@ import com.genlz.jetpacks.GalleryDirections
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentGalleryBinding
 import com.genlz.jetpacks.databinding.SimplePagerItemImageBinding
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
+    /**
+     * Support reading passed in args as usual even if there is no navigation components.
+     * The name of args must be as same as the definition in the navigation xml which is not support
+     * string resource reference,and will be translated to lower camel case.
+     */
     private val args by navArgs<GalleryFragmentArgs>()
 
     private val binding by viewBinding(FragmentGalleryBinding::bind)
@@ -50,7 +53,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        controlFullscreen(enter)
+//        controlFullscreen(enter)
         return super.onCreateAnimation(transit, enter, nextAnim)
     }
 
@@ -70,7 +73,6 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val cacheKeys = args.cacheKeys
-
         binding.imagePager.apply {
             adapter = ImagesAdapter(this@GalleryFragment, cacheKeys)
 //            offscreenPageLimit = cacheKeys.size //影响动画
@@ -93,10 +95,11 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     companion object {
 
         /**
-         * For navigation support
+         * For navigation support.
          *
          * @param navController
          * @param view The shared element view.
+         * @param keys The navigation params.
          */
         fun navigate(
             navController: NavController,
@@ -110,6 +113,53 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 GalleryDirections.gallery(keys),
                 extras
             )
+        }
+
+        /**
+         * For no navigation support.
+         *
+         * @param fragmentManager The child fragment manager.
+         *
+         */
+        fun navigate(
+            fragmentManager: FragmentManager,
+            view: View,
+            keys: Array<MemoryCache.Key>
+        ) {
+            val fragment = GalleryFragment().apply {
+                arguments = bundleOf(
+                    "cacheKeys" to keys
+                )
+            }
+            fragmentManager.commit {
+                //TODO fix shared element transition not working.
+                setReorderingAllowed(true)
+                addSharedElement(view, view.context.getString(R.string.image_origin))
+                add(R.id.root, fragment, null)
+                addToBackStack("gallery")
+            }
+        }
+
+        /**
+         * Modal background.
+         */
+        fun navigate(
+            activity: FragmentActivity,
+            view: View,
+            keys: Array<MemoryCache.Key>
+        ) {
+            val fragment = GalleryFragment().apply {
+                arguments = bundleOf(
+                    "cacheKeys" to keys
+                )
+            }
+            activity.supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                addSharedElement(view, activity.getString(R.string.image_origin))
+                //TODO fix back press.
+                add(android.R.id.content, fragment, null)
+                addToBackStack("gallery")
+            }
         }
 
         fun localResUri(@AnyRes resource: Int): Uri =
@@ -132,7 +182,6 @@ private class ImagesAdapter(
     }
 
     override fun onBindViewHolder(holder: ImagesViewHolder, position: Int) {
-
         holder.onBind(position)
     }
 
@@ -141,12 +190,6 @@ private class ImagesAdapter(
     inner class ImagesViewHolder(
         private val binding: SimplePagerItemImageBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-
-        init {
-            binding.root.setOnClickListener {
-                fragment.findNavController().navigateUp()
-            }
-        }
 
         fun onBind(position: Int) {
             val bitmap = fragment.requireContext().imageLoader.memoryCache[keys[position]]
