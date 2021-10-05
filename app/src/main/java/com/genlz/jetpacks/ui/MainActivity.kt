@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewOverlay
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -55,11 +56,6 @@ class MainActivity : AppCompatActivity(), FullscreenController {
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     /**
-     * The field to record top margin of content main view.
-     */
-    private var contentMainTopMargin = 0
-
-    /**
      * 未适配连续性时，Fold折叠后会销毁并重新创建一个Activity，再次打开又会创建一个Activity。
      */
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,12 +84,9 @@ class MainActivity : AppCompatActivity(), FullscreenController {
 
         binding.bottomNavigation.getOrCreateBadge(R.id.communityFragment).apply {
             number = 20
-            setBounds(50, 50, 100, 100)
         }
 
-        binding.fab.setOnClickListener {
 
-        }
     }
 
     override fun enterFullscreen() {

@@ -19,6 +19,10 @@
             app:nullable="false" />
 
         <argument
+            android:name="initPosition"
+            app:argType="integer" />
+
+        <argument
             android:name="showOptions"
             android:defaultValue="0"
             app:argType="integer" />

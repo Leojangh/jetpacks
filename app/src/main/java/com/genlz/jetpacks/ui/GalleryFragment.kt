@@ -1,11 +1,13 @@
 package com.genlz.jetpacks.ui
 
+import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
+import android.widget.Checkable
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.AnyRes
 import androidx.annotation.IntDef
@@ -37,7 +39,7 @@ import com.genlz.jetpacks.databinding.SimplePagerItemImageBinding
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     /**
-     * Support reading passed in args as usual even if there is no navigation components.
+     * Support reading passed in args as usual.
      * The name of args must be as same as the definition in the navigation xml which is not support
      * string resource reference,and will be translated to lower camel case.
      */
@@ -49,8 +51,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         super.onCreate(savedInstanceState)
         val move = TransitionInflater.from(requireContext())
             .inflateTransition(android.R.transition.move).apply {
-                duration =
-                    resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
+                duration = resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
             }
         sharedElementEnterTransition = move
 
@@ -58,16 +59,19 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         activity.onBackPressedDispatcher.addCallback(this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if (args.showOptions == SHOW_OPTIONS_NORMAL) {
-                        isEnabled =
-                            false //must set false to disable this callback.otherwise stackoverflow.
-                        activity.onBackPressed()
-                        return
+                    when (args.showOptions) {
+                        SHOW_OPTIONS_NORMAL -> {
+                            //must set false to disable this callback.otherwise stackoverflow.
+                            isEnabled = false
+                            activity.onBackPressed()
+                            return
+                        }
+                        SHOW_OPTIONS_FULLSCREEN -> activity.supportFragmentManager.popBackStack(
+                            TAG,
+                            FragmentManager.POP_BACK_STACK_INCLUSIVE
+                        )
+                        else -> throw IllegalArgumentException("Unknown show options:${args.showOptions}")
                     }
-                    activity.supportFragmentManager.popBackStack(
-                        TAG,
-                        FragmentManager.POP_BACK_STACK_INCLUSIVE
-                    )
                 }
             })
     }
@@ -95,22 +99,22 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val cacheKeys = args.cacheKeys
-        binding.imagePager.apply {
-            adapter = ImagesAdapter(this@GalleryFragment, cacheKeys)
-//            offscreenPageLimit = cacheKeys.size //影响动画
-            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    val rb = binding.pagerIndicator[position] as android.widget.Checkable
-                    rb.isChecked = true
-                }
-            })
-        }
         repeat(cacheKeys.size) {
             LayoutInflater.from(context).inflate(
                 R.layout.simple_radio_button,
                 binding.pagerIndicator,
                 true
             )
+        }
+        binding.imagePager.apply {
+            adapter = ImagesAdapter(cacheKeys)
+//            offscreenPageLimit = cacheKeys.size //影响动画
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    (binding.pagerIndicator[position] as Checkable).isChecked = true
+                }
+            })
+            setCurrentItem(args.initPosition, false)
         }
 
         // Note: When using a shared element transition from a fragment using a RecyclerView
@@ -141,19 +145,20 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
          *
          * @param navController
          * @param view The shared element view.
+         * @param initPosition The position of the initial clicked point.
          * @param keys The navigation params.
          */
         fun navigate(
             navController: NavController,
             view: View,
-            position: Int,
+            initPosition: Int,
             keys: Array<MemoryCache.Key>
         ) {
             val extras = FragmentNavigatorExtras(
-                view to navController.context.getString(R.string.image_origin) + position
+                view to view.context.getString(R.string.image_origin, initPosition)
             )
             navController.navigate(
-                GalleryDirections.gallery(keys),
+                GalleryDirections.gallery(keys, initPosition),
                 extras
             )
         }
@@ -164,18 +169,19 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         fun navigate(
             activity: FragmentActivity,
             view: View,
-            position: Int,
+            initPosition: Int,
             keys: Array<MemoryCache.Key>
         ) {
             val fragment = GalleryFragment().apply {
                 arguments = bundleOf(
                     "cacheKeys" to keys,
-                    "showOptions" to SHOW_OPTIONS_FULLSCREEN
+                    "initPosition" to initPosition,
+                    "showOptions" to SHOW_OPTIONS_FULLSCREEN,
                 )
             }
             activity.supportFragmentManager.commit {
                 setReorderingAllowed(true)
-                addSharedElement(view, activity.getString(R.string.image_origin) + position)
+                addSharedElement(view, activity.getString(R.string.image_origin, initPosition))
                 add(android.R.id.content, fragment, TAG)
                 addToBackStack(TAG)
             }
@@ -187,7 +193,6 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 }
 
 private class ImagesAdapter(
-    private val fragment: Fragment,
     private val keys: Array<MemoryCache.Key>
 ) : RecyclerView.Adapter<ImagesAdapter.ImagesViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImagesViewHolder {
@@ -212,7 +217,7 @@ private class ImagesAdapter(
 
         init {
             binding.root.setOnClickListener {
-                fragment.requireActivity().onBackPressed()
+                (it.context as Activity).onBackPressed()
             }
         }
 
@@ -224,9 +229,9 @@ private class ImagesAdapter(
             // must be assigned so that the transition animation uses the correct view.
             ViewCompat.setTransitionName(
                 binding.simpleImage,
-                fragment.resources.getString(R.string.image_origin) + position
+                binding.root.resources.getString(R.string.image_origin, position)
             )
-            val bitmap = fragment.requireContext().imageLoader.memoryCache[keys[position]]
+            val bitmap = binding.root.context.imageLoader.memoryCache[keys[position]]
             binding.simpleImage.load(bitmap)
         }
     }
