@@ -2,13 +2,9 @@
     <string name="app_name">JetPacks</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="skip">Skip</string>
     <string name="act">Act</string>
     <string name="good">Good</string>
@@ -19,9 +15,9 @@
     <string name="bottom_dialog_shortcut_label_long">Have a look</string>
     <string name="bottom_dialog_shortcuts_message">Open bottom sheet dialog</string>
 
-    <string name="second_fragment_shortcut_label">@string/second_fragment_label</string>
-    <string name="second_fragment_shortcut_label_long">This is second fragment</string>
-    <string name="second_fragment_shortcuts_message">This shortcut has already disabled</string>
+    <string name="products_fragment_shortcut_label">@string/products_fragment</string>
+    <string name="products_fragment_shortcut_label_long">@string/products_fragment</string>
+    <string name="products_fragment_shortcuts_message">This shortcut has already disabled</string>
 
     <!--Bottom navigation menu title-->
     <string name="community">Community</string>
@@ -51,5 +47,9 @@
     <string name="gallery_fragment">Gallery Fragment</string>
     <string name="thumb_up">Good</string>
     <string name="comment">Comment</string>
+    <string name="products_fragment">ProductsFragment</string>
+    <string name="community_fragment">CommunityFragment</string>
+    <string name="service_fragment">ServiceFragment</string>
+    <string name="vip_fragment">VipFragment</string>
 
 </resources>

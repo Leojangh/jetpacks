@@ -35,6 +35,9 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/EdgeToEdge.NewSplash">
+
+            <nav-graph android:value="@navigation/bottom_navi" />
+
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />

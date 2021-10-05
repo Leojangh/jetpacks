@@ -8,23 +8,29 @@
     <fragment
         android:id="@+id/communityFragment"
         android:name="com.genlz.jetpacks.ui.community.CommunityFragment"
-        android:label="CommunityFragment"
+        android:label="@string/community_fragment"
         tools:layout="@layout/fragment_community" />
     <fragment
         android:id="@+id/productsFragment"
         android:name="com.genlz.jetpacks.ui.products.ProductsFragment"
-        android:label="ProductsFragment"
-        tools:layout="@layout/fragment_products" />
+        android:label="@string/products_fragment"
+        tools:layout="@layout/fragment_products">
+
+        <deepLink
+            android:id="@+id/deepLink"
+            app:action="ACTION_VIEW"
+            app:uri="jetpacks://android.genlz.com/productsfragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/serviceFragment"
         android:name="com.genlz.jetpacks.ui.service.ServiceFragment"
-        android:label="ServiceFragment"
+        android:label="@string/service_fragment"
         tools:layout="@layout/fragment_service" />
     <fragment
         android:id="@+id/vipFragment"
         android:name="com.genlz.jetpacks.ui.vip.VipFragment"
-        android:label="VipFragment"
+        android:label="@string/vip_fragment"
         tools:layout="@layout/fragment_vip" />
 
     <include app:graph="@navigation/bottom_dialog" />
