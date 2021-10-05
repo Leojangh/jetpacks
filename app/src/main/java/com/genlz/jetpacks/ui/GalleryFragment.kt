@@ -119,7 +119,9 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         }
 
         // Make sure always as fullscreen state at this fragment scenario.
-        controlFullscreen(true)
+        if (args.showOptions == SHOW_OPTIONS_NORMAL) {
+            controlFullscreen(true)
+        }
 
         // Note: When using a shared element transition from a fragment using a RecyclerView
         // to another fragment, you must still postpone the fragment using a RecyclerView
@@ -167,6 +169,34 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 GalleryDirections.gallery(keys, initPosition),
                 extras
             )
+        }
+
+        /**
+         * Modal background,but have no shared elements transition?
+         */
+        fun navigate(
+            fragmentManager: FragmentManager,
+            views: List<View>,
+            initPosition: Int,
+            keys: Array<MemoryCache.Key>
+        ) {
+            fragmentManager.commit {
+                setReorderingAllowed(true)
+                views.forEachIndexed { index, view ->
+                    addSharedElement(view, view.context.getString(R.string.image_origin, index))
+                }
+                add(
+                    android.R.id.content,
+                    GalleryFragment::class.java,
+                    bundleOf(
+                        "cacheKeys" to keys,
+                        "showOptions" to SHOW_OPTIONS_FULLSCREEN,
+                        "initPosition" to initPosition
+                    ),
+                    TAG
+                )
+                addToBackStack(TAG)
+            }
         }
 
         fun localResUri(@AnyRes resource: Int): Uri =

@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -166,8 +167,14 @@ private class ThumbsAdapter(
                 memoryCacheKey(keys[bindingAdapterPosition])
                 listener { _, _ ->
                     img.setOnClickListener {
+//                        GalleryFragment.navigate(
+//                            navController,
+//                            (it.parent as ViewGroup).children.toList(),
+//                            bindingAdapterPosition,
+//                            keys
+//                        )
                         GalleryFragment.navigate(
-                            navController,
+                            (navController.context as FragmentActivity).supportFragmentManager,
                             (it.parent as ViewGroup).children.toList(),
                             bindingAdapterPosition,
                             keys
