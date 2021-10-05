@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/posts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -15,5 +15,5 @@
         android:padding="4dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:spanCount="1"
-        tools:listitem="@layout/products_list_item" />
+        tools:listitem="@layout/posts_list_item" />
 </com.google.android.material.circularreveal.cardview.CircularRevealCardView>

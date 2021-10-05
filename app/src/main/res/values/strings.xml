@@ -49,5 +49,7 @@
     <string name="image_thumbnail" translatable="false">image_thumbnail_%d</string>
     <string name="image_placeholder_uri" translatable="false">android.resource://com.genlz.jetpacks/%d</string>
     <string name="gallery_fragment">Gallery Fragment</string>
+    <string name="thumb_up">Good</string>
+    <string name="comment">Comment</string>
 
 </resources>

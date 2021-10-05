@@ -124,7 +124,7 @@
                 tools:text="标签" />
 
             <TextView
-                android:id="@+id/post_comments"
+                android:id="@+id/post_comments_area"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -171,7 +171,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="18dp"
                 app:layout_constraintBottom_toBottomOf="@+id/post_views"
-                app:layout_constraintEnd_toStartOf="@+id/post_comments"
+                app:layout_constraintEnd_toStartOf="@+id/post_comments_area"
                 app:layout_constraintTop_toTopOf="@+id/post_views"
                 app:srcCompat="@drawable/ic_baseline_comment_24"
                 tools:ignore="ContentDescription" />
@@ -181,9 +181,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/post_comments"
+                app:layout_constraintBottom_toBottomOf="@+id/post_comments_area"
                 app:layout_constraintEnd_toStartOf="@+id/post_thumbs"
-                app:layout_constraintTop_toTopOf="@+id/post_comments"
+                app:layout_constraintTop_toTopOf="@+id/post_comments_area"
                 app:srcCompat="@drawable/ic_baseline_thumb_up"
                 tools:ignore="ContentDescription" />
 

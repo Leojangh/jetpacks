@@ -3,6 +3,7 @@ package com.genlz.jetpacks.ui
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -108,7 +109,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         }
         binding.imagePager.apply {
             adapter = ImagesAdapter(cacheKeys)
-//            offscreenPageLimit = cacheKeys.size //影响动画
+            offscreenPageLimit = cacheKeys.size
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     (binding.pagerIndicator[position] as Checkable).isChecked = true
@@ -144,47 +145,25 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
          * For navigation support.
          *
          * @param navController
-         * @param view The shared element view.
+         * @param views The shared element views.
          * @param initPosition The position of the initial clicked point.
          * @param keys The navigation params.
          */
         fun navigate(
             navController: NavController,
-            view: View,
+            views: List<View>,
             initPosition: Int,
             keys: Array<MemoryCache.Key>
         ) {
-            val extras = FragmentNavigatorExtras(
-                view to view.context.getString(R.string.image_origin, initPosition)
-            )
+            val sharedElements = views.mapIndexed { index, view ->
+                view to view.context.getString(R.string.image_origin, index)
+            }.toTypedArray()
+
+            val extras = FragmentNavigatorExtras(*sharedElements)
             navController.navigate(
                 GalleryDirections.gallery(keys, initPosition),
                 extras
             )
-        }
-
-        /**
-         * For no navigation support and with decor with Modal background.
-         */
-        fun navigate(
-            activity: FragmentActivity,
-            view: View,
-            initPosition: Int,
-            keys: Array<MemoryCache.Key>
-        ) {
-            val fragment = GalleryFragment().apply {
-                arguments = bundleOf(
-                    "cacheKeys" to keys,
-                    "initPosition" to initPosition,
-                    "showOptions" to SHOW_OPTIONS_FULLSCREEN,
-                )
-            }
-            activity.supportFragmentManager.commit {
-                setReorderingAllowed(true)
-                addSharedElement(view, activity.getString(R.string.image_origin, initPosition))
-                add(android.R.id.content, fragment, TAG)
-                addToBackStack(TAG)
-            }
         }
 
         fun localResUri(@AnyRes resource: Int): Uri =
@@ -206,7 +185,7 @@ private class ImagesAdapter(
     }
 
     override fun onBindViewHolder(holder: ImagesViewHolder, position: Int) {
-        holder.onBind(position)
+        holder.onBind()
     }
 
     override fun getItemCount(): Int = keys.size
@@ -221,7 +200,7 @@ private class ImagesAdapter(
             }
         }
 
-        fun onBind(position: Int) {
+        fun onBind() {
             // Transition name must unique,so cannot set in XML.
             // Another point to consider when using shared element transitions with a RecyclerView
             // is that you cannot set the transition name in the RecyclerView item's XML layout
@@ -229,9 +208,9 @@ private class ImagesAdapter(
             // must be assigned so that the transition animation uses the correct view.
             ViewCompat.setTransitionName(
                 binding.simpleImage,
-                binding.root.resources.getString(R.string.image_origin, position)
+                binding.root.resources.getString(R.string.image_origin, bindingAdapterPosition)
             )
-            val bitmap = binding.root.context.imageLoader.memoryCache[keys[position]]
+            val bitmap = binding.root.context.imageLoader.memoryCache[keys[bindingAdapterPosition]]
             binding.simpleImage.load(bitmap)
         }
     }

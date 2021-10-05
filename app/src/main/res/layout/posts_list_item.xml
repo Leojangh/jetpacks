@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.circularreveal.cardview.CircularRevealCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardElevation="1dp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/avatar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircularShape"
+            tools:src="@drawable/ic_twitter" />
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/mock_leojangh"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            app:layout_constraintBottom_toTopOf="@+id/content"
+            app:layout_constraintStart_toEndOf="@id/avatar"
+            app:layout_constraintTop_toTopOf="@id/avatar"
+            tools:text="@string/mock_leojangh" />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            android:ellipsize="end"
+            android:maxLines="5"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            app:layout_constraintBottom_toTopOf="@+id/post_thumbs"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/username"
+            app:layout_constraintTop_toBottomOf="@id/username"
+            tools:text="@string/long_text" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/post_thumbs"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            android:padding="2dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintBottom_toTopOf="@+id/action"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/content"
+            app:layout_constraintTop_toBottomOf="@id/content"
+            app:spanCount="3"
+            tools:itemCount="9"
+            tools:listitem="@layout/simple_item_image_view" />
+
+        <TextView
+            android:id="@+id/post_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/mock_time"
+            app:layout_constraintBottom_toBottomOf="@id/action"
+            app:layout_constraintStart_toStartOf="@id/content"
+            app:layout_constraintTop_toTopOf="@id/action" />
+
+        <ImageButton
+            android:id="@+id/action"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:src="@drawable/ic_baseline_more_horiz_24"
+            app:layout_constraintBottom_toTopOf="@+id/post_comments_area"
+            app:layout_constraintEnd_toEndOf="@id/post_thumbs"
+            app:layout_constraintTop_toBottomOf="@id/post_thumbs"
+            app:rippleColor="@null" />
+
+        <com.google.android.material.circularreveal.cardview.CircularRevealCardView
+            android:id="@+id/post_comments_area"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            app:cardBackgroundColor="#F1F1F1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/post_thumbs"
+            app:layout_constraintStart_toStartOf="@id/post_thumbs"
+            app:layout_constraintTop_toBottomOf="@id/action">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/post_comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="2"
+                tools:listitem="@layout/comment_list_item" />
+        </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.circularreveal.cardview.CircularRevealCardView>

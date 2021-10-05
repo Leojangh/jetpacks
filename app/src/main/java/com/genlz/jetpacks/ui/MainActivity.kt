@@ -85,8 +85,6 @@ class MainActivity : AppCompatActivity(), FullscreenController {
         binding.bottomNavigation.getOrCreateBadge(R.id.communityFragment).apply {
             number = 20
         }
-
-
     }
 
     override fun enterFullscreen() {
