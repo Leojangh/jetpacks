@@ -143,8 +143,10 @@ private class ThumbsAdapter(
     }
 
     class ThumbViewHolder(
-        private val binding: SimpleItemImageViewBinding
+        binding: SimpleItemImageViewBinding
     ) : RecyclerView.ViewHolder(binding.root) {
+
+        private val img = binding.postThumbnail
 
         fun onBind(
             navController: NavController,
@@ -153,17 +155,17 @@ private class ThumbsAdapter(
             position: Int
         ) {
             ViewCompat.setTransitionName(
-                binding.root,
-                binding.root.context.getString(
+                img,
+                img.context.getString(
                     R.string.image_thumbnail,
                     position
                 ) + "_$bindingAdapterPosition"
             )
 
-            binding.root.load(uri) {
+            img.load(uri) {
                 memoryCacheKey(keys[bindingAdapterPosition])
                 listener { _, _ ->
-                    binding.root.setOnClickListener {
+                    img.setOnClickListener {
                         GalleryFragment.navigate(
                             navController,
                             (it.parent as ViewGroup).children.toList(),
