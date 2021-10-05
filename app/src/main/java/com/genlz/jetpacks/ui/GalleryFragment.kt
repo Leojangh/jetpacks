@@ -118,6 +118,9 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             setCurrentItem(args.initPosition, false)
         }
 
+        // Make sure always as fullscreen state at this fragment scenario.
+        controlFullscreen(true)
+
         // Note: When using a shared element transition from a fragment using a RecyclerView
         // to another fragment, you must still postpone the fragment using a RecyclerView
         // to ensure that the returning shared element transition functions correctly
