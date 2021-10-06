@@ -73,9 +73,7 @@ android {
     }
 
     androidComponents {
-        beforeVariants {
-            println(it.productFlavors)
-        }
+
     }
 
     compileOptions {
@@ -101,6 +99,8 @@ android {
 }
 
 dependencies {
+
+    implementation(project(":gallery"))
 
     implementation("com.github.chrisbanes:PhotoView:2.2.0")
 

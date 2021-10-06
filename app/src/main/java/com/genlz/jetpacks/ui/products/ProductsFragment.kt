@@ -1,5 +1,6 @@
 package com.genlz.jetpacks.ui.products
 
+import android.app.Activity
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -19,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.memory.MemoryCache
+import com.genlz.android.gallery.GalleryActivity
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.CommentListItemBinding
@@ -155,13 +157,13 @@ private class ThumbsAdapter(
             keys: Array<MemoryCache.Key>,
             position: Int
         ) {
-            ViewCompat.setTransitionName(
-                img,
-                img.context.getString(
-                    R.string.image_thumbnail,
-                    position
-                ) + "_$bindingAdapterPosition"
-            )
+//            ViewCompat.setTransitionName(
+//                img,
+//                img.context.getString(
+//                    R.string.image_thumbnail,
+//                    position
+//                ) + "_$bindingAdapterPosition"
+//            )
 
             img.load(uri) {
                 memoryCacheKey(keys[bindingAdapterPosition])
@@ -173,11 +175,17 @@ private class ThumbsAdapter(
 //                            bindingAdapterPosition,
 //                            keys
 //                        )
-                        GalleryFragment.navigate(
-                            (navController.context as FragmentActivity).supportFragmentManager,
+//                        GalleryFragment.navigate(
+//                            (navController.context as FragmentActivity).supportFragmentManager,
+//                            (it.parent as ViewGroup).children.toList(),
+//                            bindingAdapterPosition,
+//                            keys
+//                        )
+                        GalleryActivity.navigate(
+                            navController.context as Activity,
                             (it.parent as ViewGroup).children.toList(),
-                            bindingAdapterPosition,
-                            keys
+                            keys,
+                            bindingAdapterPosition
                         )
                     }
                 }
