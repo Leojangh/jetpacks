@@ -1,6 +1,5 @@
 package com.genlz.jetpacks.ui.products
 
-import android.app.Activity
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -27,6 +26,7 @@ import com.genlz.jetpacks.databinding.FragmentProductsBinding
 import com.genlz.jetpacks.databinding.PostsListItemBinding
 import com.genlz.jetpacks.databinding.SimpleItemImageViewBinding
 import com.genlz.jetpacks.ui.GalleryFragment
+import com.genlz.jetpacks.utility.appCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "ProductsFragment"
@@ -173,17 +173,21 @@ private class ThumbsAdapter(
             listener { _, _ ->
                 img.setOnClickListener {
                     method1(it, position)
-
+//                    method2(it, position)
                     //Method 3:simplest but there is a bug on MIUI freeform.
-//                    GalleryActivity.navigate(
-//                        navController.context as Activity,
-//                        (it.parent as ViewGroup).children.toList(),
-//                        keys,
-//                        position
-//                    )
+//                    method3(it, position)
                 }
             }
         }
+    }
+
+    private fun method3(it: View, position: Int) {
+        GalleryActivity.navigate(
+            navController.context.appCompatActivity!!,
+            (it.parent as ViewGroup).children.toList(),
+            keys,
+            position
+        )
     }
 
 
@@ -197,6 +201,19 @@ private class ThumbsAdapter(
         val views = (img.parent as ViewGroup).children.toList()
         GalleryFragment.navigate(
             navController,
+            views,
+            position,
+            keys
+        )
+    }
+
+    private fun method2(
+        img: View,
+        position: Int
+    ) {
+        val views = (img.parent as ViewGroup).children.toList()
+        GalleryFragment.navigate(
+            img.context.appCompatActivity!!,
             views,
             position,
             keys

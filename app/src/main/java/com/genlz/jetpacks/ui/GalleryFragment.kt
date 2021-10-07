@@ -36,6 +36,7 @@ import com.genlz.jetpacks.GalleryDirections
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentGalleryBinding
 import com.genlz.jetpacks.databinding.SimplePagerItemImageBinding
+import com.genlz.jetpacks.utility.appCompatActivity
 import java.util.*
 
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
@@ -225,7 +226,7 @@ private class ImagesAdapter(
 
         init {
             binding.root.setOnClickListener {
-                (it.context as Activity).onBackPressed()
+                it.context.appCompatActivity?.onBackPressed()
             }
         }
 
