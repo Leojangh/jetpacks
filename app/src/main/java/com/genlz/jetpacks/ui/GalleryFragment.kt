@@ -85,12 +85,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     //adb shell settings put global transition_duration_scale 20
     private fun controlFullscreen(enter: Boolean) {
         val fullscreenController = activity as? FullscreenController ?: return
-        val duration = (sharedElementEnterTransition as Transition).duration
         if (enter) {
-            //The animation of motion layout is incompatible with shared animation?
-            requireView().postDelayed({
-                fullscreenController.enterFullscreen()
-            }, duration)
+            fullscreenController.enterFullscreen()
         } else {
             fullscreenController.exitFullscreen()
         }
