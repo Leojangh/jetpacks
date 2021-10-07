@@ -36,6 +36,7 @@ import com.genlz.jetpacks.GalleryDirections
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentGalleryBinding
 import com.genlz.jetpacks.databinding.SimplePagerItemImageBinding
+import java.util.*
 
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
@@ -93,7 +94,9 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 fullscreenController.enterFullscreen()
             }, (sharedElementEnterTransition as Transition).duration)
         } else {
-            fullscreenController.exitFullscreen()
+            requireView().postDelayed({
+                fullscreenController.exitFullscreen()
+            }, (sharedElementEnterTransition as Transition).duration)
         }
     }
 
@@ -136,12 +139,6 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     companion object {
 
-        @Retention(AnnotationRetention.SOURCE)
-        @IntDef(
-            value = [SHOW_OPTIONS_FULLSCREEN, SHOW_OPTIONS_NORMAL]
-        )
-        annotation class ShowOptions
-
         const val SHOW_OPTIONS_FULLSCREEN = 1
 
         const val SHOW_OPTIONS_NORMAL = 0
@@ -161,7 +158,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             keys: Array<MemoryCache.Key>
         ) {
             val sharedElements = views.mapIndexed { index, view ->
-                view to view.context.getString(R.string.image_origin, index)
+                view to "hero_image_$index"
             }.toTypedArray()
 
             val extras = FragmentNavigatorExtras(*sharedElements)
@@ -175,26 +172,25 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
          * Modal background,but have no shared elements transition?
          */
         fun navigate(
-            fragmentManager: FragmentManager,
+            activity: FragmentActivity,
             views: List<View>,
             initPosition: Int,
             keys: Array<MemoryCache.Key>
         ) {
-            fragmentManager.commit {
+            activity.supportFragmentManager.commit {
                 setReorderingAllowed(true)
                 views.forEachIndexed { index, view ->
-                    addSharedElement(view, view.context.getString(R.string.image_origin, index))
+                    ViewCompat.setTransitionName(view, "item_image_$index")
+                    addSharedElement(view, "hero_image_$index")
                 }
-                add(
-                    android.R.id.content,
-                    GalleryFragment::class.java,
-                    bundleOf(
+                val fragment = GalleryFragment().apply {
+                    arguments = bundleOf(
                         "cacheKeys" to keys,
                         "showOptions" to SHOW_OPTIONS_FULLSCREEN,
                         "initPosition" to initPosition
-                    ),
-                    TAG
-                )
+                    )
+                }
+                replace(android.R.id.content, fragment, TAG)
                 addToBackStack(TAG)
             }
         }
@@ -218,12 +214,12 @@ private class ImagesAdapter(
     }
 
     override fun onBindViewHolder(holder: ImagesViewHolder, position: Int) {
-        holder.onBind()
+        holder.onBind(keys[position])
     }
 
     override fun getItemCount(): Int = keys.size
 
-    inner class ImagesViewHolder(
+    class ImagesViewHolder(
         private val binding: SimplePagerItemImageBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -233,17 +229,15 @@ private class ImagesAdapter(
             }
         }
 
-        fun onBind() {
+        fun onBind(key: MemoryCache.Key) {
             // Transition name must unique,so cannot set in XML.
             // Another point to consider when using shared element transitions with a RecyclerView
             // is that you cannot set the transition name in the RecyclerView item's XML layout
             // because an arbitrary number of items share that layout. A unique transition name
             // must be assigned so that the transition animation uses the correct view.
-            ViewCompat.setTransitionName(
-                binding.simpleImage,
-                binding.root.resources.getString(R.string.image_origin, bindingAdapterPosition)
-            )
-            val bitmap = binding.root.context.imageLoader.memoryCache[keys[bindingAdapterPosition]]
+            ViewCompat.setTransitionName(binding.simpleImage, "hero_image_$bindingAdapterPosition")
+
+            val bitmap = binding.root.context.imageLoader.memoryCache[key]
             binding.simpleImage.load(bitmap)
         }
     }

@@ -13,7 +13,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -138,60 +137,16 @@ private class PostsAdapter(
 private class ThumbsAdapter(
     private val navController: NavController,
     private val uris: List<Uri>,
-    private val position: Int //position in posts list
+    private val id: Int
 ) : RecyclerView.Adapter<ThumbsAdapter.ThumbViewHolder>() {
 
     private val keys = Array(itemCount) {
-        MemoryCache.Key("thumbnail_${position}_$it")
+        MemoryCache.Key("${id}_$it")
     }
 
     class ThumbViewHolder(
-        binding: SimpleItemImageViewBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
-
-        private val img = binding.postThumbnail
-
-        fun onBind(
-            navController: NavController,
-            uri: Uri,
-            keys: Array<MemoryCache.Key>,
-            position: Int
-        ) {
-//            ViewCompat.setTransitionName(
-//                img,
-//                img.context.getString(
-//                    R.string.image_thumbnail,
-//                    position
-//                ) + "_$bindingAdapterPosition"
-//            )
-
-            img.load(uri) {
-                memoryCacheKey(keys[bindingAdapterPosition])
-                listener { _, _ ->
-                    img.setOnClickListener {
-//                        GalleryFragment.navigate(
-//                            navController,
-//                            (it.parent as ViewGroup).children.toList(),
-//                            bindingAdapterPosition,
-//                            keys
-//                        )
-//                        GalleryFragment.navigate(
-//                            (navController.context as FragmentActivity).supportFragmentManager,
-//                            (it.parent as ViewGroup).children.toList(),
-//                            bindingAdapterPosition,
-//                            keys
-//                        )
-                        GalleryActivity.navigate(
-                            navController.context as Activity,
-                            (it.parent as ViewGroup).children.toList(),
-                            keys,
-                            bindingAdapterPosition
-                        )
-                    }
-                }
-            }
-        }
-    }
+        val binding: SimpleItemImageViewBinding
+    ) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ThumbViewHolder {
         return ThumbViewHolder(
@@ -204,8 +159,50 @@ private class ThumbsAdapter(
     }
 
     override fun onBindViewHolder(holder: ThumbViewHolder, position: Int) {
-        holder.onBind(navController, uris[position], keys, this.position)
+
+        val img = holder.binding.postThumbnail
+
+        // 如果是使用Fragment打开，那必须在这里设置，而不是像Activity那样在另一端设置都可以，
+        // 这是因为使用Fragment打开会导致原有的fragment被销毁，在返回原fragment时需要重新bind，
+        // 这也就是为什么需要在此处设置Transition name的原因；使用Activity打开就不会有这个问题，
+        // 因为在新的Activity中打开不会销毁原来Activity中的fragment,自然也不会重新bind。
+        ViewCompat.setTransitionName(img, "${id}_$position")
+
+        img.load(uris[position]) {
+            memoryCacheKey(keys[position])
+            listener { _, _ ->
+                img.setOnClickListener {
+                    method1(it, position)
+
+                    //Method 3:simplest but there is a bug on MIUI freeform.
+//                    GalleryActivity.navigate(
+//                        navController.context as Activity,
+//                        (it.parent as ViewGroup).children.toList(),
+//                        keys,
+//                        position
+//                    )
+                }
+            }
+        }
     }
+
+
+    /**
+     * 动画最完美，但是关闭ViewPager2的预加载后会有Bug。
+     */
+    private fun method1(
+        img: View,
+        position: Int
+    ) {
+        val views = (img.parent as ViewGroup).children.toList()
+        GalleryFragment.navigate(
+            navController,
+            views,
+            position,
+            keys
+        )
+    }
+
 
     override fun getItemCount() = uris.size
 }

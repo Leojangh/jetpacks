@@ -54,7 +54,7 @@ class GalleryActivity : AppCompatActivity() {
 
         binding.imagePager.apply {
             adapter = PagerAdapter(cacheKeys)
-            offscreenPageLimit = cacheKeys.size
+//            offscreenPageLimit = cacheKeys.size
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     (binding.pagerIndicator[position] as Checkable).isChecked = true
