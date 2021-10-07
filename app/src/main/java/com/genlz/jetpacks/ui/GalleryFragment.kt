@@ -1,17 +1,15 @@
 package com.genlz.jetpacks.ui
 
-import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.widget.Checkable
+import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.AnyRes
-import androidx.annotation.IntDef
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
@@ -23,9 +21,9 @@ import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Transition
 import androidx.transition.TransitionInflater
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import coil.imageLoader
 import coil.load
@@ -35,9 +33,7 @@ import com.genlz.jetpacks.App
 import com.genlz.jetpacks.GalleryDirections
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentGalleryBinding
-import com.genlz.jetpacks.databinding.SimplePagerItemImageBinding
 import com.genlz.jetpacks.utility.appCompatActivity
-import java.util.*
 
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
@@ -89,15 +85,14 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     //adb shell settings put global transition_duration_scale 20
     private fun controlFullscreen(enter: Boolean) {
         val fullscreenController = activity as? FullscreenController ?: return
+        val duration = (sharedElementEnterTransition as Transition).duration
         if (enter) {
             //The animation of motion layout is incompatible with shared animation?
             requireView().postDelayed({
                 fullscreenController.enterFullscreen()
-            }, (sharedElementEnterTransition as Transition).duration)
+            }, duration)
         } else {
-            requireView().postDelayed({
-                fullscreenController.exitFullscreen()
-            }, (sharedElementEnterTransition as Transition).duration)
+            fullscreenController.exitFullscreen()
         }
     }
 
@@ -112,7 +107,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             )
         }
         binding.imagePager.apply {
-            adapter = ImagesAdapter(cacheKeys)
+            adapter = PagerAdapter(cacheKeys, this@GalleryFragment)
             offscreenPageLimit = cacheKeys.size
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
@@ -201,45 +196,46 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     }
 }
 
-private class ImagesAdapter(
-    private val keys: Array<MemoryCache.Key>
-) : RecyclerView.Adapter<ImagesAdapter.ImagesViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImagesViewHolder {
-        return ImagesViewHolder(
-            SimplePagerItemImageBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
+private class PagerAdapter(
+    private val keys: Array<MemoryCache.Key>,
+    fragment: Fragment
+) : FragmentStateAdapter(fragment) {
+
+    override fun getItemCount() = keys.size
+
+    override fun createFragment(position: Int): Fragment {
+        return ImageFragment.newInstance(keys[position], position)
     }
 
-    override fun onBindViewHolder(holder: ImagesViewHolder, position: Int) {
-        holder.onBind(keys[position])
-    }
-
-    override fun getItemCount(): Int = keys.size
-
-    class ImagesViewHolder(
-        private val binding: SimplePagerItemImageBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
-
-        init {
-            binding.root.setOnClickListener {
+    class ImageFragment : Fragment(R.layout.simple_pager_item_image) {
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+            view.setOnClickListener {
                 it.context.appCompatActivity?.onBackPressed()
             }
-        }
-
-        fun onBind(key: MemoryCache.Key) {
+            val position = requireArguments().getInt(PARAM_POSITION)
+            val key = requireArguments()[PARAM_KEY] as MemoryCache.Key
+            val img = view.findViewById<ImageView>(R.id.simple_image)
             // Transition name must unique,so cannot set in XML.
             // Another point to consider when using shared element transitions with a RecyclerView
             // is that you cannot set the transition name in the RecyclerView item's XML layout
             // because an arbitrary number of items share that layout. A unique transition name
             // must be assigned so that the transition animation uses the correct view.
-            ViewCompat.setTransitionName(binding.simpleImage, "hero_image_$bindingAdapterPosition")
+            ViewCompat.setTransitionName(img, "hero_image_$position")
+            val bitmap = img.context.imageLoader.memoryCache[key]
+            img.load(bitmap)
+        }
 
-            val bitmap = binding.root.context.imageLoader.memoryCache[key]
-            binding.simpleImage.load(bitmap)
+        companion object {
+            const val PARAM_KEY = "key"
+            const val PARAM_POSITION = "position"
+
+            fun newInstance(key: MemoryCache.Key, position: Int): ImageFragment {
+                val args = bundleOf(PARAM_KEY to key, PARAM_POSITION to position)
+                val fragment = ImageFragment()
+                fragment.arguments = args
+                return fragment
+            }
         }
     }
 }

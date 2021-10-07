@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="5dp"
     android:layout_height="5dp"
     android:layout_margin="4dp"
     android:button="@drawable/pager_indicator"
     android:clickable="false"
-    android:gravity="center" />
+    android:gravity="center"
+    tools:viewBindingIgnore="true" />
