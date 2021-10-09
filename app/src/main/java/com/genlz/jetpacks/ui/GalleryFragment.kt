@@ -21,7 +21,6 @@ import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.navArgs
-import androidx.transition.Transition
 import androidx.transition.TransitionInflater
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -53,6 +52,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 duration = resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
             }
         sharedElementEnterTransition = move
+
 
         val activity = requireActivity()
         activity.onBackPressedDispatcher.addCallback(this,
@@ -95,6 +95,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val cacheKeys = args.cacheKeys
+        val imageUris = args.imageUris
         repeat(cacheKeys.size) {
             LayoutInflater.from(context).inflate(
                 R.layout.simple_radio_button,
@@ -103,7 +104,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             )
         }
         binding.imagePager.apply {
-            adapter = PagerAdapter(cacheKeys, this@GalleryFragment)
+            adapter = PagerAdapter(cacheKeys, imageUris, this@GalleryFragment)
             offscreenPageLimit = cacheKeys.size
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
@@ -141,13 +142,14 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
          * @param navController
          * @param views The shared element views.
          * @param initPosition The position of the initial clicked point.
-         * @param keys The navigation params.
+         * @param cacheKeys The cache keys of thumbnails.
          */
         fun navigate(
             navController: NavController,
             views: List<View>,
             initPosition: Int,
-            keys: Array<MemoryCache.Key>
+            cacheKeys: Array<MemoryCache.Key>,
+            uris: Array<String>,
         ) {
             val sharedElements = views.mapIndexed { index, view ->
                 view to "hero_image_$index"
@@ -155,7 +157,11 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
             val extras = FragmentNavigatorExtras(*sharedElements)
             navController.navigate(
-                GalleryDirections.gallery(keys, initPosition),
+                GalleryDirections.gallery(
+                    cacheKeys = cacheKeys,
+                    initPosition = initPosition,
+                    imageUris = uris
+                ),
                 extras
             )
         }
@@ -167,7 +173,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             activity: FragmentActivity,
             views: List<View>,
             initPosition: Int,
-            keys: Array<MemoryCache.Key>
+            keys: Array<MemoryCache.Key>,
+            uris: Array<String>,
         ) {
             activity.supportFragmentManager.commit {
                 setReorderingAllowed(true)
@@ -179,7 +186,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                     arguments = bundleOf(
                         "cacheKeys" to keys,
                         "showOptions" to SHOW_OPTIONS_FULLSCREEN,
-                        "initPosition" to initPosition
+                        "initPosition" to initPosition,
+                        "imageUris" to uris
                     )
                 }
                 replace(android.R.id.content, fragment, TAG)
@@ -194,13 +202,14 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
 private class PagerAdapter(
     private val keys: Array<MemoryCache.Key>,
+    private val imageUris: Array<String>,
     fragment: Fragment
 ) : FragmentStateAdapter(fragment) {
 
     override fun getItemCount() = keys.size
 
     override fun createFragment(position: Int): Fragment {
-        return ImageFragment.newInstance(keys[position], position)
+        return ImageFragment.newInstance(keys[position], imageUris[position], position)
     }
 
     class ImageFragment : Fragment(R.layout.simple_pager_item_image) {
@@ -211,6 +220,7 @@ private class PagerAdapter(
             }
             val position = requireArguments().getInt(PARAM_POSITION)
             val key = requireArguments()[PARAM_KEY] as MemoryCache.Key
+            val uri = requireArguments()[PARAM_URI] as String
             val img = view.findViewById<ImageView>(R.id.simple_image)
             // Transition name must unique,so cannot set in XML.
             // Another point to consider when using shared element transitions with a RecyclerView
@@ -218,16 +228,22 @@ private class PagerAdapter(
             // because an arbitrary number of items share that layout. A unique transition name
             // must be assigned so that the transition animation uses the correct view.
             ViewCompat.setTransitionName(img, "hero_image_$position")
-            val bitmap = img.context.imageLoader.memoryCache[key]
-            img.load(bitmap)
+            img.load(uri) {
+                placeholderMemoryCacheKey(key)
+            }
         }
 
         companion object {
             const val PARAM_KEY = "key"
+            const val PARAM_URI = "uri"
             const val PARAM_POSITION = "position"
 
-            fun newInstance(key: MemoryCache.Key, position: Int): ImageFragment {
-                val args = bundleOf(PARAM_KEY to key, PARAM_POSITION to position)
+            fun newInstance(key: MemoryCache.Key, imageUri: String, position: Int): ImageFragment {
+                val args = bundleOf(
+                    PARAM_KEY to key,
+                    PARAM_POSITION to position,
+                    PARAM_URI to imageUri
+                )
                 val fragment = ImageFragment()
                 fragment.arguments = args
                 return fragment

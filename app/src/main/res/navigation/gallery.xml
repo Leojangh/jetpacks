@@ -24,6 +24,11 @@
             app:argType="integer" />
 
         <argument
+            android:name="imageUris"
+            app:argType="string[]"
+            app:nullable="false" />
+
+        <argument
             android:name="showOptions"
             android:defaultValue="0"
             app:argType="integer" />

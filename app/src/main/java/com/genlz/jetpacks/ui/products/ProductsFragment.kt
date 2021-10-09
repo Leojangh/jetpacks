@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
@@ -15,9 +16,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.memory.MemoryCache
+import coil.size.ViewSizeResolver
 import com.genlz.android.gallery.GalleryActivity
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
@@ -25,6 +29,7 @@ import com.genlz.jetpacks.databinding.CommentListItemBinding
 import com.genlz.jetpacks.databinding.FragmentProductsBinding
 import com.genlz.jetpacks.databinding.PostsListItemBinding
 import com.genlz.jetpacks.databinding.SimpleItemImageViewBinding
+import com.genlz.jetpacks.pojo.Post
 import com.genlz.jetpacks.ui.GalleryFragment
 import com.genlz.jetpacks.utility.appCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,7 +47,9 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            posts.adapter = PostsAdapter(findNavController(), viewModel.mockResource())
+            posts.adapter = PostAdapter(findNavController()).apply {
+                submitList(viewModel.mockPosts())
+            }
         }
 
         postponeEnterTransition()
@@ -52,10 +59,9 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
     }
 }
 
-private class PostsAdapter(
-    private val navController: NavController,
-    private val uris: List<Uri>,
-) : RecyclerView.Adapter<PostsAdapter.PostsViewHolder>() {
+private class PostAdapter(
+    private val navController: NavController
+) : ListAdapter<Post, PostAdapter.PostViewHolder>(DiffCallback()) {
 
     private val popupWindow = PopupWindow(navController.context).apply {
         setBackgroundDrawable(null)
@@ -84,16 +90,32 @@ private class PostsAdapter(
         }
     }
 
-    inner class PostsViewHolder(
+    private fun doThumbUp() {
+
+    }
+
+    private fun doComment() {
+
+    }
+
+    inner class PostViewHolder(
         private val binding: PostsListItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun onBind(navController: NavController, uris: List<Uri>, comments: List<String>) {
+        fun onBind(navController: NavController, post: Post) {
             binding.apply {
-                postThumbs.adapter = ThumbsAdapter(navController, uris, bindingAdapterPosition)
-                postComments.adapter = CommentsAdapter(comments)
-                content.text = navController.context.getText(R.string.long_text)
-                avatar.setImageResource(R.drawable.ic_twitter)
+                postThumbs.adapter =
+                    ThumbsAdapter(
+                        navController,
+                        post.thumbnails,
+                        bindingAdapterPosition
+                    )
+                postComments.adapter =
+                    CommentsAdapter(listOf("好厉害！", "666", "aaa", "bbb", "牛逼", "屌爆了").shuffled())
+                content.text = post.abstraction
+                avatar.load(post.user.avatar) {
+                    placeholder(R.drawable.ic_twitter)
+                }
                 action.setOnClickListener {
                     if (popupWindow.isShowing) {
                         popupWindow.dismiss()
@@ -105,16 +127,8 @@ private class PostsAdapter(
         }
     }
 
-    private fun doComment() {
-
-    }
-
-    private fun doThumbUp() {
-
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsViewHolder {
-        return PostsViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
+        return PostViewHolder(
             PostsListItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
@@ -123,20 +137,22 @@ private class PostsAdapter(
         )
     }
 
-    override fun onBindViewHolder(holder: PostsViewHolder, position: Int) {
-        holder.onBind(
-            navController,
-            uris.shuffled(),
-            listOf("好厉害！", "666", "aaa", "bbb", "牛逼", "屌爆了").shuffled()
-        )
+    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
+        holder.onBind(navController, getItem(position))
     }
 
-    override fun getItemCount(): Int = uris.size
+    private class DiffCallback : DiffUtil.ItemCallback<Post>() {
+        override fun areItemsTheSame(oldItem: Post, newItem: Post) =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: Post, newItem: Post) =
+            oldItem == newItem
+    }
 }
 
 private class ThumbsAdapter(
     private val navController: NavController,
-    private val uris: List<Uri>,
+    private val uris: List<String>,
     private val id: Int
 ) : RecyclerView.Adapter<ThumbsAdapter.ThumbViewHolder>() {
 
@@ -169,6 +185,7 @@ private class ThumbsAdapter(
         ViewCompat.setTransitionName(img, "${id}_$position")
 
         img.load(uris[position]) {
+            size(100)
             memoryCacheKey(keys[position])
             listener { _, _ ->
                 img.setOnClickListener {
@@ -203,7 +220,8 @@ private class ThumbsAdapter(
             navController,
             views,
             position,
-            keys
+            keys,
+            uris.toTypedArray()
         )
     }
 
@@ -216,7 +234,8 @@ private class ThumbsAdapter(
             img.context.appCompatActivity!!,
             views,
             position,
-            keys
+            keys,
+            uris.toTypedArray()
         )
     }
 
