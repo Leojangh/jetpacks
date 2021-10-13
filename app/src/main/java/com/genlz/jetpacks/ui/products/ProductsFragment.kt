@@ -32,7 +32,9 @@ import com.genlz.jetpacks.databinding.SimpleItemImageViewBinding
 import com.genlz.jetpacks.pojo.Post
 import com.genlz.jetpacks.ui.GalleryFragment
 import com.genlz.jetpacks.utility.appCompatActivity
+import com.genlz.jetpacks.utility.launchAndCollectIn
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.HashMap
 
 private const val TAG = "ProductsFragment"
 
@@ -46,10 +48,10 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
-            posts.adapter = PostAdapter(findNavController()).apply {
-                submitList(viewModel.mockPosts())
-            }
+        val adapter = PostAdapter(findNavController())
+        binding.posts.adapter = adapter
+        viewModel.posts.launchAndCollectIn(viewLifecycleOwner) {
+            adapter.submitList(it)
         }
 
         postponeEnterTransition()
@@ -102,20 +104,20 @@ private class PostAdapter(
         private val binding: PostsListItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun onBind(navController: NavController, post: Post) {
+        fun onBind(post: Post) {
             binding.apply {
-                postThumbs.adapter =
-                    ThumbsAdapter(
-                        navController,
-                        post.thumbnails,
-                        bindingAdapterPosition
-                    )
+                postThumbs.adapter = ThumbsAdapter(
+                    navController,
+                    post.thumbnails,
+                    bindingAdapterPosition
+                )
                 postComments.adapter =
-                    CommentsAdapter(listOf("好厉害！", "666", "aaa", "bbb", "牛逼", "屌爆了").shuffled())
+                    CommentsAdapter(listOf("好厉害！", "666", "aaa", "bbb", "牛逼", "屌爆了"))
                 content.text = post.abstraction
                 avatar.load(post.user.avatar) {
-                    placeholder(R.drawable.ic_twitter)
+                    placeholder(R.drawable.ic_baseline_account_circle_24)
                 }
+                username.text = post.user.username
                 action.setOnClickListener {
                     if (popupWindow.isShowing) {
                         popupWindow.dismiss()
@@ -138,7 +140,7 @@ private class PostAdapter(
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        holder.onBind(navController, getItem(position))
+        holder.onBind(getItem(position))
     }
 
     private class DiffCallback : DiffUtil.ItemCallback<Post>() {
@@ -183,62 +185,38 @@ private class ThumbsAdapter(
         // 这也就是为什么需要在此处设置Transition name的原因；使用Activity打开就不会有这个问题，
         // 因为在新的Activity中打开不会销毁原来Activity中的fragment,自然也不会重新bind。
         ViewCompat.setTransitionName(img, "${id}_$position")
-
         img.load(uris[position]) {
-            size(100)
+
+            size(ViewSizeResolver(img))
+            allowHardware(false)
             memoryCacheKey(keys[position])
             listener { _, _ ->
                 img.setOnClickListener {
-//                    method1(it, position)
-//                    method2(it, position)
-                    //Method 3:simplest but there is a bug on MIUI freeform.
-                    method3(it, position)
+                    goGallery(it, position)
                 }
             }
         }
     }
 
-    private fun method3(it: View, position: Int) {
+    private fun goGallery(
+        img: View,
+        position: Int
+    ) {
+        val views = (img.parent as ViewGroup).children.toList()
+        val thumbsAndOrigin = keys.zip(uris).toMap()
+//        GalleryFragment.navigate(
+//            navController,
+//            views,
+//            position,
+//            thumbsAndOrigin
+//        )
         GalleryActivity.navigate(
-            navController.context.appCompatActivity!!,
-            (it.parent as ViewGroup).children.toList(),
-            keys,
-            position
-        )
-    }
-
-
-    /**
-     * 动画最完美，但是关闭ViewPager2的预加载后会有Bug。
-     */
-    private fun method1(
-        img: View,
-        position: Int
-    ) {
-        val views = (img.parent as ViewGroup).children.toList()
-        GalleryFragment.navigate(
-            navController,
-            views,
-            position,
-            keys,
-            uris.toTypedArray()
-        )
-    }
-
-    private fun method2(
-        img: View,
-        position: Int
-    ) {
-        val views = (img.parent as ViewGroup).children.toList()
-        GalleryFragment.navigate(
             img.context.appCompatActivity!!,
             views,
             position,
-            keys,
-            uris.toTypedArray()
+            thumbsAndOrigin
         )
     }
-
 
     override fun getItemCount() = uris.size
 }
@@ -250,10 +228,8 @@ private class CommentsAdapter(private val comments: List<String>) :
         val binding: CommentListItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        private val comment = binding.root
-
         fun onBind(comment: String) {
-            this.comment.text = comment
+            binding.root.text = comment
         }
     }
 

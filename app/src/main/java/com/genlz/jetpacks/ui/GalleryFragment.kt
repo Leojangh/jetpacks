@@ -1,5 +1,6 @@
 package com.genlz.jetpacks.ui
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,6 +28,7 @@ import androidx.viewpager2.widget.ViewPager2
 import coil.imageLoader
 import coil.load
 import coil.memory.MemoryCache
+import coil.request.ImageRequest
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.App
 import com.genlz.jetpacks.GalleryDirections
@@ -47,12 +49,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val move = TransitionInflater.from(requireContext())
-            .inflateTransition(android.R.transition.move).apply {
-                duration = resources.getInteger(R.integer.material_motion_duration_long_1).toLong()
-            }
-        sharedElementEnterTransition = move
-
+        sharedElementEnterTransition = TransitionInflater.from(requireContext())
+            .inflateTransition(android.R.transition.move)
 
         val activity = requireActivity()
         activity.onBackPressedDispatcher.addCallback(this,
@@ -73,6 +71,18 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                     }
                 }
             })
+
+        preload(requireContext())
+    }
+
+    private fun preload(context: Context) {
+        args.imageUris.forEach {
+            val request = ImageRequest.Builder(context).apply {
+                data(it)
+//                size(ViewSizeResolver(img))
+            }.build()
+            context.imageLoader.enqueue(request)
+        }
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
@@ -105,7 +115,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         }
         binding.imagePager.apply {
             adapter = PagerAdapter(cacheKeys, imageUris, this@GalleryFragment)
-            offscreenPageLimit = cacheKeys.size
+//            offscreenPageLimit = cacheKeys.size
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     (binding.pagerIndicator[position] as Checkable).isChecked = true
@@ -142,18 +152,20 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
          * @param navController
          * @param views The shared element views.
          * @param initPosition The position of the initial clicked point.
-         * @param cacheKeys The cache keys of thumbnails.
+         * @param thumbnailAndOrigin The key is the cache keys of thumbnails that has been loaded
+         * and the value is the original uri that will be loaded.
          */
         fun navigate(
             navController: NavController,
             views: List<View>,
             initPosition: Int,
-            cacheKeys: Array<MemoryCache.Key>,
-            uris: Array<String>,
+            thumbnailAndOrigin: Map<MemoryCache.Key, String>
         ) {
             val sharedElements = views.mapIndexed { index, view ->
                 view to "hero_image_$index"
             }.toTypedArray()
+            val cacheKeys = thumbnailAndOrigin.keys.toTypedArray()
+            val uris = thumbnailAndOrigin.values.toTypedArray()
 
             val extras = FragmentNavigatorExtras(*sharedElements)
             navController.navigate(
@@ -219,8 +231,8 @@ private class PagerAdapter(
                 it.context.appCompatActivity?.onBackPressed()
             }
             val position = requireArguments().getInt(PARAM_POSITION)
-            val key = requireArguments()[PARAM_KEY] as MemoryCache.Key
-            val uri = requireArguments()[PARAM_URI] as String
+            val cacheKey = requireArguments()[PARAM_KEY] as MemoryCache.Key
+            val originUri = requireArguments()[PARAM_URI] as String
             val img = view.findViewById<ImageView>(R.id.simple_image)
             // Transition name must unique,so cannot set in XML.
             // Another point to consider when using shared element transitions with a RecyclerView
@@ -228,8 +240,9 @@ private class PagerAdapter(
             // because an arbitrary number of items share that layout. A unique transition name
             // must be assigned so that the transition animation uses the correct view.
             ViewCompat.setTransitionName(img, "hero_image_$position")
-            img.load(uri) {
-                placeholderMemoryCacheKey(key)
+            img.load(originUri) {
+                placeholderMemoryCacheKey(cacheKey)
+                allowHardware(false)
             }
         }
 
@@ -238,16 +251,14 @@ private class PagerAdapter(
             const val PARAM_URI = "uri"
             const val PARAM_POSITION = "position"
 
-            fun newInstance(key: MemoryCache.Key, imageUri: String, position: Int): ImageFragment {
-                val args = bundleOf(
-                    PARAM_KEY to key,
-                    PARAM_POSITION to position,
-                    PARAM_URI to imageUri
-                )
-                val fragment = ImageFragment()
-                fragment.arguments = args
-                return fragment
-            }
+            fun newInstance(key: MemoryCache.Key, imageUri: String, position: Int) =
+                ImageFragment().apply {
+                    arguments = bundleOf(
+                        PARAM_KEY to key,
+                        PARAM_POSITION to position,
+                        PARAM_URI to imageUri
+                    )
+                }
         }
     }
 }

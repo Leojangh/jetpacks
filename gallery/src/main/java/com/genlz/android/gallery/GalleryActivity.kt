@@ -5,21 +5,26 @@ import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.Checkable
 import android.widget.ImageView
-import android.widget.RadioButton
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.core.view.*
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.ChangeBounds
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import androidx.viewpager2.widget.ViewPager2
 import coil.imageLoader
 import coil.load
 import coil.memory.MemoryCache
 import com.genlz.android.gallery.databinding.ActivityGalleryBinding
 import com.github.chrisbanes.photoview.PhotoView
+import kotlin.math.log
 
 class GalleryActivity : AppCompatActivity() {
 
@@ -34,9 +39,9 @@ class GalleryActivity : AppCompatActivity() {
         window.statusBarColor = Color.TRANSPARENT
         window.navigationBarColor = Color.TRANSPARENT
 
-        val cacheKeys = (intent.getParcelableArrayExtra(KEY) as Array<*>).map {
-            it as MemoryCache.Key
-        }.toTypedArray()
+        val cacheKeys = intent.getParcelableArrayListExtra<MemoryCache.Key>(KEYS)
+            ?: throw IllegalArgumentException()
+        val uris = intent.getStringArrayListExtra(URIS) ?: throw IllegalArgumentException()
         val position = intent.getIntExtra(POSITION, 0)
 
         repeat(cacheKeys.size) {
@@ -53,7 +58,7 @@ class GalleryActivity : AppCompatActivity() {
         }
 
         binding.imagePager.apply {
-            adapter = PagerAdapter(cacheKeys)
+            adapter = PagerAdapter(cacheKeys, uris)
 //            offscreenPageLimit = cacheKeys.size
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
@@ -75,11 +80,14 @@ class GalleryActivity : AppCompatActivity() {
         fun navigate(
             activity: Activity,
             views: List<View>,
-            keys: Array<MemoryCache.Key>,
-            position: Int
+            position: Int,
+            thumbnailAndOrigin: Map<MemoryCache.Key, String>
         ) {
             val intent = Intent(activity, GalleryActivity::class.java).apply {
-                putExtra(KEY, keys)
+                val keys = thumbnailAndOrigin.keys
+                val uris = thumbnailAndOrigin.values
+                putExtra(KEYS, ArrayList(keys))
+                putExtra(URIS, ArrayList(uris))
                 putExtra(POSITION, position)
             }
             val pairs = views.mapIndexed { index, view ->
@@ -93,14 +101,17 @@ class GalleryActivity : AppCompatActivity() {
             activity.startActivity(intent, options.toBundle())
         }
 
-        private const val KEY = "cacheKeys"
+        private const val URIS = "originUris"
+        private const val KEYS = "cacheKeys"
         private const val POSITION = "position"
+
         private const val TAG = "GalleryActivity"
     }
 }
 
 private class PagerAdapter(
-    private val keys: Array<MemoryCache.Key>
+    private val keys: List<MemoryCache.Key>,
+    private val uris: List<String>
 ) : RecyclerView.Adapter<PagerAdapter.ImageHolder>() {
 
     class ImageHolder(private val v: ImageView) : RecyclerView.ViewHolder(v) {
@@ -108,10 +119,12 @@ private class PagerAdapter(
             v.setOnClickListener { (it.context as Activity).onBackPressed() }
         }
 
-        fun onBind(key: MemoryCache.Key) {
+        fun onBind(key: MemoryCache.Key, uri: String) {
             ViewCompat.setTransitionName(v, "hero_image_$adapterPosition")
-            val bitmap = v.context.imageLoader.memoryCache[key]
-            v.load(bitmap)
+            v.load(uri) {
+                allowHardware(false)
+                placeholderMemoryCacheKey(key)
+            }
         }
     }
 
@@ -126,7 +139,7 @@ private class PagerAdapter(
     }
 
     override fun onBindViewHolder(holder: ImageHolder, position: Int) {
-        holder.onBind(keys[position])
+        holder.onBind(keys[position], uris[position])
     }
 
     override fun getItemCount() = keys.size
