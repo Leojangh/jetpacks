@@ -100,6 +100,7 @@ android {
 
 dependencies {
 
+    implementation(project(":share"))
     implementation(project(":gallery"))
 
     implementation("com.github.chrisbanes:PhotoView:2.2.0")

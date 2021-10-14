@@ -21,6 +21,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.*
+import androidx.dynamicanimation.animation.FlingAnimation
+import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -29,6 +31,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.transition.Scene
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository
@@ -53,7 +56,14 @@ class MainActivity : AppCompatActivity(), FullscreenController {
 
     private lateinit var navController: NavController
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    private val appBarConfiguration = AppBarConfiguration(
+        setOf(
+            R.id.communityFragment,
+            R.id.productsFragment,
+            R.id.serviceFragment,
+            R.id.vipFragment
+        )
+    )
 
     /**
      * 未适配连续性时，Fold折叠后会销毁并重新创建一个Activity，再次打开又会创建一个Activity。
@@ -85,6 +95,7 @@ class MainActivity : AppCompatActivity(), FullscreenController {
         binding.bottomNavigation.getOrCreateBadge(R.id.communityFragment).apply {
             number = 20
         }
+
     }
 
     override fun enterFullscreen() {
@@ -169,14 +180,6 @@ class MainActivity : AppCompatActivity(), FullscreenController {
     }
 
     private fun setupNavigation() {
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.communityFragment,
-                R.id.productsFragment,
-                R.id.serviceFragment,
-                R.id.vipFragment
-            )
-        )
         binding.bottomNavigation.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration)
     }

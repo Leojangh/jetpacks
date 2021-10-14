@@ -10,3 +10,4 @@ dependencyResolutionManagement {
 rootProject.name = "jetpacks"
 include(":app")
 include(":gallery")
+include(":share")

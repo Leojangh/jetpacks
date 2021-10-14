@@ -189,10 +189,10 @@ private class ThumbsAdapter(
             memoryCacheKey(keys[position])
             listener { _, _ ->
                 img.setOnClickListener {
-                    method1(it, position)
+//                    method1(it, position)
 //                    method2(it, position)
                     //Method 3:simplest but there is a bug on MIUI freeform.
-//                    method3(it, position)
+                    method3(it, position)
                 }
             }
         }
