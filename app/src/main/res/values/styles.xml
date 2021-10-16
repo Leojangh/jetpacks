@@ -8,7 +8,7 @@
     </style>
 
     <style name="RadiusCorner">
-        <item name="cornerSize">4dp</item>
+        <item name="cornerSize">30dp</item>
     </style>
 
     <style name="CircularShape">

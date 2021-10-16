@@ -1,6 +1,9 @@
 package com.genlz.jetpacks.ui.community
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -24,8 +27,9 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
         super.onViewCreated(view, savedInstanceState)
         val pager = binding.contentView.pager
         val tab = binding.contentView.tab
-
         mediateTabWithPager(pager, tab)
+
+        setHasOptionsMenu(true)
     }
 
     private fun mediateTabWithPager(
@@ -44,6 +48,15 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
             }
             tab.setIcon(R.drawable.pager_tab_selector)
         }.attach()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_community, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {

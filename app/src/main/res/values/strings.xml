@@ -49,5 +49,6 @@
     <string name="community_fragment">CommunityFragment</string>
     <string name="service_fragment">ServiceFragment</string>
     <string name="vip_fragment">VipFragment</string>
+    <string name="speed_dial">Speed dial</string>
 
 </resources>

@@ -7,15 +7,14 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewOverlay
+import android.view.*
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
@@ -39,12 +38,13 @@ import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepositor
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
+import com.genlz.jetpacks.utility.updateMargin
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), FullscreenController {
+class MainActivity : AppCompatActivity(), FullscreenController, ToolbarCustomizer {
 
     private val binding by viewBinding(ActivityMainBinding::class.java)
 
@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity(), FullscreenController {
         binding.apply {
             bottomAppBar.performHide()
             fab.hide()
-            motionLayout.transitionToEnd()
+//            motionLayout.transitionToEnd()
         }
 //        WindowInsetsControllerCompat(window, binding.root).run {
 //            hide(WindowInsetsCompat.Type.systemBars())
@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity(), FullscreenController {
         binding.apply {
             bottomAppBar.performShow()
             fab.show()
-            motionLayout.transitionToStart()
+//            motionLayout.transitionToStart()
         }
 //        WindowInsetsControllerCompat(window, binding.root).run {
 //            show(WindowInsetsCompat.Type.systemBars())
@@ -146,6 +146,11 @@ class MainActivity : AppCompatActivity(), FullscreenController {
                 }
             }
         }
+
+    }
+
+    override fun custom(customizer: Toolbar.() -> Unit) {
+        customizer(binding.toolbar)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -212,19 +217,10 @@ class MainActivity : AppCompatActivity(), FullscreenController {
         ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, i ->
             val insets = i.getInsets(WindowInsetsCompat.Type.statusBars())
             v.updatePadding(top = insets.top)
+            v.post {
+                binding.contentMain.updateMargin(top = v.height)
+            }
             i
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -259,4 +255,11 @@ class MainActivity : AppCompatActivity(), FullscreenController {
         const val SPLASH_DISPLAY_TIME = 1000L
 
     }
+
+
+}
+
+fun interface ToolbarCustomizer {
+
+    fun custom(customizer: Toolbar.() -> Unit)
 }

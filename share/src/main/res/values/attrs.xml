@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <declare-styleable name="Banner">
-        <attr name="android:clickable" format="boolean" />
-        <attr name="android:drawable" format="reference" />
+        <attr name="playback_period" format="integer" />
     </declare-styleable>
 </resources>

@@ -1,8 +1,12 @@
 package com.genlz.jetpacks.adapter
 
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updateMarginsRelative
+import androidx.core.view.updatePaddingRelative
 import androidx.databinding.BindingAdapter
 import coil.load
 
@@ -16,6 +20,13 @@ fun loadFromUri(img: ImageView, uri: String) {
 @BindingAdapter("identified")
 fun isIdentifiedUser(imageView: ImageView, identified: Boolean) {
     imageView.visibility = if (identified) View.VISIBLE else View.INVISIBLE
+}
+
+@BindingAdapter("layout_marginTop")
+fun View.adjustMarginTop(top: Int) {
+    updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        topMargin = top + marginTop
+    }
 }
 
 /**
