@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="Banner">
+        <!--default 2000-->
         <attr name="playback_period" format="integer" />
+        <!--default is true-->
+        <attr name="autoPlay" format="boolean" />
     </declare-styleable>
 </resources>

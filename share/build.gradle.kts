@@ -1,5 +1,3 @@
-@file:kotlin.Suppress("ALL")
-
 val java_version: String by project
 val kotlin_version: String by project
 val min_sdk: String by project
@@ -33,7 +31,7 @@ android {
         targetCompatibility(java_version)
     }
     kotlinOptions {
-        jvmTarget = kotlin_version
+        jvmTarget = java_version
     }
 
     buildFeatures {
@@ -42,6 +40,12 @@ android {
 }
 
 dependencies {
+
+
+    val lifecycle_version = "2.4.0-alpha03"
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
 
     implementation("androidx.core:core-ktx:1.6.0")
     implementation("androidx.appcompat:appcompat:1.3.1")
