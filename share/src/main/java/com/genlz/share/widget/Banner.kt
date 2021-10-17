@@ -9,6 +9,8 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RadioGroup
 import androidx.core.view.get
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.genlz.share.R
@@ -46,14 +48,13 @@ class Banner @JvmOverloads constructor(
         ) {
             if (itemCount < 2) return //no need playback
             if (newValue) {
-                autoPlayJob =
-                    CoroutineScope(Dispatchers.Main.immediate).launch {
-                        while (isActive) {
-                            delay(period)
-                            binding.poster.currentItem =
-                                (binding.poster.currentItem + 1) % itemCount
-                        }
+                autoPlayJob = findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
+                    while (isActive) {
+                        delay(period)
+                        binding.poster.currentItem =
+                            (binding.poster.currentItem + 1) % itemCount
                     }
+                }
             } else {
                 autoPlayJob?.cancel()
             }
@@ -94,7 +95,6 @@ class Banner @JvmOverloads constructor(
     }
 
     val itemCount get() = binding.poster.adapter?.itemCount ?: 0
-
 
     private fun initIndicator() {
         if (itemCount > 1) {
@@ -144,11 +144,6 @@ class Banner @JvmOverloads constructor(
         autoPlay = autoPlay
     }
 
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        autoPlayJob?.cancel()
-    }
-
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         when (ev.action) {
             MotionEvent.ACTION_UP -> activate()
@@ -162,6 +157,4 @@ class Banner @JvmOverloads constructor(
         private const val TAG = "Banner"
         const val DEFAULT_PERIOD = 2000L
     }
-
-
 }

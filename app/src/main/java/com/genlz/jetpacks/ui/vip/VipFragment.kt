@@ -37,7 +37,6 @@ class VipFragment : Fragment(R.layout.fragment_vip) {
         binding.root.setOnClickListener {
             binding.banner.autoPlay = binding.banner.autoPlay.not()
         }
-        viewLifecycleOwner.lifecycleScope
 
     }
 
