@@ -2,6 +2,7 @@ package com.genlz.share.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.*
 import android.widget.Checkable
 import android.widget.FrameLayout
@@ -34,6 +35,8 @@ class Banner @JvmOverloads constructor(
             binding.indicator.visibility = if (value) VISIBLE else GONE
         }
 
+    private var autoPlayJob: Job? = null
+
     var autoPlay by object : ObservableProperty<Boolean>(true) {
 
         override fun afterChange(
@@ -45,7 +48,7 @@ class Banner @JvmOverloads constructor(
             if (newValue) {
                 autoPlayJob =
                     CoroutineScope(Dispatchers.Main.immediate).launch {
-                        while (true) {
+                        while (isActive) {
                             delay(period)
                             binding.poster.currentItem =
                                 (binding.poster.currentItem + 1) % itemCount
@@ -92,7 +95,6 @@ class Banner @JvmOverloads constructor(
 
     val itemCount get() = binding.poster.adapter?.itemCount ?: 0
 
-    private var autoPlayJob: Job? = null
 
     private fun initIndicator() {
         if (itemCount > 1) {
@@ -142,6 +144,11 @@ class Banner @JvmOverloads constructor(
         autoPlay = autoPlay
     }
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        autoPlayJob?.cancel()
+    }
+
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         when (ev.action) {
             MotionEvent.ACTION_UP -> activate()
@@ -155,4 +162,6 @@ class Banner @JvmOverloads constructor(
         private const val TAG = "Banner"
         const val DEFAULT_PERIOD = 2000L
     }
+
+
 }
