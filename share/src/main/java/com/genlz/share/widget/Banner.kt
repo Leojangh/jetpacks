@@ -101,6 +101,7 @@ class Banner @JvmOverloads constructor(
             repeat(itemCount) {
                 MaterialRadioButton(context).apply {
                     gravity = Gravity.CENTER
+                    background = null //no ripple
                     isClickable = false
                     buttonDrawable = context.theme.getDrawable(R.drawable.pager_indicator)
                     val dm = resources.displayMetrics

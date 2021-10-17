@@ -32,6 +32,9 @@ class VipFragment : Fragment(R.layout.fragment_vip) {
         val uris = listOf(
             GalleryFragment.localResUri(R.mipmap.unsplash1).toString(),
             GalleryFragment.localResUri(R.mipmap.unsplash2).toString(),
+            GalleryFragment.localResUri(R.mipmap.unsplash3).toString(),
+            GalleryFragment.localResUri(R.mipmap.unsplash4).toString(),
+            GalleryFragment.localResUri(R.mipmap.unsplash5).toString(),
         )
         binding.banner.setAdapter(BannerAdapter(uris))
         binding.root.setOnClickListener {
