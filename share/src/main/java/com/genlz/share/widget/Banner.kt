@@ -2,16 +2,18 @@ package com.genlz.share.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.*
 import android.widget.Checkable
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RadioGroup
+import androidx.annotation.Px
 import androidx.core.view.get
+import androidx.core.view.updatePadding
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.genlz.share.R
 import com.genlz.share.databinding.BannerBinding
@@ -29,13 +31,21 @@ class Banner @JvmOverloads constructor(
 
     private val binding = BannerBinding.inflate(LayoutInflater.from(context), this)
 
-    var period: Long = DEFAULT_PERIOD
+    var period: Long = 2000L
 
     var showIndicator: Boolean = true
         set(value) {
             field = value
             binding.indicator.visibility = if (value) VISIBLE else GONE
         }
+
+    var multiPageEnable = false
+
+    @Px
+    var multiPagePadding = 48.toDp(resources.displayMetrics).toFloat()
+
+    @Px
+    var pageMargin = 0f
 
     private var autoPlayJob: Job? = null
 
@@ -69,12 +79,17 @@ class Banner @JvmOverloads constructor(
             defStyleAttr,
             defStyleRes
         ).run {
-            period = getInteger(R.styleable.Banner_playback_period, DEFAULT_PERIOD.toInt()).toLong()
-            if (!getBoolean(R.styleable.Banner_autoPlay, true)) {
-                autoPlay = false
+            try {
+                period = getInteger(R.styleable.Banner_playback_period, period.toInt()).toLong()
+                autoPlay = getBoolean(R.styleable.Banner_autoPlay, autoPlay)
+                showIndicator = getBoolean(R.styleable.Banner_showIndicator, showIndicator)
+                multiPagePadding =
+                    getDimension(R.styleable.Banner_multiPagePadding, multiPagePadding)
+                multiPageEnable = getBoolean(R.styleable.Banner_multiPageEnable, multiPageEnable)
+                pageMargin = getDimension(R.styleable.Banner_pageMargin, pageMargin)
+            } finally {
+                recycle()
             }
-            showIndicator = getBoolean(R.styleable.Banner_showIndicator, true)
-            recycle()
         }
     }
 
@@ -120,6 +135,10 @@ class Banner @JvmOverloads constructor(
         }
     }
 
+    fun setPageMargin(@Px margin: Int = pageMargin.toInt()) {
+        binding.poster.setPageTransformer(MarginPageTransformer(margin))
+    }
+
     private fun initPager() {
         binding.poster.apply {
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -127,7 +146,14 @@ class Banner @JvmOverloads constructor(
                     (binding.indicator[position] as Checkable).isChecked = true
                 }
             })
-            (this[0] as RecyclerView).overScrollMode = View.OVER_SCROLL_NEVER
+            if (multiPageEnable) {
+                with(this[0] as RecyclerView) {
+                    updatePadding(left = multiPagePadding.toInt(), right = multiPagePadding.toInt())
+                    clipToPadding = false
+                    overScrollMode = View.OVER_SCROLL_NEVER
+                }
+            }
+            setPageMargin()
         }
     }
 
@@ -156,6 +182,5 @@ class Banner @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "Banner"
-        const val DEFAULT_PERIOD = 2000L
     }
 }

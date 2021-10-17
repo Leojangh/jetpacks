@@ -6,5 +6,8 @@
         <!--default is true-->
         <attr name="autoPlay" format="boolean" />
         <attr name="showIndicator" format="boolean" />
+        <attr name="multiPageEnable" format="boolean" />
+        <attr name="pageMargin" format="dimension" />
+        <attr name="multiPagePadding" format="dimension" />
     </declare-styleable>
 </resources>
