@@ -31,21 +31,17 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend), Titleable {
 
     private val viewModel by viewModels<RecommendFragmentViewModel>()
 
-    private val adapter = RecommendAdapter()
-
     private var loadingJob: Job? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.root.adapter = adapter
-        loadRecommendData()
-    }
-
-    private fun loadRecommendData() {
-        loadingJob?.cancel()
-        loadingJob = lifecycleScope.launch {
-            viewModel.loadRecommend().collectLatest {
-                adapter.submitData(it)
+        //Memory leak caused by reference to the adapter.
+        binding.postList.adapter = RecommendAdapter().apply {
+            loadingJob?.cancel()
+            loadingJob = viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.loadRecommend().collectLatest {
+                    submitData(it)
+                }
             }
         }
     }

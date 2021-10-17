@@ -103,6 +103,8 @@ dependencies {
     implementation(project(":share"))
     implementation(project(":gallery"))
 
+    implementation("androidx.palette:palette:1.0.0")
+
     implementation("com.github.chrisbanes:PhotoView:2.2.0")
 
     implementation("androidx.paging:paging-runtime-ktx:3.0.1")

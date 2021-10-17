@@ -15,4 +15,12 @@
         app:multiPageEnable="true"
         app:playback_period="2000" />
 
+    <View
+        android:id="@+id/mask"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        app:layout_constraintEnd_toEndOf="@id/banner"
+        app:layout_constraintStart_toStartOf="@id/banner"
+        app:layout_constraintTop_toTopOf="@id/banner" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

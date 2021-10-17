@@ -29,6 +29,7 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
         val tab = binding.contentView.tab
         mediateTabWithPager(pager, tab)
 
+        //TODO fix memory leak.
         setHasOptionsMenu(true)
     }
 

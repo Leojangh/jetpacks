@@ -47,6 +47,8 @@ class Banner @JvmOverloads constructor(
     @Px
     var pageMargin = 0f
 
+    val itemCount get() = binding.poster.adapter?.itemCount ?: 0
+
     private var autoPlayJob: Job? = null
 
     var autoPlay by object : ObservableProperty<Boolean>(true) {
@@ -108,8 +110,6 @@ class Banner @JvmOverloads constructor(
             }
         )
     }
-
-    val itemCount get() = binding.poster.adapter?.itemCount ?: 0
 
     private fun initIndicator() {
         if (itemCount > 1) {
