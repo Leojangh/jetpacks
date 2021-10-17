@@ -2,21 +2,18 @@ package com.genlz.share.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
-import android.view.GestureDetector
-import android.view.LayoutInflater
-import android.view.MotionEvent
+import android.view.*
 import android.widget.Checkable
-import android.widget.EdgeEffect
 import android.widget.FrameLayout
-import androidx.core.view.GestureDetectorCompat
+import android.widget.LinearLayout
+import android.widget.RadioGroup
 import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.genlz.share.R
 import com.genlz.share.databinding.BannerBinding
+import com.google.android.material.radiobutton.MaterialRadioButton
 import kotlinx.coroutines.*
-import java.lang.Runnable
 import kotlin.properties.ObservableProperty
 import kotlin.reflect.KProperty
 
@@ -27,32 +24,15 @@ class Banner @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
-    private val binding: BannerBinding = BannerBinding.inflate(
-        LayoutInflater.from(context),
-        this,
-        true
-    )
+    private val binding = BannerBinding.inflate(LayoutInflater.from(context), this)
 
-    private val gestureDetector =
-        GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onFling(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
-                velocityX: Float,
-                velocityY: Float
-            ): Boolean {
-                return super.onFling(e1, e2, velocityX, velocityY)
-            }
+    var period: Long = DEFAULT_PERIOD
 
-            override fun onLongPress(e: MotionEvent?) {
-                Log.d(TAG, "onLongPress: ")
-            }
-
-            //always return true unless need to ignore all gestures truly.
-            override fun onDown(e: MotionEvent?) = true
-        })
-
-    var period: Long
+    var showIndicator: Boolean = true
+        set(value) {
+            field = value
+            binding.indicator.visibility = if (value) VISIBLE else GONE
+        }
 
     var autoPlay by object : ObservableProperty<Boolean>(true) {
 
@@ -63,10 +43,14 @@ class Banner @JvmOverloads constructor(
         ) {
             if (itemCount < 2) return //no need playback
             if (newValue) {
-                autoPlayJob?.cancel()
-                autoPlayJob = coroutineScope.launch {
-                    autoPlay()
-                }
+                autoPlayJob =
+                    CoroutineScope(Dispatchers.Main.immediate).launch {
+                        while (true) {
+                            delay(period)
+                            binding.poster.currentItem =
+                                (binding.poster.currentItem + 1) % itemCount
+                        }
+                    }
             } else {
                 autoPlayJob?.cancel()
             }
@@ -74,48 +58,61 @@ class Banner @JvmOverloads constructor(
     }
 
     init {
+//        initView(context)
         context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.Banner,
             defStyleAttr,
             defStyleRes
         ).run {
-            try {
-                period = getInteger(R.styleable.Banner_playback_period, PERIOD.toInt()).toLong()
-                if (!getBoolean(R.styleable.Banner_autoPlay, true)) {
-                    autoPlay = false
-                }
-            } finally {
-                recycle()
+            period = getInteger(R.styleable.Banner_playback_period, DEFAULT_PERIOD.toInt()).toLong()
+            if (!getBoolean(R.styleable.Banner_autoPlay, true)) {
+                autoPlay = false
             }
+            showIndicator = getBoolean(R.styleable.Banner_showIndicator, true)
+            recycle()
         }
     }
 
-    private suspend fun autoPlay() {
-        while (true) {
-            delay(period)
-            pageSwitcher.run()
-        }
-    }
-
-    private val pageSwitcher = object : Runnable {
-
-        private var index = 0
-
-        override fun run() {
-            binding.poster.currentItem = ++index % itemCount
-        }
+    /**
+     * Layout Inspector won't show view hierarchy.
+     */
+    private fun initView(context: Context) {
+        addView(ViewPager2(context), LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        addView(
+            RadioGroup(context).apply {
+                orientation = LinearLayout.HORIZONTAL
+            },
+            LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+                gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+                bottomMargin = 8.toDp(resources.displayMetrics)
+            }
+        )
     }
 
     val itemCount get() = binding.poster.adapter?.itemCount ?: 0
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private var autoPlayJob: Job? = null
 
     private fun initIndicator() {
         if (itemCount > 1) {
             repeat(itemCount) {
-                inflate(context, R.layout.simple_radio_button, binding.indicator)
+                MaterialRadioButton(context).apply {
+                    gravity = Gravity.CENTER
+                    isClickable = false
+                    buttonDrawable = context.theme.getDrawable(R.drawable.pager_indicator)
+                    val dm = resources.displayMetrics
+                    val size = 5.toDp(dm)
+                    val margin = 4.toDp(dm)
+                    layoutParams = MarginLayoutParams(size, size).apply {
+                        bottomMargin = margin
+                        topMargin = margin
+                        leftMargin = margin
+                        rightMargin = margin
+                    }
+                }.also {
+                    binding.indicator.addView(it)
+                }
             }
         }
     }
@@ -127,6 +124,7 @@ class Banner @JvmOverloads constructor(
                     (binding.indicator[position] as Checkable).isChecked = true
                 }
             })
+            (this[0] as RecyclerView).overScrollMode = View.OVER_SCROLL_NEVER
         }
     }
 
@@ -134,20 +132,27 @@ class Banner @JvmOverloads constructor(
         binding.poster.adapter = adapter
         initPager()
         initIndicator()
-        autoPlay = autoPlay //activate
+        activate()
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        Log.d(TAG, "onTouchEvent: $event")
-        return gestureDetector.onTouchEvent(event)
+    /**
+     * Call this method to ensure auto play job works well.
+     */
+    private fun activate() {
+        autoPlay = autoPlay
     }
 
-//    override fun performClick(): Boolean {
-//        return super.performClick()
-//    }
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        when (ev.action) {
+            MotionEvent.ACTION_UP -> activate()
+
+            else -> autoPlayJob?.cancel()
+        }
+        return super.dispatchTouchEvent(ev)
+    }
 
     companion object {
         private const val TAG = "Banner"
-        const val PERIOD = 2000L
+        const val DEFAULT_PERIOD = 2000L
     }
 }

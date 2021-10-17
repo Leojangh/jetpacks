@@ -35,6 +35,10 @@ class VipFragment : Fragment(R.layout.fragment_vip) {
             GalleryFragment.localResUri(R.mipmap.unsplash2).toString(),
         )
         binding.banner.setAdapter(BannerAdapter(uris))
+        binding.root.setOnClickListener {
+            binding.banner.autoPlay = binding.banner.autoPlay.not()
+        }
+
     }
 
     companion object {

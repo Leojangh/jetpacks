@@ -5,5 +5,6 @@
         <attr name="playback_period" format="integer" />
         <!--default is true-->
         <attr name="autoPlay" format="boolean" />
+        <attr name="showIndicator" format="boolean" />
     </declare-styleable>
 </resources>
