@@ -12,7 +12,6 @@ import android.view.animation.AnticipateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.animation.doOnEnd
@@ -20,8 +19,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.*
-import androidx.dynamicanimation.animation.FlingAnimation
-import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -30,7 +27,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.transition.Scene
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository
@@ -217,10 +213,17 @@ class MainActivity : AppCompatActivity(), FullscreenController, ToolbarCustomize
         ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, i ->
             val insets = i.getInsets(WindowInsetsCompat.Type.statusBars())
             v.updatePadding(top = insets.top)
+            //Adjust marginTop after measured.
             v.post {
                 binding.contentMain.updateMargin(top = v.height)
             }
-            i
+            WindowInsetsCompat.CONSUMED
+        }
+
+        //BottomAppBar has already fit navigation bar.
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavigation) { v, _ ->
+            v.updatePadding(bottom = 0)
+            WindowInsetsCompat.CONSUMED
         }
     }
 
