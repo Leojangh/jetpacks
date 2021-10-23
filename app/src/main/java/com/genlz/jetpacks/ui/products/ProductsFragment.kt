@@ -204,18 +204,18 @@ private class ThumbsAdapter(
     ) {
         val views = (img.parent as ViewGroup).children.toList()
         val thumbsAndOrigin = keys.zip(uris).toMap()
-//        GalleryFragment.navigate(
-//            navController,
-//            views,
-//            position,
-//            thumbsAndOrigin
-//        )
-        GalleryActivity.navigate(
-            img.context.appCompatActivity!!,
+        GalleryFragment.navigate(
+            navController,
             views,
             position,
             thumbsAndOrigin
         )
+//        GalleryActivity.navigate(
+//            img.context.appCompatActivity!!,
+//            views,
+//            position,
+//            thumbsAndOrigin
+//        )
     }
 
     override fun getItemCount() = uris.size

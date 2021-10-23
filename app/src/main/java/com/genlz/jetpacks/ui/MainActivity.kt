@@ -1,6 +1,8 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
+import android.animation.Animator
+import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,17 +10,22 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.animation.Animation
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.LayoutRes
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.ActionBar.DISPLAY_SHOW_CUSTOM
+import androidx.appcompat.app.ActionBar.LayoutParams
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.*
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -35,12 +42,13 @@ import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
 import com.genlz.jetpacks.utility.updateMargin
+import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), FullscreenController, ToolbarCustomizer {
+class MainActivity : AppCompatActivity(), FullscreenController, ActionBarCustomizer {
 
     private val binding by viewBinding(ActivityMainBinding::class.java)
 
@@ -97,9 +105,11 @@ class MainActivity : AppCompatActivity(), FullscreenController, ToolbarCustomize
     override fun enterFullscreen() {
         binding.apply {
             bottomAppBar.performHide()
-            fab.hide()
-//            motionLayout.transitionToEnd()
+//            appBarLayout.animate().translationY(-appBarLayout.height.toFloat()).start()
+
+//            appBarLayout.isLifted = true
         }
+
 //        WindowInsetsControllerCompat(window, binding.root).run {
 //            hide(WindowInsetsCompat.Type.systemBars())
 //            systemBarsBehavior =
@@ -110,8 +120,8 @@ class MainActivity : AppCompatActivity(), FullscreenController, ToolbarCustomize
     override fun exitFullscreen() {
         binding.apply {
             bottomAppBar.performShow()
-            fab.show()
-//            motionLayout.transitionToStart()
+//            appBarLayout.animate().translationY(appBarLayout.height.toFloat()).start()
+//            appBarLayout.isLifted = false
         }
 //        WindowInsetsControllerCompat(window, binding.root).run {
 //            show(WindowInsetsCompat.Type.systemBars())
@@ -142,11 +152,10 @@ class MainActivity : AppCompatActivity(), FullscreenController, ToolbarCustomize
                 }
             }
         }
-
     }
 
-    override fun custom(customizer: Toolbar.() -> Unit) {
-        customizer(binding.toolbar)
+    override fun custom(customizer: ActionBar.() -> Unit) {
+        with(supportActionBar ?: error("No action bar supplied!"), customizer)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -208,9 +217,13 @@ class MainActivity : AppCompatActivity(), FullscreenController, ToolbarCustomize
         }
     }
 
+    /**
+     * The attribute fitSystemWindow has some bug or little glitch such as no effect with
+     * bottom navigation view;app bar layout can't lift thoroughly.
+     */
     private fun edge2edge() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, i ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbarLayout) { v, i ->
             val insets = i.getInsets(WindowInsetsCompat.Type.statusBars())
             v.updatePadding(top = insets.top)
             //Adjust marginTop after measured.
@@ -219,6 +232,10 @@ class MainActivity : AppCompatActivity(), FullscreenController, ToolbarCustomize
             }
             WindowInsetsCompat.CONSUMED
         }
+
+        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            binding.contentMain.updateMargin(top = appBarLayout.height + verticalOffset)
+        })
 
         //BottomAppBar has already fit navigation bar.
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavigation) { v, _ ->
@@ -259,10 +276,32 @@ class MainActivity : AppCompatActivity(), FullscreenController, ToolbarCustomize
 
     }
 
-
 }
 
-fun interface ToolbarCustomizer {
+fun interface ActionBarCustomizer {
 
-    fun custom(customizer: Toolbar.() -> Unit)
+    fun custom(customizer: (ActionBar.() -> Unit))
+
+    companion object {
+        fun Fragment.findActionBarCustomizer(): ActionBarCustomizer? {
+            return activity as? ActionBarCustomizer
+        }
+
+        /**
+         * [androidx.appcompat.app.ToolbarActionBar.setCustomView] use default
+         * layout params [LayoutParams.WRAP_CONTENT].So the match_parent is invalidate
+         * in custom layout,unless it becomes the direct subview of action bar,such as a child of Toolbar:
+         * ...
+         * <Toolbar>
+         *     <include layout="@layout/layoutId"/>
+         * </Toolbar>
+         * ...
+         * You can access the inflated view by [ActionBar.getCustomView].
+         */
+        fun ActionBar.setCustomViewFitAllSpace(@LayoutRes layoutId: Int) {
+            displayOptions = DISPLAY_SHOW_CUSTOM
+            val v = View.inflate(themedContext, layoutId, null)
+            setCustomView(v, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+        }
+    }
 }

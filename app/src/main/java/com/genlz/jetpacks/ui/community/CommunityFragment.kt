@@ -1,10 +1,9 @@
 package com.genlz.jetpacks.ui.community
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.util.Log
+import android.view.*
+import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -12,6 +11,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentCommunityBinding
+import com.genlz.jetpacks.ui.ActionBarCustomizer
+import com.genlz.jetpacks.ui.ActionBarCustomizer.Companion.findActionBarCustomizer
+import com.genlz.jetpacks.ui.ActionBarCustomizer.Companion.setCustomViewFitAllSpace
 import com.genlz.jetpacks.ui.community.follow.FollowFragment
 import com.genlz.jetpacks.ui.community.recommend.RecommendFragment
 import com.google.android.material.tabs.TabLayout
@@ -28,6 +30,12 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
         val pager = binding.contentView.pager
         val tab = binding.contentView.tab
         mediateTabWithPager(pager, tab)
+
+        // It seems that this method is not idempotent.
+//        findActionBarCustomizer()?.custom {
+//            setCustomViewFitAllSpace(R.layout.search_layout)
+//            displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+//        }
 
         //TODO fix memory leak.
         setHasOptionsMenu(true)

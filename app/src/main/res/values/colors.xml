@@ -10,4 +10,6 @@
 
     <color name="twitter_background">#2DAAE1</color>
 
+    <color name="statusBarColor">#4D000000</color>
+
 </resources>

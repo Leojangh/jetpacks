@@ -12,9 +12,9 @@
         android:title="@string/products" />
 
     <!--Just a placeholder-->
-    <item
-        android:enabled="false"
-        android:title="" />
+    <!--    <item-->
+    <!--        android:enabled="false"-->
+    <!--        android:title="" />-->
 
     <item
         android:id="@+id/serviceFragment"

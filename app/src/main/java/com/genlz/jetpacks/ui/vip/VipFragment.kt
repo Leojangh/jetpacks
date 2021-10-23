@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -12,8 +13,8 @@ import coil.load
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentVipBinding
+import com.genlz.jetpacks.ui.ActionBarCustomizer.Companion.findActionBarCustomizer
 import com.genlz.jetpacks.ui.GalleryFragment
-import com.genlz.jetpacks.ui.ToolbarCustomizer
 import com.google.android.material.imageview.ShapeableImageView
 
 class VipFragment : Fragment(R.layout.fragment_vip) {
@@ -24,9 +25,7 @@ class VipFragment : Fragment(R.layout.fragment_vip) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as? ToolbarCustomizer)?.custom {
-            Log.d(TAG, "onViewCreated: ${findViewById<View>(R.id.avatar)}")
-        }
+
 
         val uris = listOf(
             GalleryFragment.localResUri(R.mipmap.unsplash1).toString(),
