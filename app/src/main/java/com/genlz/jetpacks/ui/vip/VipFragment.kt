@@ -40,7 +40,8 @@ class VipFragment : Fragment(R.layout.fragment_vip) {
             show()
             setImageResource(R.drawable.ic_baseline_verified_24)
             setOnClickListener {
-                Snackbar.make(it, "Vip", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(it, "$it", Snackbar.LENGTH_SHORT).apply {
+                }.show()
             }
         }
     }
