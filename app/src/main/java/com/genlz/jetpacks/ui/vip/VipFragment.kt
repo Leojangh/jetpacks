@@ -1,11 +1,9 @@
 package com.genlz.jetpacks.ui.vip
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -13,9 +11,11 @@ import coil.load
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentVipBinding
-import com.genlz.jetpacks.ui.ActionBarCustomizer.Companion.findActionBarCustomizer
+import com.genlz.jetpacks.ui.common.ActionBarCustomizer.Companion.findActionBarCustomizer
+import com.genlz.jetpacks.ui.common.FabSetter.Companion.findFabSetter
 import com.genlz.jetpacks.ui.GalleryFragment
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.snackbar.Snackbar
 
 class VipFragment : Fragment(R.layout.fragment_vip) {
 
@@ -35,6 +35,14 @@ class VipFragment : Fragment(R.layout.fragment_vip) {
             GalleryFragment.localResUri(R.mipmap.unsplash5).toString(),
         )
         binding.banner.setAdapter(BannerAdapter(uris))
+
+        findFabSetter()?.setupFab {
+            show()
+            setImageResource(R.drawable.ic_baseline_verified_24)
+            setOnClickListener {
+                Snackbar.make(it, "Vip", Snackbar.LENGTH_SHORT).show()
+            }
+        }
     }
 
     companion object {

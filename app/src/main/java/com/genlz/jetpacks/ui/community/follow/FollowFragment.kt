@@ -15,9 +15,11 @@ import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentFollowBinding
 import com.genlz.jetpacks.datasource.SplashDataSource
 import com.genlz.jetpacks.ui.GalleryFragment
+import com.genlz.jetpacks.ui.common.FabSetter.Companion.findFabSetter
 import com.genlz.jetpacks.ui.community.Titleable
 import com.genlz.jetpacks.ui.community.Titleable.Companion.TITLE_RES_KEY
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.snackbar.Snackbar
 
 class FollowFragment : Fragment(R.layout.fragment_follow), Titleable {
 
@@ -27,6 +29,13 @@ class FollowFragment : Fragment(R.layout.fragment_follow), Titleable {
         super.onViewCreated(view, savedInstanceState)
 
 
+        findFabSetter()?.setupFab {
+            show()
+            setImageResource(R.drawable.ic_baseline_thumb_up)
+            setOnClickListener {
+                Snackbar.make(it, R.string.follow, Snackbar.LENGTH_SHORT).show()
+            }
+        }
     }
 
     companion object {

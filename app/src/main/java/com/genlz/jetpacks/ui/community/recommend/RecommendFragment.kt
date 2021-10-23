@@ -17,8 +17,10 @@ import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentRecommendBinding
 import com.genlz.jetpacks.databinding.PostItemBinding
 import com.genlz.jetpacks.pojo.Post
+import com.genlz.jetpacks.ui.common.FabSetter.Companion.findFabSetter
 import com.genlz.jetpacks.ui.community.Titleable
 import com.genlz.jetpacks.ui.community.Titleable.Companion.TITLE_RES_KEY
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -42,6 +44,14 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend), Titleable {
                 viewModel.loadRecommend().collectLatest {
                     submitData(it)
                 }
+            }
+        }
+
+        findFabSetter()?.setupFab {
+            show()
+            setImageResource(R.drawable.ic_baseline_plus_one_24)
+            setOnClickListener {
+                Snackbar.make(it, R.string.recommend, Snackbar.LENGTH_SHORT).show()
             }
         }
     }

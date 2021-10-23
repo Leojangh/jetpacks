@@ -1,9 +1,10 @@
 package com.genlz.jetpacks.ui.community
 
 import android.os.Bundle
-import android.util.Log
-import android.view.*
-import androidx.appcompat.app.ActionBar
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -11,9 +12,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentCommunityBinding
-import com.genlz.jetpacks.ui.ActionBarCustomizer
-import com.genlz.jetpacks.ui.ActionBarCustomizer.Companion.findActionBarCustomizer
-import com.genlz.jetpacks.ui.ActionBarCustomizer.Companion.setCustomViewFitAllSpace
 import com.genlz.jetpacks.ui.community.follow.FollowFragment
 import com.genlz.jetpacks.ui.community.recommend.RecommendFragment
 import com.google.android.material.tabs.TabLayout

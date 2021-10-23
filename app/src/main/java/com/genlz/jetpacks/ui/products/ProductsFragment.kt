@@ -1,6 +1,5 @@
 package com.genlz.jetpacks.ui.products
 
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
@@ -8,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
-import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
@@ -22,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.memory.MemoryCache
 import coil.size.ViewSizeResolver
-import com.genlz.android.gallery.GalleryActivity
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.CommentListItemBinding
@@ -31,10 +28,9 @@ import com.genlz.jetpacks.databinding.PostsListItemBinding
 import com.genlz.jetpacks.databinding.SimpleItemImageViewBinding
 import com.genlz.jetpacks.pojo.Post
 import com.genlz.jetpacks.ui.GalleryFragment
-import com.genlz.jetpacks.utility.appCompatActivity
+import com.genlz.jetpacks.ui.common.FabSetter.Companion.findFabSetter
 import com.genlz.jetpacks.utility.launchAndCollectIn
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.HashMap
 
 private const val TAG = "ProductsFragment"
 
@@ -57,6 +53,10 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
         postponeEnterTransition()
         (view.parent as? ViewGroup)?.doOnPreDraw {
             startPostponedEnterTransition()
+        }
+
+        findFabSetter()?.setupFab {
+            hide()
         }
     }
 }

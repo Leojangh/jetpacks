@@ -34,6 +34,7 @@ import com.genlz.jetpacks.App
 import com.genlz.jetpacks.GalleryDirections
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentGalleryBinding
+import com.genlz.jetpacks.ui.common.FullscreenController.Companion.findFullscreenController
 import com.genlz.jetpacks.utility.appCompatActivity
 
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
@@ -87,19 +88,16 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         if (args.showOptions == SHOW_OPTIONS_NORMAL) {
-            controlFullscreen(enter)
+            //adb shell settings put global transition_duration_scale 20
+            findFullscreenController()?.apply {
+                if (enter) {
+                    enterFullscreen()
+                } else {
+                    exitFullscreen()
+                }
+            }
         }
         return super.onCreateAnimation(transit, enter, nextAnim)
-    }
-
-    //adb shell settings put global transition_duration_scale 20
-    private fun controlFullscreen(enter: Boolean) {
-        val fullscreenController = activity as? FullscreenController ?: return
-        if (enter) {
-            fullscreenController.enterFullscreen()
-        } else {
-            fullscreenController.exitFullscreen()
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -126,7 +124,14 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
         // Make sure always as fullscreen state at this fragment scenario.
         if (args.showOptions == SHOW_OPTIONS_NORMAL) {
-            controlFullscreen(true)
+            //adb shell settings put global transition_duration_scale 20
+            findFullscreenController()?.apply {
+                if (true) {
+                    enterFullscreen()
+                } else {
+                    exitFullscreen()
+                }
+            }
         }
 
         // Note: When using a shared element transition from a fragment using a RecyclerView
@@ -261,13 +266,6 @@ private class PagerAdapter(
                 }
         }
     }
-}
-
-interface FullscreenController {
-
-    fun enterFullscreen()
-
-    fun exitFullscreen()
 }
 
 private const val TAG = "GalleryFragment"
