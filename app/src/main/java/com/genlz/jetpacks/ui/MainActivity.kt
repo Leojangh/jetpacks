@@ -4,6 +4,7 @@ import android.Manifest
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -18,9 +19,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
+import androidx.core.view.*
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -239,8 +238,14 @@ class MainActivity : AppCompatActivity(),
             WindowInsetsCompat.CONSUMED
         }
 
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
         binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             binding.contentMain.updateMargin(top = appBarLayout.height + verticalOffset)
+            // Control status bar appearance.
+            val fullscreen = binding.contentMain.marginTop == 0
+            controller.isAppearanceLightStatusBars = fullscreen
+            window.statusBarColor =
+                if (fullscreen) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
         })
 
         //BottomAppBar has already fit navigation bar.
@@ -248,7 +253,6 @@ class MainActivity : AppCompatActivity(),
             v.updatePadding(bottom = 0)
             WindowInsetsCompat.CONSUMED
         }
-
 
     }
 
