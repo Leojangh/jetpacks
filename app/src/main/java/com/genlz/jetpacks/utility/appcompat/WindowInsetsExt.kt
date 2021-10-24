@@ -2,6 +2,7 @@
 
 package com.genlz.jetpacks.utility.appcompat
 
+import androidx.core.graphics.Insets
 import androidx.core.view.WindowInsetsCompat
 
 inline val WindowInsetsCompat.systemBarInsets get() = getInsets(WindowInsetsCompat.Type.systemBars())
@@ -12,3 +13,7 @@ inline val WindowInsetsCompat.systemGesturesInsets get() = getInsets(WindowInset
 inline val WindowInsetsCompat.mandatorySystemGesturesInsets get() = getInsets(WindowInsetsCompat.Type.mandatorySystemGestures())
 inline val WindowInsetsCompat.captionBarInsets get() = getInsets(WindowInsetsCompat.Type.captionBar())
 inline val WindowInsetsCompat.displayCutoutInsets get() = getInsets(WindowInsetsCompat.Type.displayCutout())
+
+operator fun Insets.plus(insets: Insets) = Insets.add(this, insets)
+
+operator fun Insets.minus(insets: Insets) = Insets.subtract(this, insets)
