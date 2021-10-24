@@ -35,7 +35,7 @@ import com.genlz.jetpacks.GalleryDirections
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentGalleryBinding
 import com.genlz.jetpacks.ui.common.FullscreenController.Companion.findFullscreenController
-import com.genlz.jetpacks.utility.appCompatActivity
+import com.genlz.jetpacks.utility.appcompat.appCompatActivity
 
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 

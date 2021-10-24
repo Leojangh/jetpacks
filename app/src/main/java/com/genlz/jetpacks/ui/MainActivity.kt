@@ -9,19 +9,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.animation.AnticipateInterpolator
-import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -43,10 +39,8 @@ import com.genlz.jetpacks.databinding.ActivityMainBinding
 import com.genlz.jetpacks.ui.common.ActionBarCustomizer
 import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
-import com.genlz.jetpacks.utility.appcompat.requireViewByIdExt
-import com.genlz.jetpacks.utility.updateMargin
+import com.genlz.jetpacks.utility.appcompat.*
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -83,7 +77,7 @@ class MainActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         splashScreen = installSplashScreen()
-//        waitForReady()
+        waitForReady()
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
@@ -108,6 +102,7 @@ class MainActivity : AppCompatActivity(),
             number = 20
         }
 
+//        lruCache(100)
     }
 
     override fun enterFullscreen() {
@@ -234,10 +229,9 @@ class MainActivity : AppCompatActivity(),
      * bottom navigation view;app bar layout can't lift thoroughly.
      */
     private fun edge2edge() {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbarLayout) { v, i ->
-            val insets = i.getInsets(WindowInsetsCompat.Type.statusBars())
-            v.updatePadding(top = insets.top)
+        window.setDecorFitsSystemWindowsExt(false)
+        binding.toolbarLayout.setOnApplyWindowInsetsListener { v, i, ip ->
+            v.updatePadding(top = i.statusBarInsets.top + ip.top)
             //Adjust marginTop after measured.
             v.post {
                 binding.contentMain.updateMargin(top = v.height)
@@ -250,10 +244,12 @@ class MainActivity : AppCompatActivity(),
         })
 
         //BottomAppBar has already fit navigation bar.
-        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavigation) { v, _ ->
+        binding.bottomNavigation.setOnApplyWindowInsetsListener { v, _, _ ->
             v.updatePadding(bottom = 0)
             WindowInsetsCompat.CONSUMED
         }
+
+
     }
 
     /**

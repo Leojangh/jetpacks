@@ -1,7 +1,4 @@
 val java_version: String by project
-val kotlin_version: String by project
-val min_sdk: String by project
-val target_sdk: String by project
 
 plugins {
     id("com.android.library")
@@ -9,11 +6,11 @@ plugins {
 }
 
 android {
-    compileSdk = target_sdk.toInt()
+    compileSdk = 31
 
     defaultConfig {
-        minSdk = min_sdk.toInt()
-        targetSdk = target_sdk.toInt()
+        minSdk = 21
+        targetSdk = 31
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -41,15 +38,15 @@ android {
 
 dependencies {
 
+    val lifecycle: String by rootProject.extra
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle")
 
-    val lifecycle_version = "2.4.0-alpha03"
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation("androidx.core:core-ktx:${rootProject.extra["coreKtx"]}")
+    implementation("androidx.appcompat:appcompat:${rootProject.extra["appcompat"]}")
+    implementation("com.google.android.material:material:${rootProject.extra["material"]}")
 
-    implementation("androidx.core:core-ktx:1.6.0")
-    implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("com.google.android.material:material:1.4.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")

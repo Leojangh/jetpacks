@@ -1,5 +1,7 @@
+// Auto properties delegate from gradle.properties,
+// same as settings and init script,just us 'by settings' or 'by gradle'.
+// this delegate declaration can be omitted if use groovy.
 val java_version: String by project
-val kotlin_version: String by project
 val hilt_version: String by project
 val nav_version: String by project
 
@@ -68,7 +70,7 @@ android {
         }
 
         debug {
-            applicationIdSuffix = "debug"
+            applicationIdSuffix = ".debug"
         }
     }
 
@@ -101,57 +103,57 @@ android {
 dependencies {
 
     implementation(project(":share"))
-    implementation(project(":gallery"))
 
-    implementation("androidx.palette:palette:1.0.0")
+    implementation("androidx.palette:palette:${rootProject.extra["palette"]}")
 
-    implementation("com.github.chrisbanes:PhotoView:2.2.0")
+    implementation("com.github.chrisbanes:PhotoView:${rootProject.extra["photoView"]}")
 
-    implementation("androidx.paging:paging-runtime-ktx:3.0.1")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("androidx.paging:paging-runtime-ktx:${rootProject.extra["paging"]}")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:${rootProject.extra["swiperRefreshLayout"]}")
 
-    val window_version = "1.0.0-beta+"
-    implementation("androidx.window:window:$window_version")
-    androidTestImplementation("androidx.window:window-testing:$window_version")
+    val window: String by rootProject.extra
+    implementation("androidx.window:window:$window")
+    androidTestImplementation("androidx.window:window-testing:$window")
 
-    implementation("androidx.core:core-splashscreen:1.0.0-alpha02")
+    implementation("androidx.core:core-splashscreen:${rootProject.extra["splash"]}")
 
-    implementation("io.coil-kt:coil:1.3.2")
+    implementation("io.coil-kt:coil:${rootProject.extra["coil"]}")
 
-    implementation("androidx.startup:startup-runtime:1.1.0")
+    implementation("androidx.startup:startup-runtime:${rootProject.extra["startup"]}")
 
-    val lifecycle_version = "2.4.0-alpha03"
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    val lifecycle: String by rootProject.extra
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle")
 
-    val room_version = "2.3.0"
-    implementation("androidx.room:room-ktx:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
+    val room: String by rootProject.extra
+    implementation("androidx.room:room-ktx:$room")
+    kapt("androidx.room:room-compiler:$room")
 
-    implementation("androidx.work:work-runtime-ktx:2.7.0-beta01")//for targeting S+
+    implementation("androidx.work:work-runtime-ktx:${rootProject.extra["work"]}")
 
-    val retrofit_version = "2.9.0"
     //retrofit
-    implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
-    implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
-    implementation("com.google.code.gson:gson:2.8.7")
+    val retrofit: String by rootProject.extra
+    implementation("com.squareup.retrofit2:converter-gson:$retrofit")
+    implementation("com.squareup.retrofit2:retrofit:$retrofit")
+    implementation("com.google.code.gson:gson:${rootProject.extra["gson"]}")
 
     //okhttp
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.1"))
+    val okhttp: String by rootProject.extra
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:$okhttp"))
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
-    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:$okhttp")
 
     implementation("com.google.dagger:hilt-android:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
     implementation(kotlin("reflect"))
-    implementation("androidx.core:core-ktx:1.6.0")
-    implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("com.google.android.material:material:1.4.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.1")
+    implementation("androidx.core:core-ktx:${rootProject.extra["coreKtx"]}")
+    implementation("androidx.appcompat:appcompat:${rootProject.extra["appcompat"]}")
+    implementation("com.google.android.material:material:${rootProject.extra["material"]}")
+    implementation("androidx.constraintlayout:constraintlayout:${rootProject.extra["constraintLayout"]}")
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation(fileTree("libs") {

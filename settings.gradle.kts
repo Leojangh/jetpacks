@@ -1,3 +1,5 @@
+//val kotlin_version: String by settings
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -7,7 +9,7 @@ dependencyResolutionManagement {
     }
 }
 
+
 rootProject.name = "jetpacks"
 include(":app")
-include(":gallery")
 include(":share")

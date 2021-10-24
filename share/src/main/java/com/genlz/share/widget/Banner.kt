@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RadioGroup
 import androidx.annotation.Px
+import androidx.core.content.withStyledAttributes
 import androidx.core.view.get
 import androidx.core.view.updatePadding
 import androidx.lifecycle.findViewTreeLifecycleOwner
@@ -75,23 +76,14 @@ class Banner @JvmOverloads constructor(
 
     init {
 //        initView(context)
-        context.theme.obtainStyledAttributes(
-            attrs,
-            R.styleable.Banner,
-            defStyleAttr,
-            defStyleRes
-        ).run {
-            try {
-                period = getInteger(R.styleable.Banner_playback_period, period.toInt()).toLong()
-                autoPlay = getBoolean(R.styleable.Banner_autoPlay, autoPlay)
-                showIndicator = getBoolean(R.styleable.Banner_showIndicator, showIndicator)
-                multiPagePadding =
-                    getDimension(R.styleable.Banner_multiPagePadding, multiPagePadding)
-                multiPageEnable = getBoolean(R.styleable.Banner_multiPageEnable, multiPageEnable)
-                pageMargin = getDimension(R.styleable.Banner_pageMargin, pageMargin)
-            } finally {
-                recycle()
-            }
+        context.withStyledAttributes(attrs, R.styleable.Banner, defStyleAttr, defStyleRes) {
+            period = getInteger(R.styleable.Banner_playback_period, period.toInt()).toLong()
+            autoPlay = getBoolean(R.styleable.Banner_autoPlay, autoPlay)
+            showIndicator = getBoolean(R.styleable.Banner_showIndicator, showIndicator)
+            multiPagePadding =
+                getDimension(R.styleable.Banner_multiPagePadding, multiPagePadding)
+            multiPageEnable = getBoolean(R.styleable.Banner_multiPageEnable, multiPageEnable)
+            pageMargin = getDimension(R.styleable.Banner_pageMargin, pageMargin)
         }
     }
 
