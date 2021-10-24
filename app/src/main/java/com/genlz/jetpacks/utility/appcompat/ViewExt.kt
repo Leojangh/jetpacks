@@ -39,22 +39,16 @@ inline fun View.updateMargin(
 }
 
 /**
- * A Quadruple form.
+ * A Quadruple form to record paddings or margins.
  */
-data class Quadruple(val first: Int, val second: Int, val third: Int, val fourth: Int)
-/**
- *
- */
-typealias Paddings = Quadruple
-
-val Paddings.left get() = component1()
-val Paddings.top get() = component2()
-val Paddings.right get() = component3()
-val Paddings.bottom get() = component4()
-
-typealias Margins = Quadruple
-
-//val Margins.left get() = component1()//conflict
+data class EdgeDistance(
+    val left: Int,
+    val top: Int,
+    val right: Int,
+    val bottom: Int
+)
+typealias Paddings = EdgeDistance
+typealias Margins = EdgeDistance
 
 /**
  * Extension from [OnApplyWindowInsetsListener],help to remember the initial paddings.
