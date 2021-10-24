@@ -11,7 +11,6 @@ import coil.load
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentVipBinding
-import com.genlz.jetpacks.ui.common.ActionBarCustomizer.Companion.findActionBarCustomizer
 import com.genlz.jetpacks.ui.common.FabSetter.Companion.findFabSetter
 import com.genlz.jetpacks.ui.GalleryFragment
 import com.google.android.material.imageview.ShapeableImageView

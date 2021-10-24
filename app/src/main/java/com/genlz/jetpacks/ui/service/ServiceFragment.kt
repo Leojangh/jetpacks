@@ -1,5 +1,7 @@
 package com.genlz.jetpacks.ui.service
 
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.genlz.android.viewbinding.viewBinding
@@ -12,4 +14,12 @@ class ServiceFragment : Fragment(R.layout.fragment_service) {
 
     private val viewModel by viewModels<ServiceFragmentViewModel>()
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+    }
+
+    companion object {
+        private const val TAG = "ServiceFragment"
+    }
 }

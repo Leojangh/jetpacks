@@ -4,10 +4,15 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.animation.AnticipateInterpolator
+import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -36,6 +41,8 @@ import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.jetpacks.utility.appcompat.*
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -96,8 +103,6 @@ class MainActivity : AppCompatActivity(),
         binding.bottomNavigation.getOrCreateBadge(R.id.communityFragment).apply {
             number = 20
         }
-
-//        lruCache(100)
     }
 
     override fun enterFullscreen() {

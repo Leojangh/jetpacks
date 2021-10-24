@@ -38,23 +38,26 @@ private object Listener : ViewPropertyAnimatorListener {
 /**
  * Add an action which will be invoked when the animation has started.
  */
-fun ViewPropertyAnimatorCompat.doOnStart(action: (View) -> Unit) {
+fun ViewPropertyAnimatorCompat.doOnStart(action: (View) -> Unit): ViewPropertyAnimatorCompat {
     Listener.startActions.add(0, action)
     setListener(Listener)
+    return this
 }
 
 /**
  * Add an action which will be invoked when the animation has ended.
  */
-fun ViewPropertyAnimatorCompat.doOnEnd(action: (View) -> Unit) {
+fun ViewPropertyAnimatorCompat.doOnEnd(action: (View) -> Unit): ViewPropertyAnimatorCompat {
     Listener.endActions += action
     setListener(Listener)
+    return this
 }
 
 /**
  * Add an action which will be invoked when the animation has cancelled.
  */
-fun ViewPropertyAnimatorCompat.doOnCancel(action: (View) -> Unit) {
+fun ViewPropertyAnimatorCompat.doOnCancel(action: (View) -> Unit): ViewPropertyAnimatorCompat {
     Listener.cancelActions += action
     setListener(Listener)
+    return this
 }

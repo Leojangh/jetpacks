@@ -10,6 +10,7 @@ import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
@@ -777,3 +778,12 @@ inline var View.accessibilityPaneTitleExt: CharSequence?
 inline var View.accessibilityHeading
     @UiThread get() = ViewCompat.isAccessibilityHeading(this)
     @UiThread set(value) = ViewCompat.setAccessibilityHeading(this, value)
+
+
+inline var View.foregroundExt: Drawable?
+    get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) foreground else null
+    set(value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            foreground = value
+        }
+    }

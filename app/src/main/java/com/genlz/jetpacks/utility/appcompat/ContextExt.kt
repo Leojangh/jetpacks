@@ -56,7 +56,7 @@ inline fun Context.createDeviceProtectedStorageContextExt() =
 
 inline fun Context.isDeviceProtectedStorageExt() = ContextCompat.isDeviceProtectedStorage(this)
 
-inline fun Context.getMainExecutorExt(): Executor = ContextCompat.getMainExecutor(this)
+inline val Context.mainExecutorExt: Executor get() = ContextCompat.getMainExecutor(this)
 
 inline fun Context.startForegroundServiceExt(intent: Intent) =
     ContextCompat.startForegroundService(this, intent)
