@@ -1,26 +1,22 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.animation.AnticipateInterpolator
-import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.*
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -41,8 +37,6 @@ import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.jetpacks.utility.appcompat.*
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -92,9 +86,8 @@ class MainActivity : AppCompatActivity(),
 
         Log.d(TAG, "onCreate: $this")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions()
-        }
+        requestPermissions()
+
         setupNavigation()
         windowInfoRepo = windowInfoRepository()
 
@@ -103,6 +96,7 @@ class MainActivity : AppCompatActivity(),
         binding.bottomNavigation.getOrCreateBadge(R.id.communityFragment).apply {
             number = 20
         }
+
     }
 
     override fun enterFullscreen() {
@@ -165,7 +159,6 @@ class MainActivity : AppCompatActivity(),
         action(binding.fab)
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun requestPermissions() {
         val requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -221,6 +214,7 @@ class MainActivity : AppCompatActivity(),
      */
     private fun edge2edge() {
         window.setDecorFitsSystemWindowsExt(false)
+
         binding.toolbarLayout.setOnApplyWindowInsetsListener { v, i, ip ->
             v.updatePadding(top = i.statusBarInsets.top + ip.top)
             //Adjust marginTop after measured.
@@ -231,13 +225,13 @@ class MainActivity : AppCompatActivity(),
         }
 
         val controller = WindowInsetsControllerCompat(window, window.decorView)
-        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-            binding.contentMain.updateMargin(top = appBarLayout.height + verticalOffset)
+        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { abl, offset ->
+//            binding.contentMain.updateMargin(top = appBarLayout.height + verticalOffset)
             // Control status bar appearance.
-            val fullscreen = binding.contentMain.marginTop == 0
-            controller.isAppearanceLightStatusBars = fullscreen
+            val lifted = -offset == abl.height
+            controller.isAppearanceLightStatusBars = lifted
             window.statusBarColor =
-                if (fullscreen) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
+                if (lifted) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
         })
 
         //BottomAppBar has already fit navigation bar.

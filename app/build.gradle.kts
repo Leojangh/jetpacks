@@ -15,6 +15,12 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
 }
 
+kapt {
+    arguments {
+
+    }
+}
+
 android {
     compileSdk = 31
 
@@ -31,6 +37,10 @@ android {
             annotationProcessorOptions {
                 arguments += "room.schemaLocation" to "$projectDir/schemas"
             }
+        }
+
+        ndk {
+            abiFilters += listOf("arm64-v8a", "x86_64")
         }
 
         vectorDrawables.useSupportLibrary = true
@@ -66,6 +76,7 @@ android {
         release {
 
             isMinifyEnabled = true
+            isShrinkResources = true
 
             proguardFiles += getDefaultProguardFile("proguard-android-optimize.txt")
             proguardFiles("proguard-rules.pro")
@@ -183,6 +194,8 @@ dependencies {
 }
 
 configurations.all {
+
+    exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
 
     resolutionStrategy {
         cacheDynamicVersionsFor(10, "minutes")

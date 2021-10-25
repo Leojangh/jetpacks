@@ -637,7 +637,7 @@ inline val View.isAttachedToWindowExt get() = ViewCompat.isAttachedToWindow(this
 /**
  * @see ViewCompat.hasOnClickListeners
  */
-inline val View.hasOnClickListener get() = ViewCompat.hasOnClickListeners(this)
+inline val View.hasOnClickListeners get() = ViewCompat.hasOnClickListeners(this)
 
 /**
  * @see ViewCompat.setScrollIndicators

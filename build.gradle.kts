@@ -29,7 +29,7 @@ buildscript {
     extra["paging"] = "3.0.1"
     extra["swiperRefreshLayout"] = "1.1.0"
     extra["constraintLayout"] = "2.1.1"
-    extra["work"] = "2.7.0-beta01"//for targeting S+
+    extra["work"] = "2.7.0" //for targeting S+
 
     //Dynamic version
     extra["window"] = "1.0.0-beta+"

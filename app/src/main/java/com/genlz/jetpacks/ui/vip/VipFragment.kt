@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@ import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentVipBinding
 import com.genlz.jetpacks.ui.common.FabSetter.Companion.findFabSetter
 import com.genlz.jetpacks.ui.GalleryFragment
+import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
 
@@ -43,6 +45,28 @@ class VipFragment : Fragment(R.layout.fragment_vip) {
                 }.show()
             }
         }
+        BadgeDrawable.create(requireContext()).apply {
+            number = 10
+
+            setBounds(0, 0, 500, 500)
+            binding.banner.overlay.add(this)
+        }
+
+//        with(
+//            View.inflate(
+//                requireContext(),
+//                android.R.layout.simple_list_item_1,
+//                null
+//            ) as TextView
+//        ) {
+//            text = "Hello"
+//            measure(
+//                View.MeasureSpec.makeMeasureSpec(100, View.MeasureSpec.EXACTLY),
+//                View.MeasureSpec.makeMeasureSpec(100, View.MeasureSpec.EXACTLY)
+//            )
+//            layout(0, 0, 500, 500)
+//            binding.banner.overlay.add(this)
+//        }
     }
 
     companion object {
