@@ -14,15 +14,21 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.ButtonBarLayout
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
+import androidx.core.view.updatePaddingRelative
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.get
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -37,6 +43,7 @@ import com.genlz.jetpacks.databinding.ActivityMainBinding
 import com.genlz.jetpacks.ui.common.ActionBarCustomizer
 import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
+import com.genlz.jetpacks.ui.common.ReSelectable
 import com.genlz.jetpacks.utility.appcompat.*
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -58,7 +65,13 @@ class MainActivity : AppCompatActivity(),
 
     private lateinit var windowInfoRepo: WindowInfoRepository
 
-    private lateinit var navController: NavController
+    private val navController: NavController get() = navHostFragment.navController
+
+    private val currentFragment get() = navHostFragment.childFragmentManager.fragments[0]
+
+    private val navHostFragment by lazy {
+        supportFragmentManager.findFragmentById(R.id.content_main) as NavHostFragment
+    }
 
     private val windowInsetsController by lazy {
         WindowInsetsControllerCompat(window, window.decorView)
@@ -83,10 +96,6 @@ class MainActivity : AppCompatActivity(),
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.content_main) as NavHostFragment
-        navController = navHostFragment.navController
-
         customExitAnimation()
         edge2edge()
 
@@ -99,14 +108,15 @@ class MainActivity : AppCompatActivity(),
 
         listenWindowInfo()
 
-        binding.bottomNavigation.getOrCreateBadge(R.id.communityFragment).apply {
-            number = 20
+        /**
+         * Although the menu item id is as same as fragment node in navigation graph,but in fact
+         * the fragment id is the fragment container's id at runtime.
+         */
+        binding.bottomNavigation.setOnItemReselectedListener {
+            (currentFragment as? ReSelectable)?.onReselect()
         }
 
-        requireViewByIdExt<EditText>(R.id.edit_text).apply {
 
-        }
-        currentFocus
     }
 
     override fun enterFullscreen() {
@@ -227,15 +237,16 @@ class MainActivity : AppCompatActivity(),
 
         binding.toolbarLayout.setOnApplyWindowInsetsListener { v, i, ip ->
             v.updatePadding(top = i.statusBarInsets.top + ip.top)
-            //Adjust marginTop after measured.
-            v.post {
-                binding.contentMain.updateMargin(top = v.height)
-            }
+            //Adjust paddingTop after measured.
+            v.post { binding.contentMain.updatePadding(top = v.height) }
             WindowInsetsCompat.CONSUMED
         }
 
+        // Because update padding has no impact for it's parent,aka the view parent,
+        // view group no need to requestLayout.Recursive occurs in this listener if
+        // update margins.
         binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { abl, offset ->
-//            binding.contentMain.updateMargin(top = appBarLayout.height + verticalOffset)
+            binding.contentMain.updatePadding(top = abl.height + offset)
             // Control status bar appearance.
             val lifted = -offset == abl.height
             windowInsetsController.isAppearanceLightStatusBars = lifted
