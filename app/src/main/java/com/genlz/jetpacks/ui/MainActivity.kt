@@ -1,6 +1,7 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -130,13 +131,16 @@ class MainActivity : AppCompatActivity(),
             appBarLayout.isLifted = true
 //            val behavior =
 //                (binding.appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior as AppBarLayout.Behavior
-//            ObjectAnimator.ofInt(0, -offset).apply {
-//                duration = 250L
-//                addUpdateListener {
-////                    behavior.topAndBottomOffset =
-//                    appBarLayout.offsetTopAndBottomExt(it.animatedValue as Int)
-//                }
-//            }.start()
+            ObjectAnimator.ofInt(0, -offset).apply {
+                duration = 250L
+                val method =
+                    appBarLayout.javaClass.getDeclaredMethod("onOffsetChanged", Int::class.java)
+                        .apply { isAccessible = true }
+                addUpdateListener {
+                    method(appBarLayout, it.animatedValue)
+                    appBarLayout.offsetTopAndBottomExt(it.animatedValue as Int)
+                }
+            }.start()
         }
 
 //        WindowInsetsControllerCompat(window, binding.root).run {
@@ -262,7 +266,6 @@ class MainActivity : AppCompatActivity(),
             windowInsetsController.isAppearanceLightStatusBars = lifted
             window.statusBarColor =
                 if (lifted) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
-            Log.d(TAG, "edge2edge: ${abl.isLifted}")
         })
 
 
