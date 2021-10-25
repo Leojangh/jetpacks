@@ -1,13 +1,15 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.animation.AnticipateInterpolator
+import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
@@ -58,6 +60,10 @@ class MainActivity : AppCompatActivity(),
 
     private lateinit var navController: NavController
 
+    private val windowInsetsController by lazy {
+        WindowInsetsControllerCompat(window, window.decorView)
+    }
+
     private val appBarConfiguration = AppBarConfiguration(
         setOf(
             R.id.communityFragment,
@@ -97,6 +103,10 @@ class MainActivity : AppCompatActivity(),
             number = 20
         }
 
+        requireViewByIdExt<EditText>(R.id.edit_text).apply {
+
+        }
+        currentFocus
     }
 
     override fun enterFullscreen() {
@@ -224,12 +234,11 @@ class MainActivity : AppCompatActivity(),
             WindowInsetsCompat.CONSUMED
         }
 
-        val controller = WindowInsetsControllerCompat(window, window.decorView)
         binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { abl, offset ->
 //            binding.contentMain.updateMargin(top = appBarLayout.height + verticalOffset)
             // Control status bar appearance.
             val lifted = -offset == abl.height
-            controller.isAppearanceLightStatusBars = lifted
+            windowInsetsController.isAppearanceLightStatusBars = lifted
             window.statusBarColor =
                 if (lifted) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
         })
@@ -259,6 +268,23 @@ class MainActivity : AppCompatActivity(),
             Log.d(TAG, "onTopResumedActivityChanged: top resume")
         } else {
             Log.d(TAG, "onTopResumedActivityChanged: no longer top resume")
+        }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+//        clearEditTextFocus(ev)
+        return super.dispatchTouchEvent(ev)
+    }
+
+    private fun clearEditTextFocus(ev: MotionEvent) {
+        val v = currentFocus
+        if (ev.action == MotionEvent.ACTION_UP && R.id.edit_text == v?.id) {
+            val rect = Rect()
+            v.getGlobalVisibleRect(rect)
+            if (!rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                v.clearFocus()
+                windowInsetsController.hide(WindowInsetsCompat.Type.ime())
+            }
         }
     }
 

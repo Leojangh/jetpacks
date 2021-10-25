@@ -36,6 +36,7 @@
         app:startIconDrawable="@drawable/ic_baseline_search_24">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_gravity="center" />
