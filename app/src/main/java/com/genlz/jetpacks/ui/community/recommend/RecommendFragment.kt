@@ -47,13 +47,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend), Titleable {
             }
         }
 
-        findFabSetter()?.setupFab {
-            show()
-            setImageResource(R.drawable.ic_baseline_plus_one_24)
-            setOnClickListener {
-                Snackbar.make(it, R.string.recommend, Snackbar.LENGTH_SHORT).show()
-            }
-        }
     }
 
     companion object {

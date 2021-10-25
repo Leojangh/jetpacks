@@ -9,26 +9,20 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.animation.AnticipateInterpolator
-import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.ButtonBarLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
-import androidx.core.view.updatePaddingRelative
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.get
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -116,15 +110,33 @@ class MainActivity : AppCompatActivity(),
             (currentFragment as? ReSelectable)?.onReselect()
         }
 
+        var f = false
 
+        binding.fab.setOnClickListener {
+            if (!f) {
+                enterFullscreen()
+            } else {
+                exitFullscreen()
+            }
+            f = !f
+
+        }
     }
 
     override fun enterFullscreen() {
         binding.apply {
             bottomAppBar.performHide()
-//            appBarLayout.animate().translationY(-appBarLayout.height.toFloat()).start()
-
-//            appBarLayout.isLifted = true
+            val offset = appBarLayout.height
+            appBarLayout.isLifted = true
+//            val behavior =
+//                (binding.appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior as AppBarLayout.Behavior
+//            ObjectAnimator.ofInt(0, -offset).apply {
+//                duration = 250L
+//                addUpdateListener {
+////                    behavior.topAndBottomOffset =
+//                    appBarLayout.offsetTopAndBottomExt(it.animatedValue as Int)
+//                }
+//            }.start()
         }
 
 //        WindowInsetsControllerCompat(window, binding.root).run {
@@ -137,8 +149,7 @@ class MainActivity : AppCompatActivity(),
     override fun exitFullscreen() {
         binding.apply {
             bottomAppBar.performShow()
-//            appBarLayout.animate().translationY(appBarLayout.height.toFloat()).start()
-//            appBarLayout.isLifted = false
+            val offset = appBarLayout.height
         }
 //        WindowInsetsControllerCompat(window, binding.root).run {
 //            show(WindowInsetsCompat.Type.systemBars())
@@ -237,11 +248,10 @@ class MainActivity : AppCompatActivity(),
 
         binding.toolbarLayout.setOnApplyWindowInsetsListener { v, i, ip ->
             v.updatePadding(top = i.statusBarInsets.top + ip.top)
-            //Adjust paddingTop after measured.
-            v.post { binding.contentMain.updatePadding(top = v.height) }
-            WindowInsetsCompat.CONSUMED
+            i
         }
 
+        // Make sure the 'content_main' is always adjacent to appbar.
         // Because update padding has no impact for it's parent,aka the view parent,
         // view group no need to requestLayout.Recursive occurs in this listener if
         // update margins.
@@ -252,14 +262,15 @@ class MainActivity : AppCompatActivity(),
             windowInsetsController.isAppearanceLightStatusBars = lifted
             window.statusBarColor =
                 if (lifted) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
+            Log.d(TAG, "edge2edge: ${abl.isLifted}")
         })
+
 
         //BottomAppBar has already fit navigation bar.
         binding.bottomNavigation.setOnApplyWindowInsetsListener { v, _, _ ->
             v.updatePadding(bottom = 0)
             WindowInsetsCompat.CONSUMED
         }
-
     }
 
     /**
