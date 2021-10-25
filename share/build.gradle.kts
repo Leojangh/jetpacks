@@ -1,4 +1,4 @@
-val java_version: String by project
+@file:Suppress("LocalVariableName")
 
 plugins {
     id("com.android.library")
@@ -23,6 +23,8 @@ android {
             proguardFiles("proguard-rules.pro")
         }
     }
+
+    val java_version: String by project
     compileOptions {
         sourceCompatibility(java_version)
         targetCompatibility(java_version)

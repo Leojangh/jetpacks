@@ -1,3 +1,5 @@
+@file:Suppress("LocalVariableName")
+
 buildscript {
 
     val kotlin_version: String by project

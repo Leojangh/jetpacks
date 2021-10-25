@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 // Auto properties delegate from gradle.properties,
 // same as settings and init script,just us 'by settings' or 'by gradle'.
 // this delegate declaration can be omitted if use groovy.
@@ -104,22 +106,30 @@ dependencies {
 
     implementation(project(":share"))
 
-    implementation("androidx.palette:palette:${rootProject.extra["palette"]}")
+    val palette: String by rootProject.extra
+    implementation("androidx.palette:palette:$palette")
 
-    implementation("com.github.chrisbanes:PhotoView:${rootProject.extra["photoView"]}")
+    val photoView: String by rootProject.extra
+    implementation("com.github.chrisbanes:PhotoView:$photoView")
 
-    implementation("androidx.paging:paging-runtime-ktx:${rootProject.extra["paging"]}")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:${rootProject.extra["swiperRefreshLayout"]}")
+    val paging: String by rootProject.extra
+    implementation("androidx.paging:paging-runtime-ktx:$paging")
+
+    val swiperRefreshLayout: String by rootProject.extra
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:$swiperRefreshLayout")
 
     val window: String by rootProject.extra
     implementation("androidx.window:window:$window")
     androidTestImplementation("androidx.window:window-testing:$window")
 
-    implementation("androidx.core:core-splashscreen:${rootProject.extra["splash"]}")
+    val splash: String by rootProject.extra
+    implementation("androidx.core:core-splashscreen:$splash")
 
-    implementation("io.coil-kt:coil:${rootProject.extra["coil"]}")
+    val coil: String by rootProject.extra
+    implementation("io.coil-kt:coil:$coil")
 
-    implementation("androidx.startup:startup-runtime:${rootProject.extra["startup"]}")
+    val startup: String by rootProject.extra
+    implementation("androidx.startup:startup-runtime:$startup")
 
     val lifecycle: String by rootProject.extra
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle")
@@ -130,7 +140,8 @@ dependencies {
     implementation("androidx.room:room-ktx:$room")
     kapt("androidx.room:room-compiler:$room")
 
-    implementation("androidx.work:work-runtime-ktx:${rootProject.extra["work"]}")
+    val work: String by rootProject.extra
+    implementation("androidx.work:work-runtime-ktx:$work")
 
     //retrofit
     val retrofit: String by rootProject.extra
@@ -150,10 +161,16 @@ dependencies {
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
     implementation(kotlin("reflect"))
-    implementation("androidx.core:core-ktx:${rootProject.extra["coreKtx"]}")
-    implementation("androidx.appcompat:appcompat:${rootProject.extra["appcompat"]}")
-    implementation("com.google.android.material:material:${rootProject.extra["material"]}")
-    implementation("androidx.constraintlayout:constraintlayout:${rootProject.extra["constraintLayout"]}")
+
+    val coreKtx: String by rootProject.extra
+    val appcompat: String by rootProject.extra
+    val material: String by rootProject.extra
+    val constraintLayout: String by rootProject.extra
+
+    implementation("androidx.core:core-ktx:$coreKtx")
+    implementation("androidx.appcompat:appcompat:$appcompat")
+    implementation("com.google.android.material:material:$material")
+    implementation("androidx.constraintlayout:constraintlayout:$constraintLayout")
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation(fileTree("libs") {
