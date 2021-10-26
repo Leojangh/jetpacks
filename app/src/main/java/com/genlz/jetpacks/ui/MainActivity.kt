@@ -14,10 +14,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
@@ -112,39 +110,15 @@ class MainActivity : AppCompatActivity(),
             (currentFragment as? ReSelectable)?.onReselect()
         }
 
-        var f = false
-
-        binding.fab.setOnClickListener {
-            if (!f) {
-                enterFullscreen()
-            } else {
-                exitFullscreen()
-            }
-            f = !f
-
-        }
     }
 
     override fun enterFullscreen() {
         binding.apply {
             bottomAppBar.performHide()
-            val offset = appBarLayout.height
-//            appBarLayout.isLifted = true
-//            val behavior =
-//                (binding.appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior as AppBarLayout.Behavior
-//            ObjectAnimator.ofInt(0, -offset).apply {
-//                duration = 250L
-//                val method =
-//                    appBarLayout.javaClass.getDeclaredMethod("onOffsetChanged", Int::class.java)
-//                        .apply { isAccessible = true }
-//                addUpdateListener {
-//                    method(appBarLayout, it.animatedValue)
-//                    appBarLayout.offsetTopAndBottomExt(it.animatedValue as Int)
-//                }
-//            }.start()
+            appBarLayout.setExpanded(false)
         }
 
-//        WindowInsetsControllerCompat(window, binding.root).run {
+//        windowInsetsController.run {
 //            hide(WindowInsetsCompat.Type.systemBars())
 //            systemBarsBehavior =
 //                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -154,9 +128,9 @@ class MainActivity : AppCompatActivity(),
     override fun exitFullscreen() {
         binding.apply {
             bottomAppBar.performShow()
-            val offset = appBarLayout.height
+            appBarLayout.setExpanded(true)
         }
-//        WindowInsetsControllerCompat(window, binding.root).run {
+//        windowInsetsController.run {
 //            show(WindowInsetsCompat.Type.systemBars())
 //        }
     }
@@ -253,7 +227,7 @@ class MainActivity : AppCompatActivity(),
 
         binding.toolbarLayout.setOnApplyWindowInsetsListener { v, i, ip ->
             v.updatePadding(top = i.statusBarInsets.top + ip.top)
-            i
+            WindowInsetsCompat.CONSUMED
         }
 
         // Make sure the 'content_main' is always adjacent to appbar.
@@ -264,18 +238,35 @@ class MainActivity : AppCompatActivity(),
             // It seems that the ABL.ScrollViewBehavior can automatically adjust paddings.
 //            binding.contentMain.updatePadding(top = abl.height + offset)
             // Control status bar appearance.
-            val lifted = -offset == abl.height
-            windowInsetsController.isAppearanceLightStatusBars = lifted
+            val collapse = -offset == abl.height
+            windowInsetsController.isAppearanceLightStatusBars = collapse
             window.statusBarColor =
-                if (lifted) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
-        })
+                if (collapse) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
 
+            // TODO fix not working
+            with(abl.getTag(R.id.animator_id) as? ObjectAnimator) {
+                if (this == null) {
+                    abl.setTag(
+                        R.id.animator_id,
+                        ObjectAnimator.ofArgb(
+                            window,
+                            "statusBarColor",
+                            window.statusBarColor,
+                            if (collapse) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
+                        ).setDuration(300L)
+                    )
+                } else {
+                    start()
+                }
+            }
+        })
 
         //BottomAppBar has already fit navigation bar.
         binding.bottomNavigation.setOnApplyWindowInsetsListener { v, _, _ ->
             v.updatePadding(bottom = 0)
             WindowInsetsCompat.CONSUMED
         }
+        windowInsetsController.isAppearanceLightNavigationBars = true
     }
 
     /**

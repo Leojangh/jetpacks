@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentServiceBinding
+import com.google.android.material.internal.CollapsingTextHelper
 
 class ServiceFragment : Fragment(R.layout.fragment_service) {
 
@@ -16,6 +17,10 @@ class ServiceFragment : Fragment(R.layout.fragment_service) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val cth = CollapsingTextHelper(binding.textView)
+
+
 
     }
 
