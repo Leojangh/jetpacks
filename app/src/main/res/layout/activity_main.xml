@@ -13,21 +13,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:navGraph="@navigation/bottom_navi"
         tools:paddingTop="?attr/actionBarSize" />
+
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:theme="@style/Theme.Jetpacks.AppBarOverlay"
-        app:elevation="8dp"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
-        app:liftOnScroll="true"
-        app:state_liftable="true"
-        app:state_lifted="true"
-        tools:layout_height="56dp">
+        app:liftOnScroll="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbarLayout"

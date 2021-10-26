@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
@@ -128,19 +129,19 @@ class MainActivity : AppCompatActivity(),
         binding.apply {
             bottomAppBar.performHide()
             val offset = appBarLayout.height
-            appBarLayout.isLifted = true
+//            appBarLayout.isLifted = true
 //            val behavior =
 //                (binding.appBarLayout.layoutParams as CoordinatorLayout.LayoutParams).behavior as AppBarLayout.Behavior
-            ObjectAnimator.ofInt(0, -offset).apply {
-                duration = 250L
-                val method =
-                    appBarLayout.javaClass.getDeclaredMethod("onOffsetChanged", Int::class.java)
-                        .apply { isAccessible = true }
-                addUpdateListener {
-                    method(appBarLayout, it.animatedValue)
-                    appBarLayout.offsetTopAndBottomExt(it.animatedValue as Int)
-                }
-            }.start()
+//            ObjectAnimator.ofInt(0, -offset).apply {
+//                duration = 250L
+//                val method =
+//                    appBarLayout.javaClass.getDeclaredMethod("onOffsetChanged", Int::class.java)
+//                        .apply { isAccessible = true }
+//                addUpdateListener {
+//                    method(appBarLayout, it.animatedValue)
+//                    appBarLayout.offsetTopAndBottomExt(it.animatedValue as Int)
+//                }
+//            }.start()
         }
 
 //        WindowInsetsControllerCompat(window, binding.root).run {
@@ -260,7 +261,8 @@ class MainActivity : AppCompatActivity(),
         // view group no need to requestLayout.Recursive occurs in this listener if
         // update margins.
         binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { abl, offset ->
-            binding.contentMain.updatePadding(top = abl.height + offset)
+            // It seems that the ABL.ScrollViewBehavior can automatically adjust paddings.
+//            binding.contentMain.updatePadding(top = abl.height + offset)
             // Control status bar appearance.
             val lifted = -offset == abl.height
             windowInsetsController.isAppearanceLightStatusBars = lifted
