@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity(),
         }
 
         binding.fab.setOnClickListener {
-            navController.navigate(WebFragmentDirections.web("https://www.baidu.com"))
+            navController.navigate(WebFragmentDirections.web("https://baidu.com"))
         }
     }
 

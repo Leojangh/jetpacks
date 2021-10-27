@@ -116,6 +116,7 @@ android {
 dependencies {
 
     implementation(project(":share"))
+    implementation("androidx.webkit:webkit:1.4.0")
 
     val palette: String by rootProject.extra
     implementation("androidx.palette:palette:$palette")
