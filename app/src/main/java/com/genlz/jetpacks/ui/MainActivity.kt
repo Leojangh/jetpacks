@@ -38,6 +38,7 @@ import com.genlz.jetpacks.ui.common.ActionBarCustomizer
 import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.jetpacks.ui.common.ReSelectable
+import com.genlz.jetpacks.ui.web.WebFragmentDirections
 import com.genlz.jetpacks.utility.appcompat.*
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -110,6 +111,9 @@ class MainActivity : AppCompatActivity(),
             (currentFragment as? ReSelectable)?.onReselect()
         }
 
+        binding.fab.setOnClickListener {
+            navController.navigate(WebFragmentDirections.web("https://www.baidu.com"))
+        }
     }
 
     override fun enterFullscreen() {

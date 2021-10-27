@@ -50,5 +50,6 @@
     <string name="service_fragment">ServiceFragment</string>
     <string name="vip_fragment">VipFragment</string>
     <string name="speed_dial">Speed dial</string>
+    <string name="web_fragment">WebFragment</string>
 
 </resources>

@@ -31,11 +31,12 @@
                     -->
         <activity
             android:name=".ui.MainActivity"
+            android:configChanges="orientation|screenSize"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/EdgeToEdge.NewSplash">
 
-            <nav-graph android:value="@navigation/bottom_navi" />
+            <nav-graph android:value="@navigation/main" />
 
             <meta-data
                 android:name="android.app.shortcuts"
@@ -46,10 +47,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.web.WebActivity"
-            android:exported="true" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"
