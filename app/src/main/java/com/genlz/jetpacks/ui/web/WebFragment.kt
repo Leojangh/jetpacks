@@ -8,6 +8,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.BuildConfig
@@ -73,13 +74,10 @@ class WebFragment : Fragment(R.layout.fragment_web) {
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             binding.webView.goBack()
-//                findNavController().navigateUp()
         }
         findFabSetter()?.setupFab {
             setOnClickListener {
-                binding.webView.evaluateJavascript("$('img')[0].src") {
-                    Log.d(TAG, "onViewCreated: $it")
-                }
+                findNavController().navigateUp()
             }
         }
         binding.webView.loadUrl(args.uri)
