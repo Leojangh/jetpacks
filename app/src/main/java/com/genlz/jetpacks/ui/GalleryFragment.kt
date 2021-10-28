@@ -10,6 +10,7 @@ import android.view.animation.Animation
 import android.widget.Checkable
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.annotation.AnyRes
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
@@ -125,13 +126,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         // Make sure always as fullscreen state at this fragment scenario.
         if (args.showOptions == SHOW_OPTIONS_NORMAL) {
             //adb shell settings put global transition_duration_scale 20
-            findFullscreenController()?.apply {
-                if (true) {
-                    enterFullscreen()
-                } else {
-                    exitFullscreen()
-                }
-            }
+            findFullscreenController()?.enterFullscreen()
         }
 
         // Note: When using a shared element transition from a fragment using a RecyclerView

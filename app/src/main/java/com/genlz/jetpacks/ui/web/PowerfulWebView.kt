@@ -8,15 +8,9 @@ import android.view.MotionEvent
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.StyleRes
-import androidx.core.os.bundleOf
-import androidx.core.view.GestureDetectorCompat
-import androidx.core.view.NestedScrollingChild2
-import androidx.core.view.NestedScrollingChild3
-import androidx.navigation.findNavController
-import com.genlz.jetpacks.R
-import com.genlz.jetpacks.ui.BottomDialogFragmentArgs
-import com.genlz.jetpacks.utility.appcompat.*
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import androidx.core.view.*
+import androidx.core.view.ViewCompat.NestedScrollType
+import androidx.core.view.ViewCompat.ScrollAxis
 
 class PowerfulWebView @JvmOverloads constructor(
     context: Context,
@@ -24,14 +18,58 @@ class PowerfulWebView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
     @StyleRes defStyleRes: Int = 0
 ) : WebView(context, attrs, defStyleAttr, defStyleRes),
+    ScrollingView,
     NestedScrollingChild2,
     NestedScrollingChild3,
     GestureDetector.OnGestureListener,
-    GestureDetector.OnDoubleTapListener {
+    GestureDetector.OnDoubleTapListener
+//    CircularRevealWidget
+{
 
+    /**
+     * When double tap and release,event order:
+     *
+     * 1.[onSingleTapUp]
+     *
+     * 2.[onDoubleTap]
+     *
+     * 3.[onDoubleTapEvent]
+     *
+     * 4.[onDoubleTapEvent]
+     *
+     * [onSingleTapUp] is traditional click.
+     *
+     * When long press,event order:
+     *
+     * 1.[onShowPress]
+     *
+     * 2.[onLongPress]
+     */
     private val gestureDetector = GestureDetectorCompat(context, this)
 
+    private val scrollHelpers = NestedScrollingChildHelper(this)
+
+    var showPressListener: ((MotionEvent) -> Boolean)? = null
+
+    var singleTapListener: ((MotionEvent) -> Boolean)? = null
+
+    var scrollListener: ((MotionEvent, MotionEvent, Float, Float) -> Boolean)? =
+        null
+
+    var longPressListener: ((MotionEvent) -> Unit)? = null
+
+    var flingListener: ((MotionEvent, MotionEvent, Float, Float) -> Boolean)? =
+        null
+
+    var singleTapConfirmedListener: ((MotionEvent) -> Boolean)? = null
+
+    var doubleTapListener: ((MotionEvent) -> Boolean)? = null
+
+    var doubleTapEventListener: ((MotionEvent) -> Boolean)? = null
+
     var scripts: Set<String> = HashSet()
+
+//    private val helper = CircularRevealHelper(this)
 
     init {
         settings.apply {
@@ -47,19 +85,46 @@ class PowerfulWebView @JvmOverloads constructor(
         }
     }
 
-    override fun startNestedScroll(axes: Int, type: Int): Boolean {
+    override fun computeHorizontalScrollRange(): Int {
+        return super.computeHorizontalScrollRange()
+    }
+
+    override fun computeHorizontalScrollOffset(): Int {
+        return super.computeHorizontalScrollOffset()
+    }
+
+    override fun computeHorizontalScrollExtent(): Int {
+        return super.computeHorizontalScrollExtent()
+    }
+
+    override fun computeVerticalScrollRange(): Int {
+        return super.computeVerticalScrollRange()
+    }
+
+    override fun computeVerticalScrollOffset(): Int {
+        return super.computeVerticalScrollOffset()
+    }
+
+    override fun computeVerticalScrollExtent(): Int {
+        return super.computeVerticalScrollExtent()
+    }
+
+    override fun startNestedScroll(
+        @ScrollAxis axes: Int,
+        @NestedScrollType type: Int
+    ): Boolean {
         Log.d(TAG, "startNestedScroll: $type")
-        return startNestedScrollExt(axes)
+        return scrollHelpers.startNestedScroll(axes, type)
     }
 
-    override fun stopNestedScroll(type: Int) {
+    override fun stopNestedScroll(@NestedScrollType type: Int) {
         Log.d(TAG, "stopNestedScroll: $type")
-        stopNestedScrollExt()
+        scrollHelpers.stopNestedScroll(type)
     }
 
-    override fun hasNestedScrollingParent(type: Int): Boolean {
+    override fun hasNestedScrollingParent(@NestedScrollType type: Int): Boolean {
         Log.d(TAG, "hasNestedScrollingParent: $type")
-        return hasNestedScrollingParent
+        return scrollHelpers.hasNestedScrollingParent(type)
     }
 
     override fun dispatchNestedScroll(
@@ -68,34 +133,38 @@ class PowerfulWebView @JvmOverloads constructor(
         dxUnconsumed: Int,
         dyUnconsumed: Int,
         offsetInWindow: IntArray?,
-        type: Int,
+        @NestedScrollType type: Int,
         consumed: IntArray
     ) {
         Log.d(TAG, "dispatchNestedScroll: $type")
-        dispatchNestedScrollExt(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow)
-    }
-
-    override fun dispatchNestedScroll(
-        dxConsumed: Int,
-        dyConsumed: Int,
-        dxUnconsumed: Int,
-        dyUnconsumed: Int,
-        offsetInWindow: IntArray?,
-        type: Int
-    ): Boolean {
-        Log.d(TAG, "dispatchNestedScroll: $type")
-        return dispatchNestedScrollExt(
+        scrollHelpers.dispatchNestedScroll(
             dxConsumed,
             dyConsumed,
             dxUnconsumed,
             dyUnconsumed,
-            offsetInWindow
+            offsetInWindow,
+            type,
+            consumed
         )
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        gestureDetector.onTouchEvent(event)
-        return super.onTouchEvent(event)
+    override fun dispatchNestedScroll(
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
+        offsetInWindow: IntArray?,
+        @NestedScrollType type: Int
+    ): Boolean {
+        Log.d(TAG, "dispatchNestedScroll: $type")
+        return scrollHelpers.dispatchNestedScroll(
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed,
+            offsetInWindow,
+            type
+        )
     }
 
     override fun dispatchNestedPreScroll(
@@ -103,10 +172,15 @@ class PowerfulWebView @JvmOverloads constructor(
         dy: Int,
         consumed: IntArray?,
         offsetInWindow: IntArray?,
-        type: Int
+        @NestedScrollType type: Int
     ): Boolean {
         Log.d(TAG, "dispatchNestedPreScroll: $type")
-        return dispatchNestedPreScrollExt(dx, dy, consumed, offsetInWindow)
+        return scrollHelpers.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        gestureDetector.onTouchEvent(event)
+        return super.onTouchEvent(event)
     }
 
     companion object {
@@ -117,45 +191,110 @@ class PowerfulWebView @JvmOverloads constructor(
 
     override fun onShowPress(e: MotionEvent) {
         Log.d(TAG, "onShowPress: ")
+        showPressListener?.invoke(e)
     }
 
     override fun onSingleTapUp(e: MotionEvent): Boolean {
         Log.d(TAG, "onSingleTapUp: ")
-        return true
+        return singleTapListener?.invoke(e) ?: true
     }
 
-    var scrollListener: ((MotionEvent, MotionEvent, Float, Float) -> Boolean)? = null
     override fun onScroll(
         e1: MotionEvent,
         e2: MotionEvent,
         distanceX: Float,
         distanceY: Float
-    ) = scrollListener?.invoke(e1, e2, distanceX, distanceY) ?: true
-
-    var longPressListener: ((MotionEvent) -> Unit)? = null
-
-    override fun onLongPress(e: MotionEvent) {
-        longPressListener?.invoke(e)
+    ): Boolean {
+        Log.d(TAG, "onScroll: ")
+        scrollListener?.invoke(e1, e2, distanceX, distanceY)
+        startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_TOUCH)
+        return dispatchNestedPreScroll(
+            distanceX.toInt(),
+            distanceY.toInt(),
+            intArrayOf(0, 0),
+            null,
+            ViewCompat.TYPE_TOUCH
+        )
     }
 
-    var flingListener: ((MotionEvent, MotionEvent, Float, Float) -> Boolean)? = null
+    override fun onLongPress(e: MotionEvent) {
+        Log.d(TAG, "onLongPress: ")
+        longPressListener?.invoke(e)
+    }
 
     override fun onFling(
         e1: MotionEvent,
         e2: MotionEvent,
         velocityX: Float,
         velocityY: Float
-    ) = flingListener?.invoke(e1, e2, velocityX, velocityY) ?: true
+    ): Boolean {
+        Log.d(TAG, "onFling: ")
+        return flingListener?.invoke(e1, e2, velocityX, velocityY) ?: true
+    }
 
-    var singleTapConfirmedListener: ((MotionEvent) -> Boolean)? = null
+    override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+        return singleTapConfirmedListener?.invoke(e) ?: true
+    }
 
-    override fun onSingleTapConfirmed(e: MotionEvent) =
-        singleTapConfirmedListener?.invoke(e) ?: true
+    override fun onDoubleTap(e: MotionEvent): Boolean {
+        Log.d(TAG, "onDoubleTap: ")
+        return doubleTapListener?.invoke(e) ?: true
+    }
 
-    var doubleTapListener: ((MotionEvent) -> Boolean)? = null
+    override fun onDoubleTapEvent(e: MotionEvent): Boolean {
+        Log.d(TAG, "onDoubleTapEvent: ")
+        return doubleTapEventListener?.invoke(e) ?: true
+    }
 
-    override fun onDoubleTap(e: MotionEvent) = doubleTapListener?.invoke(e) ?: true
+//    override fun draw(canvas: Canvas) {
+//        if (helper == null)
+//            helper.draw(canvas)
+//        else
+//            super.draw(canvas)
+//    }
+//
+//    override fun actualDraw(canvas: Canvas) {
+//        super.draw(canvas)
+//    }
+//
+//    override fun isOpaque(): Boolean {
+//        return if (helper == null) super.isOpaque() else helper.isOpaque
+//    }
+//
+//    override fun actualIsOpaque(): Boolean {
+//        return super.isOpaque()
+//    }
+//
+//    override fun buildCircularRevealCache() {
+//        helper.buildCircularRevealCache()
+//    }
+//
+//    override fun destroyCircularRevealCache() {
+//        helper.destroyCircularRevealCache()
+//    }
+//
+//    override fun getRevealInfo(): CircularRevealWidget.RevealInfo? {
+//        return helper.revealInfo
+//    }
+//
+//    override fun setRevealInfo(revealInfo: CircularRevealWidget.RevealInfo?) {
+//        helper.revealInfo = revealInfo
+//    }
+//
+//    override fun getCircularRevealScrimColor(): Int {
+//        return helper.circularRevealScrimColor
+//    }
+//
+//    override fun setCircularRevealScrimColor(color: Int) {
+//        helper.circularRevealScrimColor = color
+//    }
+//
+//    override fun getCircularRevealOverlayDrawable(): Drawable? {
+//        return helper.circularRevealOverlayDrawable
+//    }
+//
+//    override fun setCircularRevealOverlayDrawable(drawable: Drawable?) {
+//        helper.circularRevealOverlayDrawable = drawable
+//    }
 
-    var doubleTapEventListener: ((MotionEvent) -> Boolean)? = null
-    override fun onDoubleTapEvent(e: MotionEvent) = doubleTapEventListener?.invoke(e) ?: true
 }

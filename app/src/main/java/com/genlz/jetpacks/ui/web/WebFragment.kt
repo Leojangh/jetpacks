@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.activity.addCallback
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.genlz.jetpacks.BuildConfig
+import com.genlz.jetpacks.R
 import com.genlz.jetpacks.ui.common.FabSetter.Companion.findFabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController.Companion.findFullscreenController
 import com.genlz.jetpacks.ui.web.bridge.JavascriptBridge.Companion.wrap
@@ -55,12 +57,13 @@ class WebFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findFullscreenController()?.enterFullscreen()
+//        findFullscreenController()?.enterFullscreen()
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
+
         val jQ = requireArguments()[JQUERY_SCRIP] as String
         val imageHook = requireArguments()[IMAGE_HOOK_SCRIPT] as String
-        webView.scripts = setOf(jQ, imageHook)
         webView.apply {
+            scripts = setOf(jQ, imageHook)
             setOnApplyWindowInsetsListener { v, i, ip ->
                 val insets = i.statusBarInsets + i.imeInsets
                 v.updatePadding(top = insets.top + ip.top, bottom = insets.bottom + ip.bottom)
@@ -71,17 +74,17 @@ class WebFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             webView.goBack()
         }
-        findFabSetter()?.setupFab {
-            setOnClickListener {
-
-            }
-        }
+//        findFabSetter()?.setupFab {
+//            setOnClickListener {
+//
+//            }
+//        }
         webView.loadUrl(args.uri)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        findFullscreenController()?.exitFullscreen()
+//        findFullscreenController()?.exitFullscreen()
     }
 
     companion object {
