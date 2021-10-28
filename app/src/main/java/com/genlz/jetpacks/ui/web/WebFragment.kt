@@ -4,12 +4,9 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.Toast
 import androidx.activity.addCallback
-import androidx.annotation.UiThread
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.genlz.android.viewbinding.viewBinding
@@ -18,9 +15,10 @@ import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentWebBinding
 import com.genlz.jetpacks.ui.common.FabSetter.Companion.findFabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController.Companion.findFullscreenController
+import com.genlz.jetpacks.ui.web.bridge.JavascriptBridge.Companion.wrap
+import com.genlz.jetpacks.ui.web.bridge.JavascriptBridgeImpl
 import com.genlz.jetpacks.utility.appcompat.*
 import java.io.InputStreamReader
-import java.lang.reflect.Proxy
 import java.nio.charset.StandardCharsets
 
 class WebFragment : Fragment(R.layout.fragment_web) {
@@ -74,13 +72,11 @@ class WebFragment : Fragment(R.layout.fragment_web) {
             addJavascriptInterface(JavascriptBridgeImpl(context).wrap(), "Android")
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-//            if (binding.webView.canGoBack()) {
             binding.webView.goBack()
-//            }
+//                findNavController().navigateUp()
         }
         findFabSetter()?.setupFab {
             setOnClickListener {
-//                findNavController().navigateUp()
                 binding.webView.evaluateJavascript("$('img')[0].src") {
                     Log.d(TAG, "onViewCreated: $it")
                 }
@@ -99,69 +95,6 @@ class WebFragment : Fragment(R.layout.fragment_web) {
         private const val JQUERY_SCRIP = "jQ"
         private const val IMAGE_HOOK_SCRIPT = "image_hook"
 
+        const val TAG = "WebFragment"
     }
 }
-
-const val TAG = "WebFragment"
-
-/**
- * All method run in a dedicate thread named "JavaBridge",but you don't
- * care about thread.
- */
-@Suppress("UNUSED")
-private class JavascriptBridgeImpl(
-    override val context: Context
-) : JavascriptBridge {
-
-    override fun toast(message: String) {
-        Toast.makeText(context.applicationContext, message, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun transit(left: Float, top: Float, right: Float, bottom: Float) {
-        Log.d(TAG, "transit: $left,$top,$right,$bottom")
-    }
-}
-
-/**
- * Dynamic proxy.
- */
-fun JavascriptBridge.wrap(): JavascriptBridge {
-    val proxy = Proxy.newProxyInstance(
-        context.classLoader,
-        arrayOf(JavascriptBridge::class.java)
-    ) { _, method, args ->
-        if (method.declaringClass == Any::class.java) {
-            if (args.isNullOrEmpty()) method(this) else method(this, args)
-        } else {
-            val safeArgs = if (args.isNullOrEmpty()) emptyArray<Any?>() else args
-            if (method.isAnnotationPresent(UiThread::class.java)) {
-                //Post to ui thread.
-                context.mainExecutorExt.execute {
-                    method(this, *safeArgs)
-                }
-            } else {
-                method(this, *safeArgs) //Invoke directly
-            }
-        }
-    } as JavascriptBridge
-    return JavascriptBridgeWrapper(proxy)
-}
-
-interface JavascriptBridge {
-
-    val context: Context
-
-    @UiThread
-    @JavascriptInterface
-    fun toast(message: String)
-
-    @JavascriptInterface
-    fun transit(left: Float, top: Float, right: Float, bottom: Float)
-}
-
-/**
- * Static proxy.
- */
-class JavascriptBridgeWrapper(
-    private val base: JavascriptBridge
-) : JavascriptBridge by base
