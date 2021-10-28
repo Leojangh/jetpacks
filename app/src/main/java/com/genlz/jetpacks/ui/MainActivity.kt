@@ -56,9 +56,9 @@ class MainActivity : AppCompatActivity(),
 
     private val viewModel by viewModels<MainActivityViewModel>()
 
-    private lateinit var splashScreen: SplashScreen
+    private val splashScreen by lazy { installSplashScreen() }
 
-    private lateinit var windowInfoRepo: WindowInfoRepository
+    private val windowInfoRepo by lazy { windowInfoRepository() }
 
     private val navController: NavController get() = navHostFragment.navController
 
@@ -86,7 +86,6 @@ class MainActivity : AppCompatActivity(),
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        splashScreen = installSplashScreen()
         waitForReady()
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
@@ -99,7 +98,6 @@ class MainActivity : AppCompatActivity(),
         requestPermissions()
 
         setupNavigation()
-        windowInfoRepo = windowInfoRepository()
 
         listenWindowInfo()
 
@@ -140,13 +138,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun listenWindowInfo() {
-
-        lifecycleScope.launch {
-            windowInfoRepo.currentWindowMetrics.flowWithLifecycle(lifecycle)
-                .collect {
-                    Log.d(TAG, "onCreate:width ${it.bounds.width()} height${it.bounds.height()}")
-                }
-        }
 
         //WindowManager 会在应用跨屏显示（以物理或虚拟方式）时提供 LayoutInfo 数据（设备功能类型、设备功能边界和设备折叠状态）。
         // 因此，在上图中，应用在单屏模式下运行时，WindowLayoutInfo 为空。

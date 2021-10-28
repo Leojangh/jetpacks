@@ -130,7 +130,7 @@ dependencies {
     val swiperRefreshLayout: String by rootProject.extra
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:$swiperRefreshLayout")
 
-    val window: String = "1.0.0-beta02" /*by rootProject.extra*/
+    val window: String by rootProject.extra
     implementation("androidx.window:window:$window")
     androidTestImplementation("androidx.window:window-testing:$window")
 
