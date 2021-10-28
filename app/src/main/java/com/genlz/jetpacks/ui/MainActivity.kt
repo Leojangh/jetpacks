@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
+import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
@@ -112,6 +113,7 @@ class MainActivity : AppCompatActivity(),
         binding.fab.setOnClickListener {
             navController.navigate(WebFragmentDirections.web("https://baidu.com"))
         }
+
     }
 
     override fun enterFullscreen() {
@@ -237,23 +239,6 @@ class MainActivity : AppCompatActivity(),
             windowInsetsController.isAppearanceLightStatusBars = collapse
             window.statusBarColor =
                 if (collapse) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
-
-            // TODO fix not working
-            with(abl.getTag(R.id.animator_id) as? ObjectAnimator) {
-                if (this == null) {
-                    abl.setTag(
-                        R.id.animator_id,
-                        ObjectAnimator.ofArgb(
-                            window,
-                            "statusBarColor",
-                            window.statusBarColor,
-                            if (collapse) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
-                        ).setDuration(300L)
-                    )
-                } else {
-                    start()
-                }
-            }
         })
 
         //BottomAppBar has already fit navigation bar.

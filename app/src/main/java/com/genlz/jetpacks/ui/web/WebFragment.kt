@@ -2,18 +2,16 @@ package com.genlz.jetpacks.ui.web
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.activity.addCallback
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.BuildConfig
-import com.genlz.jetpacks.R
-import com.genlz.jetpacks.databinding.FragmentWebBinding
 import com.genlz.jetpacks.ui.common.FabSetter.Companion.findFabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController.Companion.findFullscreenController
 import com.genlz.jetpacks.ui.web.bridge.JavascriptBridge.Companion.wrap
@@ -22,11 +20,14 @@ import com.genlz.jetpacks.utility.appcompat.*
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 
-class WebFragment : Fragment(R.layout.fragment_web) {
+class WebFragment : Fragment() {
 
     private val args by navArgs<WebFragmentArgs>()
 
-    private val binding by viewBinding(FragmentWebBinding::bind)
+    /**
+     * Be care for it's lifecycle.
+     */
+    private val webView get() = view as PowerfulWebView
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -46,41 +47,36 @@ class WebFragment : Fragment(R.layout.fragment_web) {
         }
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ) = PowerfulWebView(requireContext())
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         findFullscreenController()?.enterFullscreen()
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
-        binding.webView.apply {
-            settings.apply {
-                javaScriptEnabled = true
-                domStorageEnabled = true
-            }
-            webViewClient = object : WebViewClient() {
-                override fun onPageFinished(view: WebView, url: String) {
-                    val jQ = requireArguments()[JQUERY_SCRIP] as String
-                    val imageHook = requireArguments()[IMAGE_HOOK_SCRIPT] as String
-                    //inject JQuery
-                    view.evaluateJavascript(jQ, null)
-                    //inject image hook
-                    view.evaluateJavascript(imageHook, null)
-                }
-            }
+        val jQ = requireArguments()[JQUERY_SCRIP] as String
+        val imageHook = requireArguments()[IMAGE_HOOK_SCRIPT] as String
+        webView.scripts = setOf(jQ, imageHook)
+        webView.apply {
             setOnApplyWindowInsetsListener { v, i, ip ->
                 val insets = i.statusBarInsets + i.imeInsets
-                v.updateMargin(top = insets.top + ip.top, bottom = insets.bottom + ip.bottom)
+                v.updatePadding(top = insets.top + ip.top, bottom = insets.bottom + ip.bottom)
                 i
             }
             addJavascriptInterface(JavascriptBridgeImpl(context).wrap(), "Android")
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            binding.webView.goBack()
+            webView.goBack()
         }
         findFabSetter()?.setupFab {
             setOnClickListener {
-                findNavController().navigateUp()
+
             }
         }
-        binding.webView.loadUrl(args.uri)
+        webView.loadUrl(args.uri)
     }
 
     override fun onDestroyView() {

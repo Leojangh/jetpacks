@@ -34,6 +34,7 @@ interface JavascriptBridge {
                 context.classLoader,
                 arrayOf(JavascriptBridge::class.java)
             ) { _, method, args ->
+                //As maybe NPE corrupt when spread args.
                 val safeArgs = if (args.isNullOrEmpty()) emptyArray<Any?>() else args
                 if (method.declaringClass == Any::class.java) {
                     method(this, *safeArgs)
