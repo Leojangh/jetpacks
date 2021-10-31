@@ -24,18 +24,18 @@
 
 namespace {
 
-using sample::ImageProcessor;
+    using sample::ImageProcessor;
 
-ImageProcessor* castToImageProcessor(jlong handle) {
-    return reinterpret_cast<ImageProcessor*>(static_cast<uintptr_t>(handle));
-}
+    ImageProcessor *castToImageProcessor(jlong handle) {
+        return reinterpret_cast<ImageProcessor *>(static_cast<uintptr_t>(handle));
+    }
 
 }  // namespace
 
 extern "C" JNIEXPORT jlong JNICALL
 Java_com_android_example_rsmigration_VulkanImageProcessor_initVulkanProcessor(
-        JNIEnv* env, jobject /* this */, jobject _assetManager) {
-    auto* assetManager = AAssetManager_fromJava(env, _assetManager);
+        JNIEnv *env, jobject /* this */, jobject _assetManager) {
+    auto *assetManager = AAssetManager_fromJava(env, _assetManager);
     RET_CHECK(assetManager != nullptr);
     auto processor = ImageProcessor::create(/*enableDebug=*/true, assetManager);
     return static_cast<jlong>(reinterpret_cast<uintptr_t>(processor.release()));
@@ -43,7 +43,7 @@ Java_com_android_example_rsmigration_VulkanImageProcessor_initVulkanProcessor(
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_android_example_rsmigration_VulkanImageProcessor_configureInputAndOutput(
-        JNIEnv* env, jobject /* this */, jlong _processor, jobject _inputBitmap,
+        JNIEnv *env, jobject /* this */, jlong _processor, jobject _inputBitmap,
         jint _numberOfOutputImages) {
     if (_processor == 0L) return false;
     return castToImageProcessor(_processor)
@@ -52,14 +52,14 @@ Java_com_android_example_rsmigration_VulkanImageProcessor_configureInputAndOutpu
 
 extern "C" JNIEXPORT jobject JNICALL
 Java_com_android_example_rsmigration_VulkanImageProcessor_getOutputHardwareBuffer(
-        JNIEnv* env, jobject /* this */, jlong _processor, jint _index) {
+        JNIEnv *env, jobject /* this */, jlong _processor, jint _index) {
     if (_processor == 0L) return nullptr;
-    auto* ahwb = castToImageProcessor(_processor)->getOutputAHardwareBuffer(_index);
+    auto *ahwb = castToImageProcessor(_processor)->getOutputAHardwareBuffer(_index);
     return AHardwareBuffer_toHardwareBuffer(env, ahwb);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_android_example_rsmigration_VulkanImageProcessor_rotateHue(JNIEnv* /* env */,
+Java_com_android_example_rsmigration_VulkanImageProcessor_rotateHue(JNIEnv * /* env */,
                                                                     jobject /* this */,
                                                                     jlong _processor,
                                                                     jfloat _radian,
@@ -69,7 +69,7 @@ Java_com_android_example_rsmigration_VulkanImageProcessor_rotateHue(JNIEnv* /* e
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_android_example_rsmigration_VulkanImageProcessor_blur(JNIEnv* /* env */,
+Java_com_android_example_rsmigration_VulkanImageProcessor_blur(JNIEnv * /* env */,
                                                                jobject /* this */, jlong _processor,
                                                                jfloat _radius, jint _outputIndex) {
     if (_processor == 0L) return false;
@@ -77,7 +77,7 @@ Java_com_android_example_rsmigration_VulkanImageProcessor_blur(JNIEnv* /* env */
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_android_example_rsmigration_VulkanImageProcessor_destroyVulkanProcessor(JNIEnv* /* env */,
+Java_com_android_example_rsmigration_VulkanImageProcessor_destroyVulkanProcessor(JNIEnv * /* env */,
                                                                                  jobject /* this */,
                                                                                  jlong _processor) {
     if (_processor == 0L) return;

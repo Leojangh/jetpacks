@@ -44,8 +44,11 @@ import com.genlz.jetpacks.utility.appcompat.*
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -109,16 +112,22 @@ class MainActivity : AppCompatActivity(),
 
         var job: Job? = null
         val processor = VulkanImageProcessor(this)
+        val target = binding.root
+        target.post {
+            processor.configureInputAndOutput(
+                target.drawToBitmap(), 1
+            )
+        }
         binding.fab.setOnClickListener {
 //            val uri = "https://baidu.com"
 //            navController.navigate(WebFragmentDirections.web(uri))
 
-            processor.configureInputAndOutput(binding.bottomAppBar.drawToBitmap(), 2)
             job?.cancel()
-            job = lifecycleScope.launch(Dispatchers.Default + SupervisorJob()) {
-                val blurredBitmap = blur(processor, 7)
+            job = lifecycleScope.launch(Dispatchers.Default) {
+                val blurredBitmap = processor.blur(13f, 0)
                 withContext(Dispatchers.Main) {
-                    binding.bottomAppBar.background = blurredBitmap.toDrawable(resources)
+                    target.foreground =
+                        blurredBitmap.toDrawable(resources).apply { alpha = 100 }
                 }
             }
         }
@@ -304,6 +313,11 @@ class MainActivity : AppCompatActivity(),
                 windowInsetsController.hide(WindowInsetsCompat.Type.ime())
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
     }
 
     override fun onNewIntent(intent: Intent?) {

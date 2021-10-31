@@ -26,43 +26,51 @@ import androidx.annotation.RequiresApi
 class VulkanImageProcessor(context: Context) : ImageProcessor {
     override val name = "Vulkan"
 
-    private var mVulkanProcessor = initVulkanProcessor(context.assets)
-
-    init {
-        if (mVulkanProcessor == 0L) {
-            throw RuntimeException("Failed to initialize Vulkan processor")
-        }
+    private var mVulkanProcessor = initVulkanProcessor(context.assets).also {
+        assert(it != 0L)
     }
 
     private lateinit var mOutputImages: Array<Bitmap>
 
     // Native methods
 
-    // Initialize the image processor backed by Vulkan.
-    // Return a non-zero handle on success, and 0L if failed.
+    /**
+     * Initialize the image processor backed by Vulkan.
+     * Return a non-zero handle on success, and 0L if failed.
+     */
     private external fun initVulkanProcessor(assetManager: AssetManager): Long
 
-    // Set the input image from bitmap and allocate output images backed by AHardwareBuffers.
-    // Return true on success, and false if failed.
+    /**
+     * Set the input image from bitmap and allocate output images backed by AHardwareBuffers.
+     * Return true on success, and false if failed.
+     */
     private external fun configureInputAndOutput(
         processor: Long,
         inputBitmap: Bitmap,
         numberOfOutputImages: Int
     ): Boolean
 
-    // Get the HardwareBuffer of the target output. This method must be invoked after
-    // configureInputAndOutput, and index must be within [0, numberOfOutputImages).
-    // Return null if failed.
+    /**
+     * Get the HardwareBuffer of the target output. This method must be invoked after
+     * configureInputAndOutput, and index must be within [0, numberOfOutputImages).
+     * Return null if failed.
+     */
     private external fun getOutputHardwareBuffer(processor: Long, index: Int): HardwareBuffer?
 
-    // Apply the hue rotation filter in Vulkan and write the results to the indexed output image.
+    /**
+     * Apply the hue rotation filter in Vulkan and write the results to the indexed output image.
+     */
     private external fun rotateHue(processor: Long, radian: Float, outputIndex: Int): Boolean
 
-    // Apply the blur filter in Vulkan and write the results to the indexed output image.
+    /**
+     * Apply the blur filter in Vulkan and write the results to the indexed output image.
+     */
     private external fun blur(processor: Long, radius: Float, outputIndex: Int): Boolean
 
-    // Frees up any underlying native resources. After calling this method, the Vulkan processor
-    // must not be used in any way.
+    /**
+     * Frees up any underlying native resources. After calling this method, the Vulkan processor
+     * must not be used in any way.
+     */
     private external fun destroyVulkanProcessor(processor: Long)
 
     override fun configureInputAndOutput(inputImage: Bitmap, numberOfOutputImages: Int) {
