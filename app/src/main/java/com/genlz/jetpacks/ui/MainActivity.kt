@@ -10,14 +10,19 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Choreographer
 import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.collection.CircularIntArray
+import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.DisplayCutoutCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
@@ -33,6 +38,10 @@ import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository
 import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
+import coil.imageLoader
+import coil.request.ImageRequest
+import coil.transform.BlurTransformation
+import coil.transform.Transformation
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
@@ -46,8 +55,10 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.circularreveal.CircularRevealCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -84,9 +95,6 @@ class MainActivity : AppCompatActivity(),
         )
     )
 
-    /**
-     * 未适配连续性时，Fold折叠后会销毁并重新创建一个Activity，再次打开又会创建一个Activity。
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         waitForReady()
@@ -112,8 +120,27 @@ class MainActivity : AppCompatActivity(),
             (currentFragment as? ReSelectable)?.onReselect()
         }
 
+        val request = ImageRequest.Builder(this).apply {
+            data(binding.bottomAppBar.background)
+            transformations(BlurTransformation(this@MainActivity))
+        }.build()
+        lifecycleScope.launch(Dispatchers.IO) {
+            val result = imageLoader.execute(request)
+            withContext(Dispatchers.Main) {
+//                binding.bottomAppBar.background = result.drawable
+            }
+
+        }
+
+
         binding.fab.setOnClickListener {
-            navController.navigate(WebFragmentDirections.web("https://baidu.com"))
+            val uri = "https://baidu.com"
+//            val build = CustomTabsIntent.Builder().apply {
+//
+//            }.build()
+//
+//            build.launchUrl(this, uri.toUri())
+            navController.navigate(WebFragmentDirections.web(uri))
         }
 
     }
@@ -123,7 +150,7 @@ class MainActivity : AppCompatActivity(),
             bottomAppBar.performHide()
             appBarLayout.setExpanded(false)
         }
-
+//        DisplayCutoutCompat()
 //        windowInsetsController.run {
 //            hide(WindowInsetsCompat.Type.systemBars())
 //            systemBarsBehavior =

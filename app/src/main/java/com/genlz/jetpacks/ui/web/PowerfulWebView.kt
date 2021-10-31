@@ -1,13 +1,17 @@
 package com.genlz.jetpacks.ui.web
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.annotation.MainThread
 import androidx.annotation.StyleRes
+import androidx.core.os.HandlerCompat
 import androidx.core.view.*
 import androidx.core.view.ViewCompat.NestedScrollType
 import androidx.core.view.ViewCompat.ScrollAxis
@@ -67,7 +71,10 @@ class PowerfulWebView @JvmOverloads constructor(
 
     var doubleTapEventListener: ((MotionEvent) -> Boolean)? = null
 
-    var scripts: Set<String> = HashSet()
+    /**
+     * The map of file name to script content.
+     */
+    var scripts: Map<String, String> = HashMap()
 
 //    private val helper = CircularRevealHelper(this)
 
@@ -78,7 +85,7 @@ class PowerfulWebView @JvmOverloads constructor(
         }
         webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String) {
-                scripts.forEach {
+                scripts.values.forEach {
                     evaluateJavascript(it, null)
                 }
             }
@@ -179,7 +186,7 @@ class PowerfulWebView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        gestureDetector.onTouchEvent(event)
+//        gestureDetector.onTouchEvent(event)
         return super.onTouchEvent(event)
     }
 

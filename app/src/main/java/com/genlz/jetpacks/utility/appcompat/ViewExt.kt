@@ -254,7 +254,7 @@ inline var View.layoutDirectionExt
 /**
  * @see ViewCompat.getParentForAccessibility
  */
-inline fun View.getParentForAccessibilityExt(): ViewParent =
+inline fun View.getParentForAccessibilityExt() =
     ViewCompat.getParentForAccessibility(this)
 
 /**
@@ -434,7 +434,7 @@ inline fun View.setBackgroundExt(background: Drawable?) = ViewCompat.setBackgrou
  * @see ViewCompat.setBackgroundTintList
  * @see ViewCompat.getBackgroundTintList
  */
-inline var View.backgroundTintListExt: ColorStateList
+inline var View.backgroundTintListExt
     get() = ViewCompat.getBackgroundTintList(this)
     set(value) = ViewCompat.setBackgroundTintList(this, value)
 
@@ -442,7 +442,7 @@ inline var View.backgroundTintListExt: ColorStateList
  * @see ViewCompat.setBackgroundTintMode
  * @see ViewCompat.getBackgroundTintMode
  */
-inline var View.backgroundTintModeExt: PorterDuff.Mode
+inline var View.backgroundTintModeExt
     get() = ViewCompat.getBackgroundTintMode(this)
     set(value) = ViewCompat.setBackgroundTintMode(this, value)
 

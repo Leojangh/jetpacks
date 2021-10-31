@@ -19,7 +19,7 @@ buildscript {
     }
 
     //Jetpack
-    extra["coreKtx"] = "1.6.0"
+    extra["coreKtx"] = "1.7.0"
     extra["lifecycle"] = "2.4.0-rc01"
     extra["appcompat"] = "1.3.1"
     extra["material"] = "1.4.0"
@@ -30,10 +30,12 @@ buildscript {
     extra["swiperRefreshLayout"] = "1.1.0"
     extra["constraintLayout"] = "2.1.1"
     extra["work"] = "2.7.0" //for targeting S+
+    extra["browser"] = "1.4.0-rc01"
+    extra["webkit"] = "1.4.0"
 
     //Dynamic version
-    extra["window"] = "1.0.0-beta+"
-    extra["splash"] = "1.0.0-alpha+"
+    extra["window"] = "+"
+    extra["splash"] = "+"
 
     //Third party
     extra["retrofit"] = "2.9.0"

@@ -26,7 +26,7 @@ android {
 
     defaultConfig {
         applicationId = "com.genlz.jetpacks"
-        minSdk = 21
+        minSdk = 29 //vulkan requisites
         targetSdk = 31
         versionCode = 1
         versionName = "1.0"
@@ -39,12 +39,36 @@ android {
             }
         }
 
+        ndkVersion = "22.0.7026061"
+//        ndkVersion = "23.1.7779620"
+
         ndk {
             abiFilters += listOf("arm64-v8a", "x86_64")
         }
 
+        externalNativeBuild {
+            cmake {
+                arguments += listOf("-DANDROID_TOOLCHAIN=clang", "-DANDROID_STL=c++_static")
+            }
+        }
+
         vectorDrawables.useSupportLibrary = true
 
+    }
+
+    sourceSets {
+        getByName("main") {
+            jniLibs {
+                srcDirs("$android.ndkDirectory/sources/third_party/vulkan/src/build-android/jniLibs")
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            version = "3.10.2"
+            path("src/main/cpp/CMakeLists.txt")
+        }
     }
 
     flavorDimensions += "env"
@@ -116,8 +140,12 @@ android {
 dependencies {
 
     implementation(project(":share"))
-    implementation("androidx.webkit:webkit:1.4.0")
-    implementation("androidx.browser:browser:1.4.0-rc01")
+
+    val webkit: String by rootProject.extra
+    implementation("androidx.webkit:webkit:$webkit")
+
+    val browser: String by rootProject.extra
+    implementation("androidx.browser:browser:$browser")
 
     val palette: String by rootProject.extra
     implementation("androidx.palette:palette:$palette")
