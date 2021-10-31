@@ -23,6 +23,7 @@ kapt {
 
 android {
     compileSdk = 31
+    buildToolsVersion = "32.0.0-rc1"
 
     defaultConfig {
         applicationId = "com.genlz.jetpacks"
@@ -30,6 +31,7 @@ android {
         targetSdk = 31
         versionCode = 1
         versionName = "1.0"
+        renderscriptTargetApi = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
