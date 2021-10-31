@@ -1,31 +1,22 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
-import android.animation.ObjectAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
-import android.view.Choreographer
 import android.view.MotionEvent
-import android.view.View
-import android.view.WindowManager
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.collection.CircularIntArray
-import androidx.core.net.toUri
-import androidx.core.splashscreen.SplashScreen
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.DisplayCutoutCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.view.updatePadding
+import androidx.core.view.*
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -36,12 +27,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoRepository
 import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.transform.BlurTransformation
-import coil.transform.Transformation
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
@@ -49,16 +38,14 @@ import com.genlz.jetpacks.ui.common.ActionBarCustomizer
 import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.jetpacks.ui.common.ReSelectable
-import com.genlz.jetpacks.ui.web.WebFragmentDirections
 import com.genlz.jetpacks.utility.appcompat.*
+import com.genlz.jetpacks.utility.imageprocessor.ImageProcessor
+import com.genlz.jetpacks.utility.imageprocessor.VulkanImageProcessor
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.circularreveal.CircularRevealCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -120,29 +107,32 @@ class MainActivity : AppCompatActivity(),
             (currentFragment as? ReSelectable)?.onReselect()
         }
 
-        val request = ImageRequest.Builder(this).apply {
-            data(binding.bottomAppBar.background)
-            transformations(BlurTransformation(this@MainActivity))
-        }.build()
-        lifecycleScope.launch(Dispatchers.IO) {
-            val result = imageLoader.execute(request)
-            withContext(Dispatchers.Main) {
-//                binding.bottomAppBar.background = result.drawable
-            }
-
-        }
-
-
+        var job: Job? = null
+        val processor = VulkanImageProcessor(this)
         binding.fab.setOnClickListener {
-            val uri = "https://baidu.com"
-//            val build = CustomTabsIntent.Builder().apply {
-//
-//            }.build()
-//
-//            build.launchUrl(this, uri.toUri())
-            navController.navigate(WebFragmentDirections.web(uri))
+//            val uri = "https://baidu.com"
+//            navController.navigate(WebFragmentDirections.web(uri))
+
+            processor.configureInputAndOutput(binding.bottomAppBar.drawToBitmap(), 2)
+            job?.cancel()
+            job = lifecycleScope.launch(Dispatchers.Default + SupervisorJob()) {
+                val blurredBitmap = blur(processor, 7)
+                binding.bottomAppBar.background = blurredBitmap.toDrawable(resources)
+            }
         }
 
+    }
+
+    private fun blur(processor: ImageProcessor, progress: Int): Bitmap {
+        val radius = rescale(progress, 1.0, 25.0)
+        return processor.blur(radius.toFloat(), 0)
+    }
+
+    /**
+     * Helper method to map the progress from [0, 100] to the given range [min, max].
+     */
+    private fun rescale(progress: Int, min: Double, max: Double): Double {
+        return (max - min) * (progress / 100.0) + min
     }
 
     override fun enterFullscreen() {
@@ -325,6 +315,9 @@ class MainActivity : AppCompatActivity(),
         private const val TAG = "MainActivity"
         const val SPLASH_DISPLAY_TIME = 1000L
 
+        init {
+            System.loadLibrary("rs_migration_jni")
+        }
     }
 
 }

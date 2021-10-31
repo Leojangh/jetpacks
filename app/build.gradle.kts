@@ -15,12 +15,6 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
 }
 
-kapt {
-    arguments {
-
-    }
-}
-
 android {
     compileSdk = 31
     buildToolsVersion = "32.0.0-rc1"
@@ -31,7 +25,6 @@ android {
         targetSdk = 31
         versionCode = 1
         versionName = "1.0"
-        renderscriptTargetApi = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

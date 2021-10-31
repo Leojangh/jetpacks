@@ -30,67 +30,75 @@ namespace sample {
 
 // VulkanContext manages the Vulkan environment and resource objects that are shared by multiple
 // compute pipelines.
-class VulkanContext {
-   public:
-    // Create the managed Vulkan objects. If enableDebug is true, the Vulkan instance will be
-    // created with the validation layer "VK_LAYER_KHRONOS_validation".
-    static std::unique_ptr<VulkanContext> create(bool enableDebug);
+    class VulkanContext {
+    public:
+        // Create the managed Vulkan objects. If enableDebug is true, the Vulkan instance will be
+        // created with the validation layer "VK_LAYER_KHRONOS_validation".
+        static std::unique_ptr<VulkanContext> create(bool enableDebug);
 
-    // Prefer VulkanContext::create
-    VulkanContext() : mDescriptorPool(VK_NULL_HANDLE), mCommandPool(VK_NULL_HANDLE) {}
+        // Prefer VulkanContext::create
+        VulkanContext() : mDescriptorPool(VK_NULL_HANDLE), mCommandPool(VK_NULL_HANDLE) {}
 
-    // Getters of the managed Vulkan objects
-    VkDevice device() const { return mDevice.handle(); }
-    VkQueue queue() const { return mQueue; }
-    VkCommandPool commandPool() const { return mCommandPool.handle(); }
-    VkDescriptorPool descriptorPool() const { return mDescriptorPool.handle(); }
+        // Getters of the managed Vulkan objects
+        VkDevice device() const { return mDevice.handle(); }
 
-    uint32_t getWorkGroupSize() const { return mWorkGroupSize; }
+        VkQueue queue() const { return mQueue; }
 
-    // Find a suitable memory type that matches the memoryTypeBits and the required properties.
-    std::optional<uint32_t> findMemoryType(uint32_t memoryTypeBits, VkFlags properties) const;
+        VkCommandPool commandPool() const { return mCommandPool.handle(); }
 
-    // Create a semaphore with the managed device.
-    bool createSemaphore(VkSemaphore* semaphore) const;
+        VkDescriptorPool descriptorPool() const { return mDescriptorPool.handle(); }
 
-    // Create a buffer and its memory.
-    bool createBuffer(size_t size, VkFlags bufferUsage, VkFlags memoryProperties, VkBuffer* buffer,
-                      VkDeviceMemory* memory) const;
+        uint32_t getWorkGroupSize() const { return mWorkGroupSize; }
 
-    // Create a command buffer with VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, and begin command
-    // buffer recording.
-    bool beginSingleTimeCommand(VkCommandBuffer* commandBuffer) const;
+        // Find a suitable memory type that matches the memoryTypeBits and the required properties.
+        std::optional<uint32_t> findMemoryType(uint32_t memoryTypeBits, VkFlags properties) const;
 
-    // End the command buffer recording, submit it to the queue, and wait until it is finished.
-    bool endAndSubmitSingleTimeCommand(VkCommandBuffer commandBuffer) const;
+        // Create a semaphore with the managed device.
+        bool createSemaphore(VkSemaphore *semaphore) const;
 
-   private:
-    // Initialization
-    bool checkInstanceVersion();
-    bool createInstance(bool enableDebug);
-    bool pickPhysicalDeviceAndQueueFamily();
-    bool createDevice();
-    bool createPools();
+        // Create a buffer and its memory.
+        bool
+        createBuffer(size_t size, VkFlags bufferUsage, VkFlags memoryProperties, VkBuffer *buffer,
+                     VkDeviceMemory *memory) const;
 
-    // Instance
-    uint32_t mInstanceVersion = 0;
-    VulkanInstance mInstance;
+        // Create a command buffer with VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, and begin command
+        // buffer recording.
+        bool beginSingleTimeCommand(VkCommandBuffer *commandBuffer) const;
 
-    // Physical device and queue family
-    VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
-    VkPhysicalDeviceProperties mPhysicalDeviceProperties;
-    VkPhysicalDeviceMemoryProperties mPhysicalDeviceMemoryProperties;
-    uint32_t mQueueFamilyIndex = 0;
-    uint32_t mWorkGroupSize = 0;
+        // End the command buffer recording, submit it to the queue, and wait until it is finished.
+        bool endAndSubmitSingleTimeCommand(VkCommandBuffer commandBuffer) const;
 
-    // Logical device and queue
-    VulkanDevice mDevice;
-    VkQueue mQueue = VK_NULL_HANDLE;
+    private:
+        // Initialization
+        bool checkInstanceVersion();
 
-    // Pools
-    VulkanDescriptorPool mDescriptorPool;
-    VulkanCommandPool mCommandPool;
-};
+        bool createInstance(bool enableDebug);
+
+        bool pickPhysicalDeviceAndQueueFamily();
+
+        bool createDevice();
+
+        bool createPools();
+
+        // Instance
+        uint32_t mInstanceVersion = 0;
+        VulkanInstance mInstance;
+
+        // Physical device and queue family
+        VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
+        VkPhysicalDeviceProperties mPhysicalDeviceProperties;
+        VkPhysicalDeviceMemoryProperties mPhysicalDeviceMemoryProperties;
+        uint32_t mQueueFamilyIndex = 0;
+        uint32_t mWorkGroupSize = 0;
+
+        // Logical device and queue
+        VulkanDevice mDevice;
+        VkQueue mQueue = VK_NULL_HANDLE;
+
+        // Pools
+        VulkanDescriptorPool mDescriptorPool;
+        VulkanCommandPool mCommandPool;
+    };
 
 }  // namespace sample
 
