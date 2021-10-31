@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.genlz.jetpacks.utility.imageprocessor
+package com.android.example.rsmigration
 
 import android.graphics.Bitmap
 

@@ -16,7 +16,10 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.*
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.drawToBitmap
+import androidx.core.view.updatePadding
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -28,9 +31,8 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
-import coil.imageLoader
-import coil.request.ImageRequest
-import coil.transform.BlurTransformation
+import com.android.example.rsmigration.ImageProcessor
+import com.android.example.rsmigration.VulkanImageProcessor
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
@@ -39,8 +41,6 @@ import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.jetpacks.ui.common.ReSelectable
 import com.genlz.jetpacks.utility.appcompat.*
-import com.genlz.jetpacks.utility.imageprocessor.ImageProcessor
-import com.genlz.jetpacks.utility.imageprocessor.VulkanImageProcessor
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -117,10 +117,11 @@ class MainActivity : AppCompatActivity(),
             job?.cancel()
             job = lifecycleScope.launch(Dispatchers.Default + SupervisorJob()) {
                 val blurredBitmap = blur(processor, 7)
-                binding.bottomAppBar.background = blurredBitmap.toDrawable(resources)
+                withContext(Dispatchers.Main) {
+                    binding.bottomAppBar.background = blurredBitmap.toDrawable(resources)
+                }
             }
         }
-
     }
 
     private fun blur(processor: ImageProcessor, progress: Int): Bitmap {

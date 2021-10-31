@@ -13,3 +13,4 @@ dependencyResolutionManagement {
 rootProject.name = "jetpacks"
 include(":app")
 include(":share")
+include(":vulkan")
