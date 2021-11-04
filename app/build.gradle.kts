@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId = "com.genlz.jetpacks"
-        minSdk = 29 //vulkan requisites
+        minSdk = 24 //vulkan requisites
         targetSdk = 31
         versionCode = 1
         versionName = "1.0"
@@ -107,7 +107,7 @@ android {
 dependencies {
 
     implementation(project(":share"))
-    implementation(project(":vulkan"))
+//    implementation(project(":vulkan"))
 
     val webkit: String by rootProject.extra
     implementation("androidx.webkit:webkit:$webkit")

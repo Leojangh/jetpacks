@@ -10,8 +10,12 @@ import androidx.activity.addCallback
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 import com.genlz.jetpacks.BuildConfig
+import com.genlz.jetpacks.ui.GalleryFragment
 import com.genlz.jetpacks.ui.common.ActionBarCustomizer.Companion.findActionBarCustomizer
 import com.genlz.jetpacks.ui.web.bridge.JavascriptBridge.Companion.wrap
 import com.genlz.jetpacks.ui.web.bridge.JavascriptBridgeImpl
@@ -78,9 +82,21 @@ class WebFragment : Fragment() {
                 i
             }
             addJavascriptInterface(JavascriptBridgeImpl(context).wrap(), "Android")
-            doubleTapEventListener = {
-                true
+
+            longPressListener = {
+
+                when (hitTestResult.type) {
+                    WebView.HitTestResult.IMAGE_TYPE -> {
+                        Log.d(TAG, "onViewCreated: ${hitTestResult.extra}")
+                        GalleryFragment.navigate(findNavController(), listOf(), 0, mapOf())
+                    }
+                }
             }
+
+            if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                WebSettingsCompat.setForceDark(settings, WebSettingsCompat.FORCE_DARK_AUTO)
+            }
+
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             webView.goBack()
@@ -91,6 +107,16 @@ class WebFragment : Fragment() {
 //            }
 //        }
         webView.loadUrl(args.uri)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        webView.onPause()
     }
 
     override fun onDestroyView() {

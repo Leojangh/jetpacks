@@ -3,7 +3,6 @@ package com.genlz.jetpacks.ui
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
@@ -14,11 +13,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.view.drawToBitmap
 import androidx.core.view.updatePadding
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -31,8 +28,6 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
-import com.android.example.rsmigration.ImageProcessor
-import com.android.example.rsmigration.VulkanImageProcessor
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
@@ -45,11 +40,8 @@ import com.genlz.jetpacks.utility.appcompat.*
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -134,10 +126,10 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun blur(processor: ImageProcessor, progress: Int): Bitmap {
-        val radius = rescale(progress, 1.0, 25.0)
-        return processor.blur(radius.toFloat(), 0)
-    }
+//    private fun blur(processor: ImageProcessor, progress: Int): Bitmap {
+//        val radius = rescale(progress, 1.0, 25.0)
+//        return processor.blur(radius.toFloat(), 0)
+//    }
 
     /**
      * Helper method to map the progress from [0, 100] to the given range [min, max].
@@ -332,7 +324,7 @@ class MainActivity : AppCompatActivity(),
         const val SPLASH_DISPLAY_TIME = 1000L
 
         init {
-            System.loadLibrary("rs_migration_jni")
+//            System.loadLibrary("rs_migration_jni")
         }
     }
 

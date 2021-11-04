@@ -2,6 +2,7 @@ package com.genlz.jetpacks.ui.web.bridge
 
 import android.content.Context
 import android.webkit.JavascriptInterface
+import com.genlz.jetpacks.ui.web.bridge.JavascriptBridge.InheritedUiThread
 import com.genlz.jetpacks.utility.appcompat.mainExecutorExt
 import java.lang.annotation.Inherited
 import java.lang.reflect.Proxy
@@ -23,7 +24,7 @@ interface JavascriptBridge {
 
     companion object {
 
-        private const val TAG = "JavascriptBridge"
+        internal const val TAG = "JavascriptBridge"
 
         /**
          * Wrap the implementation method in appropriate thread,the magic under the

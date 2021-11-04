@@ -1,7 +1,10 @@
 package com.genlz.jetpacks.ui.web.bridge
 
 import android.content.Context
+import android.graphics.RectF
+import android.util.Log
 import android.widget.Toast
+import com.genlz.jetpacks.ui.web.bridge.JavascriptBridge.Companion.TAG
 
 /**
  * All method run in a dedicate thread named "JavaBridge",but you don't
@@ -18,6 +21,7 @@ internal class JavascriptBridgeImpl(
     }
 
     override fun transit(left: Float, top: Float, right: Float, bottom: Float) {
-
+        val rectF = RectF(left, top, right, bottom)
+        Log.d(TAG, "transit: $rectF")
     }
 }

@@ -1,11 +1,13 @@
 package com.genlz.share.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.StyleRes
@@ -14,6 +16,7 @@ import androidx.core.view.ViewCompat.NestedScrollType
 import androidx.core.view.ViewCompat.ScrollAxis
 import androidx.core.widget.NestedScrollView
 
+@SuppressLint("SetJavaScriptEnabled")
 class PowerfulWebView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -85,7 +88,16 @@ class PowerfulWebView @JvmOverloads constructor(
                     evaluateJavascript(it, null)
                 }
             }
+
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                request: WebResourceRequest?
+            ): Boolean = false
         }
+        webChromeClient = object : WebChromeClient() {
+
+        }
+
         isNestedScrollingEnabled = true
     }
 
@@ -94,17 +106,14 @@ class PowerfulWebView @JvmOverloads constructor(
         @ScrollAxis axes: Int,
         @NestedScrollType type: Int
     ): Boolean {
-        Log.d(TAG, "startNestedScroll: $type")
         return childHelper.startNestedScroll(axes, type)
     }
 
     override fun stopNestedScroll(@NestedScrollType type: Int) {
-        Log.d(TAG, "stopNestedScroll: $type")
         childHelper.stopNestedScroll(type)
     }
 
     override fun hasNestedScrollingParent(@NestedScrollType type: Int): Boolean {
-        Log.d(TAG, "hasNestedScrollingParent: $type")
         return childHelper.hasNestedScrollingParent(type)
     }
 
@@ -126,7 +135,6 @@ class PowerfulWebView @JvmOverloads constructor(
         @NestedScrollType type: Int,
         consumed: IntArray
     ) {
-        Log.d(TAG, "dispatchNestedScroll: $type")
         childHelper.dispatchNestedScroll(
             dxConsumed,
             dyConsumed,
@@ -174,7 +182,6 @@ class PowerfulWebView @JvmOverloads constructor(
         offsetInWindow: IntArray?,
         @NestedScrollType type: Int
     ): Boolean {
-        Log.d(TAG, "dispatchNestedScroll: $type")
         return childHelper.dispatchNestedScroll(
             dxConsumed,
             dyConsumed,
@@ -192,7 +199,6 @@ class PowerfulWebView @JvmOverloads constructor(
         offsetInWindow: IntArray?,
         @NestedScrollType type: Int
     ): Boolean {
-        Log.d(TAG, "dispatchNestedPreScroll: $type")
         return childHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type)
     }
 
@@ -280,12 +286,10 @@ class PowerfulWebView @JvmOverloads constructor(
     override fun onDown(e: MotionEvent) = true
 
     override fun onShowPress(e: MotionEvent) {
-        Log.d(TAG, "onShowPress: ")
         showPressListener?.invoke(e)
     }
 
     override fun onSingleTapUp(e: MotionEvent): Boolean {
-        Log.d(TAG, "onSingleTapUp: ")
         return singleTapListener?.invoke(e) ?: true
     }
 
@@ -295,7 +299,6 @@ class PowerfulWebView @JvmOverloads constructor(
         distanceX: Float,
         distanceY: Float
     ): Boolean {
-        Log.d(TAG, "onScroll: ")
         dispatchNestedPreScroll(
             distanceX.toInt(),
             distanceY.toInt(),
@@ -307,7 +310,6 @@ class PowerfulWebView @JvmOverloads constructor(
     }
 
     override fun onLongPress(e: MotionEvent) {
-        Log.d(TAG, "onLongPress: ")
         longPressListener?.invoke(e)
     }
 
@@ -317,7 +319,6 @@ class PowerfulWebView @JvmOverloads constructor(
         velocityX: Float,
         velocityY: Float
     ): Boolean {
-        Log.d(TAG, "onFling: ")
         return dispatchNestedFling(velocityX, velocityY, false)
     }
 
@@ -326,12 +327,10 @@ class PowerfulWebView @JvmOverloads constructor(
     }
 
     override fun onDoubleTap(e: MotionEvent): Boolean {
-        Log.d(TAG, "onDoubleTap: ")
         return doubleTapListener?.invoke(e) ?: true
     }
 
     override fun onDoubleTapEvent(e: MotionEvent): Boolean {
-        Log.d(TAG, "onDoubleTapEvent: ")
         return doubleTapEventListener?.invoke(e) ?: true
     }
 
