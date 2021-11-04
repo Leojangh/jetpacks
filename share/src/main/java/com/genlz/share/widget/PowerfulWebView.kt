@@ -1,4 +1,4 @@
-package com.genlz.jetpacks.ui.web
+package com.genlz.share.widget
 
 import android.content.Context
 import android.util.AttributeSet

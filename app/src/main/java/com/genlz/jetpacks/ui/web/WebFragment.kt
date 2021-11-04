@@ -19,6 +19,7 @@ import com.genlz.jetpacks.utility.appcompat.imeInsets
 import com.genlz.jetpacks.utility.appcompat.plus
 import com.genlz.jetpacks.utility.appcompat.setOnApplyWindowInsetsListener
 import com.genlz.jetpacks.utility.appcompat.statusBarInsets
+import com.genlz.share.widget.PowerfulWebView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -77,6 +78,9 @@ class WebFragment : Fragment() {
                 i
             }
             addJavascriptInterface(JavascriptBridgeImpl(context).wrap(), "Android")
+            doubleTapEventListener = {
+                true
+            }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             webView.goBack()
