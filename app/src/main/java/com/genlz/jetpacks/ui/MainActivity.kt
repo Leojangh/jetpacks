@@ -40,6 +40,7 @@ import com.genlz.jetpacks.ui.common.ActionBarCustomizer
 import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.jetpacks.ui.common.ReSelectable
+import com.genlz.jetpacks.ui.web.WebFragmentDirections
 import com.genlz.jetpacks.utility.appcompat.*
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -110,26 +111,26 @@ class MainActivity : AppCompatActivity(),
             (currentFragment as? ReSelectable)?.onReselect()
         }
 
-        var job: Job? = null
-        val processor = VulkanImageProcessor(this)
-        val target = binding.root
-        target.post {
-            processor.configureInputAndOutput(
-                target.drawToBitmap(), 1
-            )
-        }
+//        var job: Job? = null
+//        val processor = VulkanImageProcessor(this)
+//        val target = binding.root
+//        target.post {
+//            processor.configureInputAndOutput(
+//                target.drawToBitmap(), 1
+//            )
+//        }
         binding.fab.setOnClickListener {
-//            val uri = "https://baidu.com"
-//            navController.navigate(WebFragmentDirections.web(uri))
+            val uri = "https://baidu.com"
+            navController.navigate(WebFragmentDirections.web(uri))
 
-            job?.cancel()
-            job = lifecycleScope.launch(Dispatchers.Default) {
-                val blurredBitmap = processor.blur(13f, 0)
-                withContext(Dispatchers.Main) {
-                    target.foreground =
-                        blurredBitmap.toDrawable(resources).apply { alpha = 100 }
-                }
-            }
+//            job?.cancel()
+//            job = lifecycleScope.launch(Dispatchers.Default) {
+//                val blurredBitmap = processor.blur(13f, 0)
+//                withContext(Dispatchers.Main) {
+//                    target.foreground =
+//                        blurredBitmap.toDrawable(resources).apply { alpha = 100 }
+//                }
+//            }
         }
     }
 

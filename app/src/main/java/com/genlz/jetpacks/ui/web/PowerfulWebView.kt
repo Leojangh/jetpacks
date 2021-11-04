@@ -1,20 +1,18 @@
 package com.genlz.jetpacks.ui.web
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.annotation.MainThread
 import androidx.annotation.StyleRes
-import androidx.core.os.HandlerCompat
 import androidx.core.view.*
 import androidx.core.view.ViewCompat.NestedScrollType
 import androidx.core.view.ViewCompat.ScrollAxis
+import androidx.core.widget.NestedScrollView
 
 class PowerfulWebView @JvmOverloads constructor(
     context: Context,
@@ -22,9 +20,8 @@ class PowerfulWebView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
     @StyleRes defStyleRes: Int = 0
 ) : WebView(context, attrs, defStyleAttr, defStyleRes),
-    ScrollingView,
-    NestedScrollingChild2,
     NestedScrollingChild3,
+    NestedScrollingParent3,
     GestureDetector.OnGestureListener,
     GestureDetector.OnDoubleTapListener
 //    CircularRevealWidget
@@ -51,19 +48,18 @@ class PowerfulWebView @JvmOverloads constructor(
      */
     private val gestureDetector = GestureDetectorCompat(context, this)
 
-    private val scrollHelpers = NestedScrollingChildHelper(this)
+    /**
+     * Usage refers to [NestedScrollView].
+     */
+    private val childHelper = NestedScrollingChildHelper(this)
+
+    private val parentHelper = NestedScrollingParentHelper(this)
 
     var showPressListener: ((MotionEvent) -> Boolean)? = null
 
     var singleTapListener: ((MotionEvent) -> Boolean)? = null
 
-    var scrollListener: ((MotionEvent, MotionEvent, Float, Float) -> Boolean)? =
-        null
-
     var longPressListener: ((MotionEvent) -> Unit)? = null
-
-    var flingListener: ((MotionEvent, MotionEvent, Float, Float) -> Boolean)? =
-        null
 
     var singleTapConfirmedListener: ((MotionEvent) -> Boolean)? = null
 
@@ -90,50 +86,37 @@ class PowerfulWebView @JvmOverloads constructor(
                 }
             }
         }
+        isNestedScrollingEnabled = true
     }
 
-    override fun computeHorizontalScrollRange(): Int {
-        return super.computeHorizontalScrollRange()
-    }
-
-    override fun computeHorizontalScrollOffset(): Int {
-        return super.computeHorizontalScrollOffset()
-    }
-
-    override fun computeHorizontalScrollExtent(): Int {
-        return super.computeHorizontalScrollExtent()
-    }
-
-    override fun computeVerticalScrollRange(): Int {
-        return super.computeVerticalScrollRange()
-    }
-
-    override fun computeVerticalScrollOffset(): Int {
-        return super.computeVerticalScrollOffset()
-    }
-
-    override fun computeVerticalScrollExtent(): Int {
-        return super.computeVerticalScrollExtent()
-    }
-
+    // NestedScrollingChild2
     override fun startNestedScroll(
         @ScrollAxis axes: Int,
         @NestedScrollType type: Int
     ): Boolean {
         Log.d(TAG, "startNestedScroll: $type")
-        return scrollHelpers.startNestedScroll(axes, type)
+        return childHelper.startNestedScroll(axes, type)
     }
 
     override fun stopNestedScroll(@NestedScrollType type: Int) {
         Log.d(TAG, "stopNestedScroll: $type")
-        scrollHelpers.stopNestedScroll(type)
+        childHelper.stopNestedScroll(type)
     }
 
     override fun hasNestedScrollingParent(@NestedScrollType type: Int): Boolean {
         Log.d(TAG, "hasNestedScrollingParent: $type")
-        return scrollHelpers.hasNestedScrollingParent(type)
+        return childHelper.hasNestedScrollingParent(type)
     }
 
+    override fun setNestedScrollingEnabled(enabled: Boolean) {
+        childHelper.isNestedScrollingEnabled = enabled
+    }
+
+    override fun isNestedScrollingEnabled(): Boolean {
+        return childHelper.isNestedScrollingEnabled
+    }
+
+    // NestedScrollChild3
     override fun dispatchNestedScroll(
         dxConsumed: Int,
         dyConsumed: Int,
@@ -144,7 +127,7 @@ class PowerfulWebView @JvmOverloads constructor(
         consumed: IntArray
     ) {
         Log.d(TAG, "dispatchNestedScroll: $type")
-        scrollHelpers.dispatchNestedScroll(
+        childHelper.dispatchNestedScroll(
             dxConsumed,
             dyConsumed,
             dxUnconsumed,
@@ -160,11 +143,39 @@ class PowerfulWebView @JvmOverloads constructor(
         dyConsumed: Int,
         dxUnconsumed: Int,
         dyUnconsumed: Int,
+        offsetInWindow: IntArray?
+    ): Boolean {
+        return childHelper.dispatchNestedScroll(
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed,
+            offsetInWindow
+        )
+    }
+
+    override fun dispatchNestedFling(
+        velocityX: Float,
+        velocityY: Float,
+        consumed: Boolean
+    ): Boolean {
+        return childHelper.dispatchNestedFling(velocityX, velocityY, consumed)
+    }
+
+    override fun dispatchNestedPreFling(velocityX: Float, velocityY: Float): Boolean {
+        return childHelper.dispatchNestedPreFling(velocityX, velocityY)
+    }
+
+    override fun dispatchNestedScroll(
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
         offsetInWindow: IntArray?,
         @NestedScrollType type: Int
     ): Boolean {
         Log.d(TAG, "dispatchNestedScroll: $type")
-        return scrollHelpers.dispatchNestedScroll(
+        return childHelper.dispatchNestedScroll(
             dxConsumed,
             dyConsumed,
             dxUnconsumed,
@@ -182,11 +193,82 @@ class PowerfulWebView @JvmOverloads constructor(
         @NestedScrollType type: Int
     ): Boolean {
         Log.d(TAG, "dispatchNestedPreScroll: $type")
-        return scrollHelpers.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type)
+        return childHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type)
+    }
+
+    // NestedScrollingParent3
+    override fun onStartNestedScroll(child: View, target: View, axes: Int, type: Int): Boolean {
+        return axes and ViewCompat.SCROLL_AXIS_VERTICAL != 0
+    }
+
+    override fun onNestedScrollAccepted(child: View, target: View, axes: Int, type: Int) {
+        parentHelper.onNestedScrollAccepted(child, target, axes, type)
+        startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, type)
+    }
+
+    override fun onStopNestedScroll(target: View, type: Int) {
+        parentHelper.onStopNestedScroll(target, type)
+        stopNestedScroll(type)
+    }
+
+    override fun onNestedScroll(
+        target: View,
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
+        type: Int,
+        consumed: IntArray
+    ) {
+        onNestedScrollInternal(dyUnconsumed, type, consumed)
+    }
+
+    override fun onNestedScroll(
+        target: View,
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
+        type: Int
+    ) {
+        onNestedScrollInternal(dyUnconsumed, type, null)
+    }
+
+    override fun onNestedScroll(
+        target: View,
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int
+    ) {
+        onNestedScrollInternal(dyUnconsumed, ViewCompat.TYPE_TOUCH, null)
+    }
+
+    override fun onNestedPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray, type: Int) {
+        dispatchNestedPreScroll(dx, dy, consumed, null, type)
+    }
+
+    override fun getNestedScrollAxes(): Int {
+        return parentHelper.nestedScrollAxes
+    }
+
+    /**
+     * Copy from [NestedScrollView.onNestedScrollInternal]
+     */
+    private fun onNestedScrollInternal(dyUnconsumed: Int, type: Int, consumed: IntArray?) {
+        val oldScrollY = scrollY
+        scrollBy(0, dyUnconsumed)
+        val myConsumed = scrollY - oldScrollY
+        consumed?.apply {
+            this[1] += myConsumed
+        }
+        val myUnconsumed = dyUnconsumed - myConsumed
+        childHelper.dispatchNestedScroll(0, myConsumed, 0, myUnconsumed, null, type, consumed)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-//        gestureDetector.onTouchEvent(event)
+        //just intercept event at here.
+        gestureDetector.onTouchEvent(event)
         return super.onTouchEvent(event)
     }
 
@@ -194,6 +276,7 @@ class PowerfulWebView @JvmOverloads constructor(
         private const val TAG = "PowerfulWebView"
     }
 
+    // Gesture detector
     override fun onDown(e: MotionEvent) = true
 
     override fun onShowPress(e: MotionEvent) {
@@ -213,15 +296,14 @@ class PowerfulWebView @JvmOverloads constructor(
         distanceY: Float
     ): Boolean {
         Log.d(TAG, "onScroll: ")
-        scrollListener?.invoke(e1, e2, distanceX, distanceY)
-        startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_TOUCH)
-        return dispatchNestedPreScroll(
+        dispatchNestedPreScroll(
             distanceX.toInt(),
             distanceY.toInt(),
             intArrayOf(0, 0),
             null,
             ViewCompat.TYPE_TOUCH
         )
+        return startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_TOUCH)
     }
 
     override fun onLongPress(e: MotionEvent) {
@@ -236,7 +318,7 @@ class PowerfulWebView @JvmOverloads constructor(
         velocityY: Float
     ): Boolean {
         Log.d(TAG, "onFling: ")
-        return flingListener?.invoke(e1, e2, velocityX, velocityY) ?: true
+        return dispatchNestedFling(velocityX, velocityY, false)
     }
 
     override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
