@@ -58,10 +58,6 @@ class ProductsFragment : Fragment(R.layout.fragment_products), ReSelectable {
         (view.parent as? ViewGroup)?.doOnPreDraw {
             startPostponedEnterTransition()
         }
-
-        findFabSetter()?.setupFab {
-            hide()
-        }
     }
 
     override fun onReselect() {

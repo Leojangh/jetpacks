@@ -1,4 +1,4 @@
-package com.genlz.share.widget
+package com.genlz.share.widget.web
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -101,6 +101,10 @@ class PowerfulWebView @JvmOverloads constructor(
         isNestedScrollingEnabled = true
     }
 
+    override fun startNestedScroll(axes: Int): Boolean {
+        return childHelper.startNestedScroll(axes)
+    }
+
     // NestedScrollingChild2
     override fun startNestedScroll(
         @ScrollAxis axes: Int,
@@ -131,6 +135,22 @@ class PowerfulWebView @JvmOverloads constructor(
         dyConsumed: Int,
         dxUnconsumed: Int,
         dyUnconsumed: Int,
+        offsetInWindow: IntArray?
+    ): Boolean {
+        return childHelper.dispatchNestedScroll(
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed,
+            offsetInWindow
+        )
+    }
+
+    override fun dispatchNestedScroll(
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
         offsetInWindow: IntArray?,
         @NestedScrollType type: Int,
         consumed: IntArray
@@ -151,15 +171,26 @@ class PowerfulWebView @JvmOverloads constructor(
         dyConsumed: Int,
         dxUnconsumed: Int,
         dyUnconsumed: Int,
-        offsetInWindow: IntArray?
+        offsetInWindow: IntArray?,
+        @NestedScrollType type: Int
     ): Boolean {
         return childHelper.dispatchNestedScroll(
             dxConsumed,
             dyConsumed,
             dxUnconsumed,
             dyUnconsumed,
-            offsetInWindow
+            offsetInWindow,
+            type
         )
+    }
+
+    override fun dispatchNestedPreScroll(
+        dx: Int,
+        dy: Int,
+        consumed: IntArray?,
+        offsetInWindow: IntArray?
+    ): Boolean {
+        return childHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow)
     }
 
     override fun dispatchNestedFling(
@@ -172,24 +203,6 @@ class PowerfulWebView @JvmOverloads constructor(
 
     override fun dispatchNestedPreFling(velocityX: Float, velocityY: Float): Boolean {
         return childHelper.dispatchNestedPreFling(velocityX, velocityY)
-    }
-
-    override fun dispatchNestedScroll(
-        dxConsumed: Int,
-        dyConsumed: Int,
-        dxUnconsumed: Int,
-        dyUnconsumed: Int,
-        offsetInWindow: IntArray?,
-        @NestedScrollType type: Int
-    ): Boolean {
-        return childHelper.dispatchNestedScroll(
-            dxConsumed,
-            dyConsumed,
-            dxUnconsumed,
-            dyUnconsumed,
-            offsetInWindow,
-            type
-        )
     }
 
     override fun dispatchNestedPreScroll(
@@ -215,6 +228,14 @@ class PowerfulWebView @JvmOverloads constructor(
     override fun onStopNestedScroll(target: View, type: Int) {
         parentHelper.onStopNestedScroll(target, type)
         stopNestedScroll(type)
+    }
+
+    override fun stopNestedScroll() {
+        childHelper.stopNestedScroll()
+    }
+
+    override fun onStopNestedScroll(child: View) {
+        childHelper.onStopNestedScroll(child)
     }
 
     override fun onNestedScroll(
@@ -319,6 +340,7 @@ class PowerfulWebView @JvmOverloads constructor(
         velocityX: Float,
         velocityY: Float
     ): Boolean {
+
         return dispatchNestedFling(velocityX, velocityY, false)
     }
 

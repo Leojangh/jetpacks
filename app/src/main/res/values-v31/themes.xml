@@ -2,10 +2,9 @@
 <resources>
 
     <style name="EdgeToEdge.NewSplash" parent="Theme.SplashScreen">
-        <!--        <item name="android:windowBackground">@drawable/pawel_unsplash</item>-->
         <item name="android:windowSplashScreenBackground">@color/twitter_background</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_logo_twitter_icon</item>
-        <!--        <item name="android:windowSplashScreenBrandingImage">@drawable/ic_xiaomi_logo</item>-->
+        <item name="android:windowSplashScreenBrandingImage">@drawable/ic_xiaomi_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.Jetpacks.NoActionBar</item>
 
     </style>
