@@ -1,24 +1,33 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
+import android.telephony.PhoneStateListener
+import android.telephony.TelephonyCallback
+import android.telephony.TelephonyManager
+import android.telephony.emergency.EmergencyNumber
 import android.util.Log
 import android.view.MotionEvent
 import android.view.animation.AnticipateInterpolator
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.getSystemService
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.loader.content.CursorLoader
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -78,6 +87,7 @@ class MainActivity : AppCompatActivity(),
         )
     )
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         waitForReady()
@@ -89,7 +99,7 @@ class MainActivity : AppCompatActivity(),
 
         Log.d(TAG, "onCreate: $this")
 
-        requestPermissions()
+        doWithPermission(Manifest.permission.READ_CALL_LOG)
 
         setupNavigation()
 
@@ -103,39 +113,11 @@ class MainActivity : AppCompatActivity(),
             (currentFragment as? ReSelectable)?.onReselect()
         }
 
-//        var job: Job? = null
-//        val processor = VulkanImageProcessor(this)
-//        val target = binding.root
-//        target.post {
-//            processor.configureInputAndOutput(
-//                target.drawToBitmap(), 1
-//            )
-//        }
         binding.fab.setOnClickListener {
             val uri = "https://baidu.com"
             navController.navigate(WebFragmentDirections.web(uri))
 
-//            job?.cancel()
-//            job = lifecycleScope.launch(Dispatchers.Default) {
-//                val blurredBitmap = processor.blur(13f, 0)
-//                withContext(Dispatchers.Main) {
-//                    target.foreground =
-//                        blurredBitmap.toDrawable(resources).apply { alpha = 100 }
-//                }
-//            }
         }
-    }
-
-//    private fun blur(processor: ImageProcessor, progress: Int): Bitmap {
-//        val radius = rescale(progress, 1.0, 25.0)
-//        return processor.blur(radius.toFloat(), 0)
-//    }
-
-    /**
-     * Helper method to map the progress from [0, 100] to the given range [min, max].
-     */
-    private fun rescale(progress: Int, min: Double, max: Double): Double {
-        return (max - min) * (progress / 100.0) + min
     }
 
     override fun enterFullscreen() {
@@ -186,31 +168,6 @@ class MainActivity : AppCompatActivity(),
 
     override fun setupFab(action: FloatingActionButton.() -> Unit) {
         action(binding.fab)
-    }
-
-    private fun requestPermissions() {
-        val requestPermissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-                if (isGranted) {
-                    //perform action
-                    Log.d(TAG, "requestPermissions: perform")
-                } else {
-                    Log.d(TAG, "requestPermissions: denied")
-                }
-            }
-
-        when {
-            checkSelfPermissionExt(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
-                Log.d(TAG, "requestPermissions: perform")
-            }
-            shouldShowRequestPermissionRationaleExt(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                Log.d(TAG, "requestPermissions: show rationale")
-            }
-            else -> {
-                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                Log.d(TAG, "requestPermissions: request")
-            }
-        }
     }
 
     private fun setupNavigation() {
