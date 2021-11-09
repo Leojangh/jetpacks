@@ -20,7 +20,7 @@ buildscript {
 
     //Jetpack
     extra["coreKtx"] = "1.7.0"
-    extra["lifecycle"] = "2.4.0-rc01"
+    extra["lifecycle"] = "2.4.0"
     extra["appcompat"] = "1.3.1"
     extra["material"] = "1.4.0"
     extra["room"] = "2.3.0"
