@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.widget.Checkable
 import android.widget.ImageView
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.annotation.AnyRes
 import androidx.core.os.bundleOf
@@ -36,7 +35,8 @@ import com.genlz.jetpacks.GalleryDirections
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentGalleryBinding
 import com.genlz.jetpacks.ui.common.FullscreenController.Companion.findFullscreenController
-import com.genlz.jetpacks.utility.appcompat.appCompatActivity
+import com.genlz.share.util.appcompat.appCompatActivity
+import com.genlz.share.util.appcompat.transitionNameExt
 
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
@@ -55,25 +55,19 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             .inflateTransition(android.R.transition.move)
 
         val activity = requireActivity()
-        activity.onBackPressedDispatcher.addCallback(this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    when (args.showOptions) {
-                        SHOW_OPTIONS_NORMAL -> {
-                            //must set false to disable this callback.otherwise stackoverflow.
-                            isEnabled = false
-                            activity.onBackPressed()
-                            return
-                        }
-                        SHOW_OPTIONS_FULLSCREEN -> activity.supportFragmentManager.popBackStack(
-                            TAG,
-                            FragmentManager.POP_BACK_STACK_INCLUSIVE
-                        )
-                        else -> throw IllegalArgumentException("Unknown show options:${args.showOptions}")
-                    }
+        activity.onBackPressedDispatcher.addCallback(this) {
+            when (args.showOptions) {
+                SHOW_OPTIONS_NORMAL -> {
+                    //must set false to disable this callback.otherwise stackoverflow.
+                    isEnabled = false
+                    activity.onBackPressed()
                 }
-            })
-
+                SHOW_OPTIONS_FULLSCREEN -> activity.supportFragmentManager.popBackStack(
+                    TAG,
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE
+                )
+            }
+        }
         preload(requireContext())
     }
 
@@ -147,6 +141,60 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         const val SHOW_OPTIONS_NORMAL = 0
 
         /**
+         * Modal background,but have no shared elements transition?
+         */
+        fun navigate(activity: FragmentActivity): (List<View>) -> (Map<MemoryCache.Key, String>, Int) -> Unit {
+            return { views ->
+                { thumbnailAndOrigin, initPosition ->
+                    val fragment = GalleryFragment().apply {
+                        arguments = bundleOf(
+                            "cacheKeys" to thumbnailAndOrigin.keys.toTypedArray(),
+                            "showOptions" to SHOW_OPTIONS_FULLSCREEN,
+                            "initPosition" to initPosition,
+                            "imageUris" to thumbnailAndOrigin.values.toTypedArray()
+                        )
+                    }
+                    activity.supportFragmentManager.commit {
+                        setReorderingAllowed(true)
+                        views.forEachIndexed { index, view ->
+                            if (view.transitionNameExt == null) view.transitionNameExt =
+                                "item_image_$index"
+                            addSharedElement(view, "hero_image_$index")
+                        }
+                        replace(android.R.id.content, fragment)
+                    }
+                }
+            }
+        }
+
+        /**
+         * The currying version of [navigate]
+         */
+        fun navigate(navController: NavController): (List<View>) -> (Map<MemoryCache.Key, String>, Int) -> Unit {
+            return { views ->
+                { thumbnailAndOrigin, initPosition ->
+                    val sharedElements = views.mapIndexed { index, view ->
+                        if (view.transitionNameExt == null)
+                            view.transitionNameExt = "item_image_$index"
+                        view to "hero_image_$index"
+                    }.toTypedArray()
+                    val cacheKeys = thumbnailAndOrigin.keys.toTypedArray()
+                    val uris = thumbnailAndOrigin.values.toTypedArray()
+
+                    val extras = FragmentNavigatorExtras(*sharedElements)
+                    navController.navigate(
+                        GalleryDirections.gallery(
+                            cacheKeys = cacheKeys,
+                            initPosition = initPosition,
+                            imageUris = uris
+                        ),
+                        extras
+                    )
+                }
+            }
+        }
+
+        /**
          * For navigation support.
          *
          * @param navController
@@ -162,6 +210,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             thumbnailAndOrigin: Map<MemoryCache.Key, String>
         ) {
             val sharedElements = views.mapIndexed { index, view ->
+                if (view.transitionNameExt == null) view.transitionNameExt = "item_image_$index"
                 view to "hero_image_$index"
             }.toTypedArray()
             val cacheKeys = thumbnailAndOrigin.keys.toTypedArray()
@@ -176,35 +225,6 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 ),
                 extras
             )
-        }
-
-        /**
-         * Modal background,but have no shared elements transition?
-         */
-        fun navigate(
-            activity: FragmentActivity,
-            views: List<View>,
-            initPosition: Int,
-            keys: Array<MemoryCache.Key>,
-            uris: Array<String>,
-        ) {
-            activity.supportFragmentManager.commit {
-                setReorderingAllowed(true)
-                views.forEachIndexed { index, view ->
-                    ViewCompat.setTransitionName(view, "item_image_$index")
-                    addSharedElement(view, "hero_image_$index")
-                }
-                val fragment = GalleryFragment().apply {
-                    arguments = bundleOf(
-                        "cacheKeys" to keys,
-                        "showOptions" to SHOW_OPTIONS_FULLSCREEN,
-                        "initPosition" to initPosition,
-                        "imageUris" to uris
-                    )
-                }
-                replace(android.R.id.content, fragment, TAG)
-                addToBackStack(TAG)
-            }
         }
 
         fun localResUri(@AnyRes resource: Int): Uri =

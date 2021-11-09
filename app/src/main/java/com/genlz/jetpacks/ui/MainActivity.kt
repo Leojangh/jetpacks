@@ -1,34 +1,25 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.Rect
-import android.os.Build
 import android.os.Bundle
-import android.telephony.PhoneStateListener
-import android.telephony.TelephonyCallback
-import android.telephony.TelephonyManager
-import android.telephony.emergency.EmergencyNumber
 import android.util.Log
 import android.view.MotionEvent
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.getSystemService
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.loader.content.CursorLoader
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -45,7 +36,7 @@ import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.jetpacks.ui.common.ReSelectable
 import com.genlz.jetpacks.ui.web.WebFragmentDirections
-import com.genlz.jetpacks.utility.appcompat.*
+import com.genlz.share.util.appcompat.*
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,7 +78,6 @@ class MainActivity : AppCompatActivity(),
         )
     )
 
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         waitForReady()
@@ -96,8 +86,6 @@ class MainActivity : AppCompatActivity(),
 
         customExitAnimation()
         edge2edge()
-
-        Log.d(TAG, "onCreate: $this")
 
         doWithPermission(Manifest.permission.READ_CALL_LOG)
 
@@ -115,8 +103,9 @@ class MainActivity : AppCompatActivity(),
 
         binding.fab.setOnClickListener {
             val uri = "https://baidu.com"
-            navController.navigate(WebFragmentDirections.web(uri))
-
+            navController.navigate(
+                WebFragmentDirections.web(uri),
+            )
         }
     }
 
@@ -150,7 +139,7 @@ class MainActivity : AppCompatActivity(),
         lifecycleScope.launch {
             windowInfoRepo.windowLayoutInfo.flowWithLifecycle(lifecycle).collect {
                 Log.d(TAG, "onCreate: No display features detected")
-                for (displayFeature: DisplayFeature in it.displayFeatures) {
+                for (displayFeature in it.displayFeatures) {
                     if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.NONE) {
                         Log.d(TAG, "onCreate: App is spanned across a fold")
                     }
@@ -212,7 +201,6 @@ class MainActivity : AppCompatActivity(),
         // update margins.
         binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { abl, offset ->
             // It seems that the ABL.ScrollViewBehavior can automatically adjust paddings.
-//            binding.contentMain.updatePadding(top = abl.height + offset)
             // Control status bar appearance.
             val collapse = -offset == abl.height
             windowInsetsController.isAppearanceLightStatusBars = collapse
@@ -225,7 +213,6 @@ class MainActivity : AppCompatActivity(),
             v.updatePadding(bottom = 0)
             WindowInsetsCompat.CONSUMED
         }
-        windowInsetsController.isAppearanceLightNavigationBars = true
     }
 
     /**
@@ -265,11 +252,6 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
 //        if launch mode is not standard,handle it manually like this
@@ -279,10 +261,6 @@ class MainActivity : AppCompatActivity(),
     companion object {
         private const val TAG = "MainActivity"
         const val SPLASH_DISPLAY_TIME = 1000L
-
-        init {
-//            System.loadLibrary("rs_migration_jni")
-        }
     }
 
 }

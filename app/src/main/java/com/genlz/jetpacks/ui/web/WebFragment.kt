@@ -1,12 +1,14 @@
 package com.genlz.jetpacks.ui.web
 
+import android.graphics.RectF
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
-import androidx.activity.addCallback
+import android.widget.ImageView
+import androidx.core.graphics.toRect
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -14,21 +16,23 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
+import coil.load
+import coil.memory.MemoryCache
 import com.genlz.jetpacks.BuildConfig
 import com.genlz.jetpacks.ui.GalleryFragment
-import com.genlz.jetpacks.ui.common.ActionBarCustomizer.Companion.findActionBarCustomizer
-import com.genlz.jetpacks.ui.web.bridge.JavascriptBridge.Companion.wrap
-import com.genlz.jetpacks.ui.web.bridge.JavascriptBridgeImpl
-import com.genlz.jetpacks.utility.appcompat.imeInsets
-import com.genlz.jetpacks.utility.appcompat.plus
-import com.genlz.jetpacks.utility.appcompat.setOnApplyWindowInsetsListener
-import com.genlz.jetpacks.utility.appcompat.statusBarInsets
+import com.genlz.jetpacks.ui.common.FabSetter.Companion.findFabSetter
+import com.genlz.jetpacks.ui.web.bridge.Android
+import com.genlz.share.util.appcompat.imeInsets
+import com.genlz.share.util.appcompat.plus
+import com.genlz.share.util.appcompat.setOnApplyWindowInsetsListener
+import com.genlz.share.util.appcompat.statusBarInsets
 import com.genlz.share.widget.web.PowerfulWebView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
+import java.util.*
 
 class WebFragment : Fragment() {
 
@@ -69,9 +73,6 @@ class WebFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        findFullscreenController()?.enterFullscreen()
-        findActionBarCustomizer()?.custom {
-            setDisplayHomeAsUpEnabled(true)
-        }
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
 
         injectJavascript()
@@ -81,33 +82,54 @@ class WebFragment : Fragment() {
                 v.updatePadding(top = insets.top + ip.top, bottom = insets.bottom + ip.bottom)
                 i
             }
-            addJavascriptInterface(JavascriptBridgeImpl(context).wrap(), "Android")
+            addJavascriptInterface(Android(context, this), "Android")
 
-            longPressListener = {
-
-                when (hitTestResult.type) {
-                    WebView.HitTestResult.IMAGE_TYPE -> {
-                        Log.d(TAG, "onViewCreated: ${hitTestResult.extra}")
-                        GalleryFragment.navigate(findNavController(), listOf(), 0, mapOf())
-                    }
-                }
-            }
+            domTouchListener = this@WebFragment.domTouchListener
 
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
                 WebSettingsCompat.setForceDark(settings, WebSettingsCompat.FORCE_DARK_AUTO)
             }
-
         }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            webView.goBack()
+        findFabSetter()?.setupFab {
+            setOnClickListener {
+                webView.overlay.clear()
+            }
         }
-//        findFabSetter()?.setupFab {
-//            setOnClickListener {
-//
-//            }
-//        }
+        Log.d(TAG, "onViewCreated: $savedInstanceState")
         webView.loadUrl(args.uri)
     }
+
+    private val domTouchListener: (RectF) -> Unit = { rectF ->
+        val rect = rectF.toRect()
+        when (webView.hitTestResult.type) {
+            WebView.HitTestResult.IMAGE_TYPE -> {
+                val uri = webView.hitTestResult.extra!!
+                val img = ImageView(context).apply {
+                    layout(rect.left, rect.top, rect.right, rect.bottom)
+                }
+                val key = MemoryCache.Key(uri)
+                img.load(uri) {
+                    memoryCacheKey(uri)
+                    listener { _, _ ->
+                        startPostponedEnterTransition()
+                    }
+                }
+                GalleryFragment.navigate(
+                    findNavController(),
+                    listOf(img),
+                    0,
+                    mapOf(key to uri)
+                )
+                postponeEnterTransition()
+//                        img.doOnPreDraw {
+//                            startPostponedEnterTransition()
+//                        }
+//                        img.background = ColorDrawable(Color.BLUE).apply { alpha = 20 }
+                webView.overlay.add(img)
+            }
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
@@ -119,15 +141,16 @@ class WebFragment : Fragment() {
         webView.onPause()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
 //        findFullscreenController()?.exitFullscreen()
     }
 
     companion object {
-
-        private const val JQUERY_SCRIP = "jQ"
-        private const val IMAGE_HOOK_SCRIPT = "image_hook"
 
         const val TAG = "WebFragment"
     }

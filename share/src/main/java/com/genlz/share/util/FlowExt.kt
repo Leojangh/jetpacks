@@ -1,4 +1,4 @@
-package com.genlz.jetpacks.utility
+package com.genlz.share.util
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle

@@ -1,4 +1,4 @@
-package com.genlz.jetpacks.utility.appcompat
+package com.genlz.share.util.appcompat
 
 import android.content.pm.PackageManager
 import androidx.activity.ComponentActivity

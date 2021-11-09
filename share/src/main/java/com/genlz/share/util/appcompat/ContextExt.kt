@@ -1,6 +1,6 @@
 @file:Suppress("UNUSED","NOTHING_TO_INLINE")
 
-package com.genlz.jetpacks.utility.appcompat
+package com.genlz.share.util.appcompat
 
 import android.content.Context
 import android.content.ContextWrapper

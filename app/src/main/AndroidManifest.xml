@@ -32,7 +32,7 @@
                     -->
         <activity
             android:name=".ui.MainActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|screenSize|screenLayout"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/EdgeToEdge.NewSplash">
@@ -48,6 +48,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.GActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Jetpacks.NoActionBar" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

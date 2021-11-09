@@ -1,13 +1,11 @@
 @file:Suppress("NOTHING_TO_INLINE", "UNUSED") // Aliases to other public API.
 
-package com.genlz.jetpacks.utility.appcompat
+package com.genlz.share.util.appcompat
 
 import android.content.ClipData
 import android.content.Context
-import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.Paint
-import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -15,7 +13,6 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewParent
 import androidx.annotation.IdRes
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
@@ -329,7 +326,7 @@ inline var View.transitionZExt
  * @see ViewCompat.setTransitionName
  * @see ViewCompat.getTransitionName
  */
-inline var View.setTransitionNameExt
+inline var View.transitionNameExt
     get() = ViewCompat.getTransitionName(this)
     set(value) = ViewCompat.setTransitionName(this, value)
 

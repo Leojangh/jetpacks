@@ -1,4 +1,4 @@
-package com.genlz.jetpacks.ui.web.bridge
+package com.genlz.share.widget.web.bridge
 
 /**
  * Static proxy.Add some interceptor at here.

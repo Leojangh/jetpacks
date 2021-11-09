@@ -2,10 +2,13 @@ package com.genlz.share.widget.web
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputConnection
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -27,9 +30,7 @@ class PowerfulWebView @JvmOverloads constructor(
     NestedScrollingParent3,
     GestureDetector.OnGestureListener,
     GestureDetector.OnDoubleTapListener
-//    CircularRevealWidget
 {
-
     /**
      * When double tap and release,event order:
      *
@@ -70,12 +71,12 @@ class PowerfulWebView @JvmOverloads constructor(
 
     var doubleTapEventListener: ((MotionEvent) -> Boolean)? = null
 
+    var domTouchListener: ((RectF) -> Unit)? = null
+
     /**
      * The map of file name to script content.
      */
     var scripts: Map<String, String> = HashMap()
-
-//    private val helper = CircularRevealHelper(this)
 
     init {
         settings.apply {
@@ -99,6 +100,14 @@ class PowerfulWebView @JvmOverloads constructor(
         }
 
         isNestedScrollingEnabled = true
+    }
+
+    override fun onCheckIsTextEditor(): Boolean {
+        return super.onCheckIsTextEditor()
+    }
+
+    override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection {
+        return super.onCreateInputConnection(outAttrs)
     }
 
     override fun startNestedScroll(axes: Int): Boolean {
@@ -355,56 +364,4 @@ class PowerfulWebView @JvmOverloads constructor(
     override fun onDoubleTapEvent(e: MotionEvent): Boolean {
         return doubleTapEventListener?.invoke(e) ?: true
     }
-
-//    override fun draw(canvas: Canvas) {
-//        if (helper == null)
-//            helper.draw(canvas)
-//        else
-//            super.draw(canvas)
-//    }
-//
-//    override fun actualDraw(canvas: Canvas) {
-//        super.draw(canvas)
-//    }
-//
-//    override fun isOpaque(): Boolean {
-//        return if (helper == null) super.isOpaque() else helper.isOpaque
-//    }
-//
-//    override fun actualIsOpaque(): Boolean {
-//        return super.isOpaque()
-//    }
-//
-//    override fun buildCircularRevealCache() {
-//        helper.buildCircularRevealCache()
-//    }
-//
-//    override fun destroyCircularRevealCache() {
-//        helper.destroyCircularRevealCache()
-//    }
-//
-//    override fun getRevealInfo(): CircularRevealWidget.RevealInfo? {
-//        return helper.revealInfo
-//    }
-//
-//    override fun setRevealInfo(revealInfo: CircularRevealWidget.RevealInfo?) {
-//        helper.revealInfo = revealInfo
-//    }
-//
-//    override fun getCircularRevealScrimColor(): Int {
-//        return helper.circularRevealScrimColor
-//    }
-//
-//    override fun setCircularRevealScrimColor(color: Int) {
-//        helper.circularRevealScrimColor = color
-//    }
-//
-//    override fun getCircularRevealOverlayDrawable(): Drawable? {
-//        return helper.circularRevealOverlayDrawable
-//    }
-//
-//    override fun setCircularRevealOverlayDrawable(drawable: Drawable?) {
-//        helper.circularRevealOverlayDrawable = drawable
-//    }
-
 }

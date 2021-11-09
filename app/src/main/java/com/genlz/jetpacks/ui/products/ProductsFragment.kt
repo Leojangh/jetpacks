@@ -1,5 +1,6 @@
 package com.genlz.jetpacks.ui.products
 
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
@@ -11,12 +12,12 @@ import android.widget.PopupWindow
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
-import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -30,10 +31,9 @@ import com.genlz.jetpacks.databinding.PostsListItemBinding
 import com.genlz.jetpacks.databinding.SimpleItemImageViewBinding
 import com.genlz.jetpacks.pojo.Post
 import com.genlz.jetpacks.ui.GalleryFragment
-import com.genlz.jetpacks.ui.common.FabSetter.Companion.findFabSetter
 import com.genlz.jetpacks.ui.common.ReSelectable
-import com.genlz.jetpacks.utility.appcompat.requireViewByIdExt
-import com.genlz.jetpacks.utility.launchAndCollectIn
+import com.genlz.share.util.appcompat.appCompatActivity
+import com.genlz.share.util.launchAndCollectIn
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "ProductsFragment"
@@ -57,6 +57,14 @@ class ProductsFragment : Fragment(R.layout.fragment_products), ReSelectable {
         postponeEnterTransition()
         (view.parent as? ViewGroup)?.doOnPreDraw {
             startPostponedEnterTransition()
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        //Handle configuration change manually: refresh layout.
+        binding.posts.adapter?.apply {
+            notifyItemRangeChanged(0, itemCount)
         }
     }
 
@@ -208,12 +216,14 @@ private class ThumbsAdapter(
     ) {
         val views = (img.parent as ViewGroup).children.toList()
         val thumbsAndOrigin = keys.zip(uris).toMap()
-        GalleryFragment.navigate(
-            navController,
-            views,
-            position,
-            thumbsAndOrigin
-        )
+//        GalleryFragment.navigate(
+//            navController,
+//            views,
+//            position,
+//            thumbsAndOrigin
+//        )
+//        GalleryFragment.navigate(img.context.appCompatActivity!!)(views)(thumbsAndOrigin, position)
+        GalleryFragment.navigate(navController)(views)(thumbsAndOrigin, position)
 //        GalleryActivity.navigate(
 //            img.context.appCompatActivity!!,
 //            views,

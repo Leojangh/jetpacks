@@ -1,26 +1,15 @@
-package com.genlz.jetpacks.ui.web.bridge
+package com.genlz.share.widget.web.bridge
 
 import android.content.Context
-import android.webkit.JavascriptInterface
-import com.genlz.jetpacks.ui.web.bridge.JavascriptBridge.InheritedUiThread
-import com.genlz.jetpacks.utility.appcompat.mainExecutorExt
-import java.lang.annotation.Inherited
+import com.genlz.share.util.appcompat.mainExecutorExt
 import java.lang.reflect.Proxy
 
 /**
- * Define the bridge method at here,annotate the method with [InheritedUiThread]
- * which indicates the method needs to be run at main thread if necessary.
+ * A marker interface to indicate being used by javascript bridge.
  */
 interface JavascriptBridge {
 
     val context: Context
-
-    @InheritedUiThread
-    @JavascriptInterface
-    fun toast(message: String)
-
-    @JavascriptInterface
-    fun transit(left: Float, top: Float, right: Float, bottom: Float)
 
     companion object {
 
@@ -30,10 +19,11 @@ interface JavascriptBridge {
          * Wrap the implementation method in appropriate thread,the magic under the
          * hood is powered by dynamic proxy,and determine according to annotation [InheritedUiThread].
          */
-        fun JavascriptBridge.wrap(): JavascriptBridge {
+        @Suppress("UNCHECKED_CAST")
+        fun <T : JavascriptBridge> T.wrap(): T {
             val proxy = Proxy.newProxyInstance(
                 context.classLoader,
-                arrayOf(JavascriptBridge::class.java)
+                arrayOf(*javaClass.interfaces)
             ) { _, method, args ->
                 //As maybe NPE corrupt when spread args.
                 val safeArgs = if (args.isNullOrEmpty()) emptyArray<Any?>() else args
@@ -49,19 +39,9 @@ interface JavascriptBridge {
                         method(this, *safeArgs) //Invoke directly
                     }
                 }
-            } as JavascriptBridge
-            return JavascriptBridgeWrapper(proxy)
+            } as T
+            return proxy
         }
     }
-
-    /**
-     * A flag annotation to indicate the method needs to be run in UI thread.
-     * I must define this instead of [androidx.annotation.UiThread] because that
-     * can't be detect in subclass.So [Inherited] to rescue.
-     */
-    @Retention
-    @Inherited
-    @Target(AnnotationTarget.FUNCTION)
-    private annotation class InheritedUiThread
 }
 

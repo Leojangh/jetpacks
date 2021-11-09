@@ -1,6 +1,6 @@
 @file:Suppress("UNUSED")
 
-package com.genlz.jetpacks.utility.appcompat
+package com.genlz.share.util.appcompat
 
 import android.app.Activity
 import android.content.Intent

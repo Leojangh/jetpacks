@@ -1,6 +1,6 @@
 @file:Suppress("UNUSED")
 
-package com.genlz.jetpacks.utility.appcompat
+package com.genlz.share.util.appcompat
 
 import android.os.Binder
 import android.os.Bundle
