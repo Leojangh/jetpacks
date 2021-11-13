@@ -1,16 +1,25 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
+import android.app.ActivityManager
+import android.content.ComponentCallbacks
+import android.content.ComponentCallbacks2
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.IBinder
+import android.system.Os
 import android.util.Log
 import android.view.MotionEvent
+import android.view.WindowManager
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityManagerCompat
+import androidx.core.content.getSystemService
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -107,6 +116,70 @@ class MainActivity : AppCompatActivity(),
                 WebFragmentDirections.web(uri),
             )
         }
+
+        val am = getSystemService<ActivityManager>()!!
+        val memoryInfo = am.getMemoryInfo()
+        Log.d(TAG, "onCreate: ${memoryInfo.availMem}")
+        Log.d(TAG, "onCreate: ${memoryInfo.totalMem}")
+
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        when (level) {
+            ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN -> {
+                /*
+                   Release any UI objects that currently hold memory.
+
+                   The user interface has moved to the background.
+                */
+                Log.d(TAG, "onTrimMemory: TRIM_MEMORY_UI_HIDDEN")
+            }
+
+            ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE,
+            ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW,
+            ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL -> {
+                /*
+                   Release any memory that your app doesn't need to run.
+
+                   The device is running low on memory while the app is running.
+                   The event raised indicates the severity of the memory-related event.
+                   If the event is TRIM_MEMORY_RUNNING_CRITICAL, then the system will
+                   begin killing background processes.
+                */
+                Log.d(
+                    TAG,
+                    "onTrimMemory: TRIM_MEMORY_RUNNING_MODERATE,TRIM_MEMORY_RUNNING_LOW,TRIM_MEMORY_RUNNING_CRITICAL:$level"
+                )
+            }
+
+            ComponentCallbacks2.TRIM_MEMORY_BACKGROUND,
+            ComponentCallbacks2.TRIM_MEMORY_MODERATE,
+            ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> {
+                /*
+                   Release as much memory as the process can.
+
+                   The app is on the LRU list and the system is running low on memory.
+                   The event raised indicates where the app sits within the LRU list.
+                   If the event is TRIM_MEMORY_COMPLETE, the process will be one of
+                   the first to be terminated.
+                */
+                Log.d(
+                    TAG,
+                    "onTrimMemory: TRIM_MEMORY_COMPLETE,TRIM_MEMORY_MODERATE,TRIM_MEMORY_BACKGROUND:$level"
+                )
+            }
+
+            else -> {
+                /*
+                  Release any non-critical data structures.
+
+                  The app received an unrecognized memory level value
+                  from the system. Treat this as a generic low-memory message.
+                */
+                Log.d(TAG, "onTrimMemory: ")
+            }
+        }
     }
 
     override fun enterFullscreen() {
@@ -192,7 +265,7 @@ class MainActivity : AppCompatActivity(),
 
         binding.toolbarLayout.setOnApplyWindowInsetsListener { v, i, ip ->
             v.updatePadding(top = i.statusBarInsets.top + ip.top)
-            WindowInsetsCompat.CONSUMED
+            i
         }
 
         // Make sure the 'content_main' is always adjacent to appbar.
@@ -209,8 +282,8 @@ class MainActivity : AppCompatActivity(),
         })
 
         //BottomAppBar has already fit navigation bar.
-        binding.bottomNavigation.setOnApplyWindowInsetsListener { v, _, _ ->
-            v.updatePadding(bottom = 0)
+        binding.bottomAppBar.setOnApplyWindowInsetsListener { v, i, ip ->
+            v.updatePadding(bottom = i.navigationBarInsets.bottom + ip.bottom)
             WindowInsetsCompat.CONSUMED
         }
     }
