@@ -9,12 +9,16 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
+import android.view.WindowManager
 import android.view.animation.AnticipateInterpolator
+import android.view.animation.LinearInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.flowWithLifecycle
@@ -81,9 +85,9 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         waitForReady()
         setContentView(binding.root)
+
         setSupportActionBar(binding.toolbar)
         customExitAnimation()
-
         doWithPermission(Manifest.permission.READ_CALL_LOG)
 
         setupNavigation()
@@ -110,6 +114,7 @@ class MainActivity : AppCompatActivity(),
             windowInsetsController.isAppearanceLightStatusBars = collapse
             window.statusBarColor =
                 if (collapse) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
+            windowInsetsController.isAppearanceLightNavigationBars = !collapse
         })
 
         /**
@@ -121,7 +126,8 @@ class MainActivity : AppCompatActivity(),
         }
 
         binding.fab.setOnClickListener {
-            val uri = "https://www.baidu.com/"
+            val uri =
+                "https://mp.weixin.qq.com/s?__biz=Mzk0NDIwMTExNw==&mid=2247502282&idx=1&sn=ed9fe9ab8c3f03499e4a6766e53287de&chksm=c32ac538f45d4c2e2803933233dc191a8216914c462aecf817fe7c7d5e9b88a5835d7b32c64b&scene=0&subscene=91&sessionid=1636875512&clicktime=1636875524&enterid=1636875524&ascene=7&devicetype=android-30&version=2800103b&nettype=WIFI&abtest_cookie=AAACAA%3D%3D&lang=zh_CN&exportkey=A2m99ii%2FhukReN80W6g3A6M%3D&pass_ticket=UrTCnLOw4r%2BY093kmNUyx4K49UfzdEUnzd%2BUgbJ8sX0pWLcZu3aTHX5Wgn2UcdLP&wx_header=1"
             navController.navigate(
                 WebFragmentDirections.web(uri),
             )
@@ -188,17 +194,19 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun enterFullscreen() {
+    override fun enterFullscreen(sticky: Boolean) {
         binding.apply {
             bottomAppBar.performHide()
             appBarLayout.setExpanded(false)
         }
-//        DisplayCutoutCompat()
-//        windowInsetsController.run {
-//            hide(WindowInsetsCompat.Type.systemBars())
-//            systemBarsBehavior =
-//                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-//        }
+        //Works well on AOSP,but some Rom not.
+        windowInsetsController.apply {
+            hide(Type.systemBars())
+            systemBarsBehavior =
+                if (sticky) WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                else WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE
+        }
+//        window.addFlags(WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS)
     }
 
     override fun exitFullscreen() {
@@ -206,9 +214,9 @@ class MainActivity : AppCompatActivity(),
             bottomAppBar.performShow()
             appBarLayout.setExpanded(true)
         }
-//        windowInsetsController.run {
-//            show(WindowInsetsCompat.Type.systemBars())
-//        }
+        windowInsetsController.apply {
+            show(Type.systemBars())
+        }
     }
 
     private fun listenWindowInfo() {
@@ -277,20 +285,41 @@ class MainActivity : AppCompatActivity(),
      * 3. Handles visual overlaps and gesture conflicts.The key step is listen the system window insets.
      *
      * More Reference:
-     * [Android Developers Guide](#https://developer.android.com/training/gestures/edge-to-edge)
+     * [Android Developers Guide](https://developer.android.com/training/gestures/edge-to-edge)
      *
-     * [Chris Banes's Blog](#https://medium.com/androiddevelopers/gesture-navigation-going-edge-to-edge-812f62e4e83e)
+     * Get Chris Banes's blog for more information:
+     *
+     * * [Gesture Navigation: going edge-to-edge](https://medium.com/androiddevelopers/gesture-navigation-going-edge-to-edge-812f62e4e83e)
+     *
+     * * [WindowInsets — listeners to layouts](https://medium.com/androiddevelopers/windowinsets-listeners-to-layouts-8f9ccc8fa4d1)
      *
      * */
     private fun edge2edge() {
         window.setDecorFitsSystemWindowsExt(false)
+        //fit status bar
         binding.toolbarLayout.setOnApplyWindowInsetsListener { v, i, ip ->
             v.updatePadding(top = i.statusBarInsets.top + ip.top)
             i
         }
+        //fit navigation bar and ime.
         binding.bottomAppBar.setOnApplyWindowInsetsListener { v, i, ip ->
-            v.updatePadding(bottom = i.navigationBarInsets.bottom + ip.bottom)
+            val insets =
+                i.getInsets(Type.navigationBars() or Type.ime())
+            v.updatePadding(bottom = ip.bottom + insets.bottom)
             WindowInsetsCompat.CONSUMED
+        }
+        //TODO animate my keyboard.
+        WindowInsetsAnimationCompat(Type.ime(), LinearInterpolator(), 300L)
+        val cb = object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
+            override fun onProgress(
+                insets: WindowInsetsCompat,
+                runningAnimations: MutableList<WindowInsetsAnimationCompat>
+            ): WindowInsetsCompat {
+                TODO("Not yet implemented")
+            }
+        }
+        windowInsetsController.addOnControllableInsetsChangedListener { controller, typeMask ->
+            Log.d(TAG, "edge2edge: $typeMask")
         }
     }
 
@@ -326,7 +355,7 @@ class MainActivity : AppCompatActivity(),
             v.getGlobalVisibleRect(rect)
             if (!rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
                 v.clearFocus()
-                windowInsetsController.hide(WindowInsetsCompat.Type.ime())
+                windowInsetsController.hide(Type.ime())
             }
         }
     }

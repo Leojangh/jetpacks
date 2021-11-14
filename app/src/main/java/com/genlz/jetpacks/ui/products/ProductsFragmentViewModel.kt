@@ -1,7 +1,6 @@
 package com.genlz.jetpacks.ui.products
 
 import android.content.Context
-import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.genlz.jetpacks.R
@@ -9,10 +8,8 @@ import com.genlz.jetpacks.datasource.SplashDataSource
 import com.genlz.jetpacks.pojo.Post
 import com.genlz.jetpacks.pojo.User
 import com.genlz.jetpacks.repository.AdRepository
-import com.genlz.jetpacks.ui.GalleryFragment
-import dagger.Reusable
+import com.genlz.jetpacks.ui.gallery.GalleryFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

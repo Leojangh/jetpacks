@@ -9,36 +9,24 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.ImageView
 import androidx.core.graphics.toRect
-import androidx.core.view.doOnPreDraw
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import coil.load
 import coil.memory.MemoryCache
-import com.genlz.jetpacks.BuildConfig
-import com.genlz.jetpacks.ui.GalleryFragment
-import com.genlz.jetpacks.ui.common.FabSetter.Companion.findFabSetter
+import com.genlz.jetpacks.ui.common.FullscreenController.Companion.findFullscreenController
+import com.genlz.jetpacks.ui.gallery.GalleryActivity
 import com.genlz.jetpacks.ui.web.bridge.Android
-import com.genlz.share.util.appcompat.imeInsets
-import com.genlz.share.util.appcompat.plus
-import com.genlz.share.util.appcompat.setOnApplyWindowInsetsListener
-import com.genlz.share.util.appcompat.statusBarInsets
+import com.genlz.share.util.appcompat.*
+import com.genlz.share.widget.web.DomTouchListener
 import com.genlz.share.widget.web.PowerfulWebView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import java.io.InputStreamReader
-import java.nio.charset.StandardCharsets
-import java.util.*
 
 @AndroidEntryPoint
-class WebFragment : Fragment() {
+class WebFragment : Fragment(), DomTouchListener {
 
     private val args by navArgs<WebFragmentArgs>()
 
@@ -57,65 +45,65 @@ class WebFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        findFullscreenController()?.enterFullscreen()
-
+//        findFullscreenController()?.enterFullscreen(false)
+        viewModel.overlays.observe(viewLifecycleOwner) {
+            webView.overlay.add(it)
+        }
         webView.apply {
-            setOnApplyWindowInsetsListener { v, i, ip ->
-                val insets = i.statusBarInsets + i.imeInsets
-                v.updatePadding(top = insets.top + ip.top, bottom = insets.bottom + ip.bottom)
-                i
-            }
-            addJavascriptInterface(Android(context, this), "Android")
+            isNestedScrollingEnabled = false
+            val bridge = Android(context, this)
+            addJavascriptInterface(bridge, bridge.name)
 
-            domTouchListener = this@WebFragment.domTouchListener
+            domTouchListener = this@WebFragment
 
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
                 WebSettingsCompat.setForceDark(settings, WebSettingsCompat.FORCE_DARK_AUTO)
             }
         }
-//        findFabSetter()?.setupFab {
-//            setOnClickListener {
-//                webView.overlay.clear()
-//            }
-//        }
-        postponeEnterTransition()
-        (view.parent as? ViewGroup)?.doOnPreDraw {
-            startPostponedEnterTransition()
-        }
     }
 
-    private val domTouchListener: (RectF) -> Unit = { rectF ->
+    override fun onDomTouch(webView: WebView, hitTestResult: WebView.HitTestResult, rectF: RectF) {
         val rect = rectF.toRect()
-        when (webView.hitTestResult.type) {
+        when (hitTestResult.type) {
             WebView.HitTestResult.IMAGE_TYPE -> {
-                val uri = webView.hitTestResult.extra!!
-                val img = ImageView(context).apply {
-                    layout(rect.left, rect.top, rect.right, rect.bottom)
-                    isFocusable = false
-                    isClickable = false
+                val uri = hitTestResult.extra!!
+                Log.d(TAG, "onDomTouch: $uri")
+                val img = ImageView(webView.context).apply {
+                    val scrollY = webView.scrollY
+                    val scrollX = webView.scrollX
+                    // ViewOverlayGroup didn't layout.
+                    layout(
+                        rect.left + scrollX,
+                        rect.top + scrollY,
+                        rect.right + scrollX,
+                        rect.bottom + scrollY
+                    )
+                    isFocusable = true
+                    isClickable = true
                 }
                 val key = MemoryCache.Key(uri)
                 img.load(uri) {
-                    memoryCacheKey(uri)
+                    memoryCacheKey(key)
                 }
-//                postponeEnterTransition()
-//                img.doOnPreDraw {
-//                    startPostponedEnterTransition()
-//                }
                 webView.overlay.apply {
                     clear()
                     add(img)
                 }
-                GalleryFragment.navigate(
-                    findNavController(),
-                    listOf(img),
-                    0,
-                    mapOf(key to uri)
-                )
+//                postponeEnterTransition()
+//                (img.parent as ViewGroup).doOnPreDraw {
+//                    startPostponedEnterTransition()
+//                }
+                GalleryActivity.navigate(requireActivity(), listOf(img), mapOf(key to uri))
+
+//                GalleryFragment.navigate(
+//                    findNavController(),
+//                    listOf(img),
+//                    0,
+//                    mapOf(key to uri)
+//                )
             }
         }
     }
-
 
     override fun onResume() {
         super.onResume()

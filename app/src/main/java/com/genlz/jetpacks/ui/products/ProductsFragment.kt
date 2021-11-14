@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
-import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
@@ -17,7 +16,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -30,9 +28,8 @@ import com.genlz.jetpacks.databinding.FragmentProductsBinding
 import com.genlz.jetpacks.databinding.PostsListItemBinding
 import com.genlz.jetpacks.databinding.SimpleItemImageViewBinding
 import com.genlz.jetpacks.pojo.Post
-import com.genlz.jetpacks.ui.GalleryFragment
+import com.genlz.jetpacks.ui.gallery.GalleryFragment
 import com.genlz.jetpacks.ui.common.ReSelectable
-import com.genlz.share.util.appcompat.appCompatActivity
 import com.genlz.share.util.appcompat.transitionNameExt
 import com.genlz.share.util.launchAndCollectIn
 import dagger.hilt.android.AndroidEntryPoint

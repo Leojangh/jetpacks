@@ -2,9 +2,13 @@
 
 package com.genlz.share.util.appcompat
 
+import android.app.Activity
+import android.app.Service
+import android.content.ComponentName
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -14,19 +18,44 @@ import java.io.File
 import java.util.concurrent.Executor
 
 val Context.appCompatActivity
-    get() = generateSequence(this) {
-        if (it is ContextWrapper) {
-            it.baseContext
-        } else null
-    }.firstOrNull { it is AppCompatActivity } as AppCompatActivity?
+    get() = unwrap() as? AppCompatActivity
+
+/**
+ * Try to find a Activity context from this context.
+ */
+fun Context.unwrap() = generateSequence(this) {
+    if (it is ContextWrapper) {
+        it.baseContext
+    } else null
+}.firstOrNull { it is Activity } as? Activity
+
+fun Context.wrap(): Context =
+    object : ContextWrapper(this) {
+        //inject at here.
+    }
+
+inline fun <reified T : Activity> Context.startActivityExt(
+    intent: Intent = intent<T>(),
+    options: Bundle? = null
+) = ContextCompat.startActivity(this, intent, options)
+
+/**
+ * Generate a Intent that contains [extras].
+ */
+inline fun <reified T> Context.intent(extras: Bundle? = null) = Intent(
+    this,
+    T::class.java
+).apply {
+    if (extras != null) putExtras(extras)
+}
+
+inline fun <reified T> Context.intent(action: String, uri: Uri) =
+    Intent(action, uri, this, T::class.java)
 
 inline fun Context.getAttributionTagExt() = ContextCompat.getAttributionTag(this)
 
 inline fun Context.startActivitiesExt(intents: Array<Intent>, options: Bundle? = null) =
     ContextCompat.startActivities(this, intents, options)
-
-inline fun Context.startActivityExt(intent: Intent, options: Bundle?) =
-    ContextCompat.startActivity(this, intent, options)
 
 inline fun Context.getDataDirExt() = ContextCompat.getDataDir(this)
 

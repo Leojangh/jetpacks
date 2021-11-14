@@ -1,4 +1,4 @@
-package com.genlz.jetpacks.ui
+package com.genlz.jetpacks.ui.gallery
 
 import android.content.Context
 import android.net.Uri
@@ -35,8 +35,8 @@ import com.genlz.jetpacks.GalleryDirections
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.FragmentGalleryBinding
 import com.genlz.jetpacks.ui.common.FullscreenController.Companion.findFullscreenController
-import com.genlz.share.util.appcompat.appCompatActivity
 import com.genlz.share.util.appcompat.transitionNameExt
+import com.genlz.share.util.appcompat.unwrap
 
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
@@ -86,7 +86,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             //adb shell settings put global transition_duration_scale 20
             findFullscreenController()?.apply {
                 if (enter) {
-                    enterFullscreen()
+                    enterFullscreen(true)
                 } else {
                     exitFullscreen()
                 }
@@ -120,7 +120,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         // Make sure always as fullscreen state at this fragment scenario.
         if (args.showOptions == SHOW_OPTIONS_NORMAL) {
             //adb shell settings put global transition_duration_scale 20
-            findFullscreenController()?.enterFullscreen()
+            findFullscreenController()?.enterFullscreen(true)
         }
 
         // Note: When using a shared element transition from a fragment using a RecyclerView
@@ -248,7 +248,7 @@ private class PagerAdapter(
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             view.setOnClickListener {
-                it.context.appCompatActivity?.onBackPressed()
+                it.context.unwrap()?.onBackPressed()
             }
             val position = requireArguments().getInt(PARAM_POSITION)
             val cacheKey = requireArguments()[PARAM_KEY] as MemoryCache.Key

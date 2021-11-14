@@ -50,7 +50,7 @@
         </activity>
 
         <activity
-            android:name=".ui.GActivity"
+            android:name=".ui.gallery.GalleryActivity"
             android:exported="false"
             android:theme="@style/Theme.Jetpacks.NoActionBar" />
 

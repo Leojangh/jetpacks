@@ -8,7 +8,7 @@
     <!--大图预览目的地-->
     <fragment
         android:id="@+id/galleryFragment"
-        android:name="com.genlz.jetpacks.ui.GalleryFragment"
+        android:name="com.genlz.jetpacks.ui.gallery.GalleryFragment"
         android:label="@string/gallery_fragment"
         tools:layout="@layout/fragment_gallery">
 

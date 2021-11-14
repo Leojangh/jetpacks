@@ -2,7 +2,6 @@ package com.genlz.share.widget.web
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -29,8 +28,7 @@ class PowerfulWebView @JvmOverloads constructor(
     NestedScrollingChild3,
     NestedScrollingParent3,
     GestureDetector.OnGestureListener,
-    GestureDetector.OnDoubleTapListener
-{
+    GestureDetector.OnDoubleTapListener {
     /**
      * When double tap and release,event order:
      *
@@ -71,12 +69,12 @@ class PowerfulWebView @JvmOverloads constructor(
 
     var doubleTapEventListener: ((MotionEvent) -> Boolean)? = null
 
-    var domTouchListener: ((RectF) -> Unit)? = null
+    var domTouchListener: DomTouchListener? = null
 
     /**
      * The map of file name to script content.
      */
-    var scripts: Map<String, String> = HashMap()
+    val scripts = HashMap<String, String>()
 
     init {
         settings.apply {
@@ -302,10 +300,9 @@ class PowerfulWebView @JvmOverloads constructor(
         childHelper.dispatchNestedScroll(0, myConsumed, 0, myUnconsumed, null, type, consumed)
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        //just intercept event at here.
-        gestureDetector.onTouchEvent(event)
-        return super.onTouchEvent(event)
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        gestureDetector.onTouchEvent(ev)
+        return super.onInterceptTouchEvent(ev)
     }
 
     companion object {
@@ -320,7 +317,8 @@ class PowerfulWebView @JvmOverloads constructor(
     }
 
     override fun onSingleTapUp(e: MotionEvent): Boolean {
-        return singleTapListener?.invoke(e) ?: true
+        performClick()
+        return singleTapListener?.invoke(e) ?: false
     }
 
     override fun onScroll(

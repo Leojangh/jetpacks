@@ -11,6 +11,9 @@ interface JavascriptBridge {
 
     val context: Context
 
+    val name: String
+        get() = javaClass.simpleName
+
     companion object {
 
         internal const val TAG = "JavascriptBridge"

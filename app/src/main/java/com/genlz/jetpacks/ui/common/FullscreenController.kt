@@ -4,7 +4,11 @@ import androidx.fragment.app.Fragment
 
 interface FullscreenController {
 
-    fun enterFullscreen()
+    /**
+     * Enter fullscreen mode.
+     * @param sticky sticky immersive mode or not.
+     */
+    fun enterFullscreen(sticky: Boolean)
 
     fun exitFullscreen()
 
