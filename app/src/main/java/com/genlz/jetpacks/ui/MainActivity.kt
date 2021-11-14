@@ -15,10 +15,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.view.isGone
 import androidx.core.view.updatePadding
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -309,11 +308,21 @@ class MainActivity : AppCompatActivity(),
         }
         //fit navigation bar and ime.
         binding.bottomAppBar.setOnApplyWindowInsetsListener { v, i, ip ->
-            val insets =
-                i.getInsets(Type.navigationBars() or Type.ime())
+            val insets = i.getInsets(Type.navigationBars() or Type.ime())
             v.updatePadding(bottom = ip.bottom + insets.bottom)
-            WindowInsetsCompat.CONSUMED
+            CONSUMED
         }
+        //or
+//        binding.bottomAppBar.setOnApplyWindowInsetsListener { v, i, ip ->
+//            v.updatePadding(bottom = ip.bottom)
+//            i
+//        }
+        //fit
+//        binding.bottomNavigation.setOnApplyWindowInsetsListener { v, i, ip ->
+//            val insets = i.getInsets(Type.navigationBars() or Type.ime())
+//            v.updatePadding(bottom = ip.bottom + insets.bottom)
+//            CONSUMED
+//        }
         //TODO animate my keyboard.
     }
 
