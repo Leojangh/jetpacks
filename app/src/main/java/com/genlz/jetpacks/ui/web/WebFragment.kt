@@ -67,7 +67,6 @@ class WebFragment : Fragment(), DomTouchListener {
         when (hitTestResult.type) {
             WebView.HitTestResult.IMAGE_TYPE -> {
                 val uri = hitTestResult.extra!!
-                Log.d(TAG, "onDomTouch: $uri")
                 val img = ImageView(webView.context).apply {
                     val scrollY = webView.scrollY
                     val scrollX = webView.scrollX
@@ -89,10 +88,6 @@ class WebFragment : Fragment(), DomTouchListener {
                     clear()
                     add(img)
                 }
-//                postponeEnterTransition()
-//                (img.parent as ViewGroup).doOnPreDraw {
-//                    startPostponedEnterTransition()
-//                }
                 GalleryActivity.navigate(requireActivity(), listOf(img), mapOf(key to uri))
 
 //                GalleryFragment.navigate(

@@ -1,7 +1,6 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
-import android.app.ActivityManager
 import android.content.ComponentCallbacks2
 import android.content.Intent
 import android.graphics.Color
@@ -9,9 +8,9 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
-import android.view.WindowManager
 import android.view.animation.AnticipateInterpolator
 import android.view.animation.LinearInterpolator
+import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
@@ -72,6 +71,9 @@ class MainActivity : AppCompatActivity(),
         WindowInsetsControllerCompat(window, window.decorView)
     }
 
+    /**
+     * Use this constructor to show top level destinations.
+     */
     private val appBarConfiguration = AppBarConfiguration(
         setOf(
             R.id.communityFragment,
@@ -85,23 +87,17 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         waitForReady()
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolbar)
         customExitAnimation()
         doWithPermission(Manifest.permission.READ_CALL_LOG)
-
         setupNavigation()
-
         listenWindowInfo()
-
         setupViews()
-        val am = getSystemService<ActivityManager>()
-        val memoryInfo = am.getMemoryInfo()
-        Log.d(TAG, "onCreate: ${memoryInfo.availMem}")
-        Log.d(TAG, "onCreate: ${memoryInfo.totalMem}")
-
     }
 
+    /**
+     * Setup views at here,such as setting listeners,adjusting layout params programmatically etc.
+     */
     private fun setupViews() {
         // Make sure the 'content_main' is always adjacent to appbar.
         // Because update padding has no impact for it's parent,aka the view parent,
@@ -132,7 +128,6 @@ class MainActivity : AppCompatActivity(),
                 WebFragmentDirections.web(uri),
             )
         }
-
         edge2edge()
     }
 
@@ -199,14 +194,14 @@ class MainActivity : AppCompatActivity(),
             bottomAppBar.performHide()
             appBarLayout.setExpanded(false)
         }
-        //Works well on AOSP,but some Rom not.
+//        DisplayCutoutCompat()
+        //Works bad on notches.
         windowInsetsController.apply {
-            hide(Type.systemBars())
+            hide(Type.systemBars() or Type.ime())
             systemBarsBehavior =
                 if (sticky) WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 else WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE
         }
-//        window.addFlags(WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS)
     }
 
     override fun exitFullscreen() {
@@ -219,6 +214,9 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    /**
+     * Jetpack Window Manager utils.
+     */
     private fun listenWindowInfo() {
 
         //WindowManager 会在应用跨屏显示（以物理或虚拟方式）时提供 LayoutInfo 数据（设备功能类型、设备功能边界和设备折叠状态）。
@@ -246,6 +244,11 @@ class MainActivity : AppCompatActivity(),
         action(binding.fab)
     }
 
+    /**
+     * Bind navigation controller with bottom navigation view and action bar.
+     * So we don't need to implement bottom navigation view's item click listener
+     * and the action bar can show appropriate title automatically.
+     */
     private fun setupNavigation() {
         binding.bottomNavigation.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -310,7 +313,7 @@ class MainActivity : AppCompatActivity(),
         }
         //TODO animate my keyboard.
         WindowInsetsAnimationCompat(Type.ime(), LinearInterpolator(), 300L)
-        val cb = object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
+        val cb = object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
             override fun onProgress(
                 insets: WindowInsetsCompat,
                 runningAnimations: MutableList<WindowInsetsAnimationCompat>
@@ -318,14 +321,8 @@ class MainActivity : AppCompatActivity(),
                 TODO("Not yet implemented")
             }
         }
-        windowInsetsController.addOnControllableInsetsChangedListener { controller, typeMask ->
-            Log.d(TAG, "edge2edge: $typeMask")
-        }
     }
 
-    /**
-     * 提供向上返回支持
-     */
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
@@ -343,14 +340,13 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-//        clearEditTextFocus(ev)
-        return super.dispatchTouchEvent(ev)
-    }
-
+    /**
+     * Clear focus of edit text view when touch outside of it.
+     * call this at [dispatchTouchEvent] if needed.
+     */
     private fun clearEditTextFocus(ev: MotionEvent) {
         val v = currentFocus
-        if (ev.action == MotionEvent.ACTION_UP && R.id.edit_text == v?.id) {
+        if (ev.action == MotionEvent.ACTION_UP && v is EditText) {
             val rect = Rect()
             v.getGlobalVisibleRect(rect)
             if (!rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {

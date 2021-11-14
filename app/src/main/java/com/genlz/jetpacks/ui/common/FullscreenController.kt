@@ -10,6 +10,9 @@ interface FullscreenController {
      */
     fun enterFullscreen(sticky: Boolean)
 
+    /**
+     * Exit fullscreen mode.
+     */
     fun exitFullscreen()
 
     companion object {
