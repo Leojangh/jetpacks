@@ -45,7 +45,7 @@ class WebFragment : Fragment(), DomTouchListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        findFullscreenController()?.enterFullscreen(false)
+        findFullscreenController()?.enterFullscreen(false)
         viewModel.overlays.observe(viewLifecycleOwner) {
             webView.overlay.add(it)
         }
@@ -110,13 +110,9 @@ class WebFragment : Fragment(), DomTouchListener {
         webView.onPause()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
-//        findFullscreenController()?.exitFullscreen()
+        findFullscreenController()?.exitFullscreen()
     }
 
     companion object {

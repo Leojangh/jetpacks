@@ -331,11 +331,6 @@ inline var View.transitionNameExt
     set(value) = ViewCompat.setTransitionName(this, value)
 
 /**
- * @see ViewCompat.getWindowSystemUiVisibility
- */
-inline val View.windowSystemUiVisibilityExt get() = ViewCompat.getWindowSystemUiVisibility(this)
-
-/**
  * @see ViewCompat.requestApplyInsets
  */
 inline fun View.requestApplyInsetsExt() = ViewCompat.requestApplyInsets(this)

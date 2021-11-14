@@ -8,17 +8,17 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.view.animation.AnticipateInterpolator
-import android.view.animation.LinearInterpolator
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.isGone
 import androidx.core.view.updatePadding
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -193,9 +193,10 @@ class MainActivity : AppCompatActivity(),
         binding.apply {
             bottomAppBar.performHide()
             appBarLayout.setExpanded(false)
+            //Bug that leads ABL can't collapse.
+//            fab.hide()
+//            fab.isGone = true
         }
-//        DisplayCutoutCompat()
-        //Works bad on notches.
         windowInsetsController.apply {
             hide(Type.systemBars() or Type.ime())
             systemBarsBehavior =
@@ -208,6 +209,8 @@ class MainActivity : AppCompatActivity(),
         binding.apply {
             bottomAppBar.performShow()
             appBarLayout.setExpanded(true)
+//            fab.show()
+//            fab.isGone = false
         }
         windowInsetsController.apply {
             show(Type.systemBars())
@@ -312,15 +315,6 @@ class MainActivity : AppCompatActivity(),
             WindowInsetsCompat.CONSUMED
         }
         //TODO animate my keyboard.
-        WindowInsetsAnimationCompat(Type.ime(), LinearInterpolator(), 300L)
-        val cb = object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
-            override fun onProgress(
-                insets: WindowInsetsCompat,
-                runningAnimations: MutableList<WindowInsetsAnimationCompat>
-            ): WindowInsetsCompat {
-                TODO("Not yet implemented")
-            }
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -340,6 +334,11 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        clearEditTextFocus(ev)
+        return super.dispatchTouchEvent(ev)
+    }
+
     /**
      * Clear focus of edit text view when touch outside of it.
      * call this at [dispatchTouchEvent] if needed.
@@ -354,6 +353,11 @@ class MainActivity : AppCompatActivity(),
                 windowInsetsController.hide(Type.ime())
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireViewByIdExt<View>(R.id.edit_text).clearFocus()
     }
 
     override fun onNewIntent(intent: Intent?) {
