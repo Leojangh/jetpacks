@@ -33,6 +33,7 @@ import com.genlz.jetpacks.pojo.Post
 import com.genlz.jetpacks.ui.GalleryFragment
 import com.genlz.jetpacks.ui.common.ReSelectable
 import com.genlz.share.util.appcompat.appCompatActivity
+import com.genlz.share.util.appcompat.transitionNameExt
 import com.genlz.share.util.launchAndCollectIn
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -196,7 +197,7 @@ private class ThumbsAdapter(
         // 这是因为使用Fragment打开会导致原有的fragment被销毁，在返回原fragment时需要重新bind，
         // 这也就是为什么需要在此处设置Transition name的原因；使用Activity打开就不会有这个问题，
         // 因为在新的Activity中打开不会销毁原来Activity中的fragment,自然也不会重新bind。
-        ViewCompat.setTransitionName(img, "${id}_$position")
+        img.transitionNameExt = "${id}_$position"
         img.load(uris[position]) {
 
             size(ViewSizeResolver(img))
@@ -222,14 +223,7 @@ private class ThumbsAdapter(
 //            position,
 //            thumbsAndOrigin
 //        )
-//        GalleryFragment.navigate(img.context.appCompatActivity!!)(views)(thumbsAndOrigin, position)
         GalleryFragment.navigate(navController)(views)(thumbsAndOrigin, position)
-//        GalleryActivity.navigate(
-//            img.context.appCompatActivity!!,
-//            views,
-//            position,
-//            thumbsAndOrigin
-//        )
     }
 
     override fun getItemCount() = uris.size

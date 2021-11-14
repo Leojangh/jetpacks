@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED","NOTHING_TO_INLINE")
+@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
 
 package com.genlz.share.util.appcompat
 
@@ -62,15 +62,11 @@ inline fun Context.startForegroundServiceExt(intent: Intent) =
     ContextCompat.startForegroundService(this, intent)
 
 /**
- * For instant app,may be null for some service.
+ * For instant app,may be null for some service,use [androidx.core.content.getSystemService] instead.
  */
-@Deprecated(
-    "Use official version instead",
-    ReplaceWith("getSystemService<T>()", "androidx.core.content.getSystemService")
-)
-inline fun <T> Context.getSystemServiceExt(serviceClass: Class<T>) =
-    ContextCompat.getSystemService(this, serviceClass)
-        ?: error("You can't access the service ${serviceClass.canonicalName}")
+inline fun <reified T> Context.getSystemService() =
+    ContextCompat.getSystemService(this, T::class.java)
+        ?: error("You can't access the service ${T::class.java.canonicalName}")
 
 inline fun Context.getSystemServiceNameExt(serviceClass: Class<*>) =
     ContextCompat.getSystemServiceName(this, serviceClass)

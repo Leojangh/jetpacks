@@ -176,7 +176,6 @@ dependencies {
     val appcompat: String by rootProject.extra
     val material: String by rootProject.extra
     val constraintLayout: String by rootProject.extra
-
     implementation("androidx.core:core-ktx:$coreKtx")
     implementation("androidx.appcompat:appcompat:$appcompat")
     implementation("com.google.android.material:material:$material")

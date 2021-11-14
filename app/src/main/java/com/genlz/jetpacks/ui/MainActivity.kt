@@ -2,24 +2,17 @@ package com.genlz.jetpacks.ui
 
 import android.Manifest
 import android.app.ActivityManager
-import android.content.ComponentCallbacks
 import android.content.ComponentCallbacks2
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
-import android.os.IBinder
-import android.system.Os
 import android.util.Log
 import android.view.MotionEvent
-import android.view.WindowManager
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityManagerCompat
-import androidx.core.content.getSystemService
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -27,14 +20,11 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
-import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
 import com.genlz.android.viewbinding.viewBinding
@@ -92,15 +82,35 @@ class MainActivity : AppCompatActivity(),
         waitForReady()
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-
         customExitAnimation()
-        edge2edge()
 
         doWithPermission(Manifest.permission.READ_CALL_LOG)
 
         setupNavigation()
 
         listenWindowInfo()
+
+        setupViews()
+        val am = getSystemService<ActivityManager>()
+        val memoryInfo = am.getMemoryInfo()
+        Log.d(TAG, "onCreate: ${memoryInfo.availMem}")
+        Log.d(TAG, "onCreate: ${memoryInfo.totalMem}")
+
+    }
+
+    private fun setupViews() {
+        // Make sure the 'content_main' is always adjacent to appbar.
+        // Because update padding has no impact for it's parent,aka the view parent,
+        // view group no need to requestLayout.Recursive occurs in this listener if
+        // update margins.
+        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { abl, offset ->
+            // It seems that the ABL.ScrollViewBehavior can automatically adjust paddings.
+            // Control status bar appearance.
+            val collapse = -offset == abl.height
+            windowInsetsController.isAppearanceLightStatusBars = collapse
+            window.statusBarColor =
+                if (collapse) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
+        })
 
         /**
          * Although the menu item id is as same as fragment node in navigation graph,but in fact
@@ -111,17 +121,13 @@ class MainActivity : AppCompatActivity(),
         }
 
         binding.fab.setOnClickListener {
-            val uri = "https://baidu.com"
+            val uri = "https://www.baidu.com/"
             navController.navigate(
                 WebFragmentDirections.web(uri),
             )
         }
 
-        val am = getSystemService<ActivityManager>()!!
-        val memoryInfo = am.getMemoryInfo()
-        Log.d(TAG, "onCreate: ${memoryInfo.availMem}")
-        Log.d(TAG, "onCreate: ${memoryInfo.totalMem}")
-
+        edge2edge()
     }
 
     override fun onTrimMemory(level: Int) {
@@ -237,12 +243,19 @@ class MainActivity : AppCompatActivity(),
         setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
+    /**
+     * Wait for the first screen ready,set condition to keep splash screen visible.
+     * Must be invoked before [setContentView].
+     */
     private fun waitForReady() {
         splashScreen.setKeepVisibleCondition {
             !viewModel.ready.value
         }
     }
 
+    /**
+     * Custom the splash screen exit animation at here.
+     */
     private fun customExitAnimation() {
         splashScreen.setOnExitAnimationListener { provider ->
             provider.view.apply {
@@ -257,31 +270,24 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * The attribute fitSystemWindow has some bug or little glitch such as no effect with
-     * bottom navigation view;app bar layout can't lift thoroughly.
-     */
+     * Implements edge to edge with 3 steps:
+     * 1. Set system bar color to transparent.At here we didn't do it because it's done in theme.
+     * 2. Laid out behind system bar,just call [setDecorFitsSystemWindowsExt].In the layout XML,
+     * [android.R.attr.fitsSystemWindows] is unnecessary.
+     * 3. Handles visual overlaps and gesture conflicts.The key step is listen the system window insets.
+     *
+     * More Reference:
+     * [Android Developers Guide](#https://developer.android.com/training/gestures/edge-to-edge)
+     *
+     * [Chris Banes's Blog](#https://medium.com/androiddevelopers/gesture-navigation-going-edge-to-edge-812f62e4e83e)
+     *
+     * */
     private fun edge2edge() {
         window.setDecorFitsSystemWindowsExt(false)
-
         binding.toolbarLayout.setOnApplyWindowInsetsListener { v, i, ip ->
             v.updatePadding(top = i.statusBarInsets.top + ip.top)
             i
         }
-
-        // Make sure the 'content_main' is always adjacent to appbar.
-        // Because update padding has no impact for it's parent,aka the view parent,
-        // view group no need to requestLayout.Recursive occurs in this listener if
-        // update margins.
-        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { abl, offset ->
-            // It seems that the ABL.ScrollViewBehavior can automatically adjust paddings.
-            // Control status bar appearance.
-            val collapse = -offset == abl.height
-            windowInsetsController.isAppearanceLightStatusBars = collapse
-            window.statusBarColor =
-                if (collapse) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
-        })
-
-        //BottomAppBar has already fit navigation bar.
         binding.bottomAppBar.setOnApplyWindowInsetsListener { v, i, ip ->
             v.updatePadding(bottom = i.navigationBarInsets.bottom + ip.bottom)
             WindowInsetsCompat.CONSUMED

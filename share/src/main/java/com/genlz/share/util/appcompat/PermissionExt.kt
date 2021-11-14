@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 
 /**
- * Request the permission and then do the [action].
+ * Request the permission and then do the [action].It's okay to just use it to request permissions
  *
  * @param onRejected the action which will be executed on request permission rejected.
  * @param onShowRationale the action which will be executed on show request permission rationale.

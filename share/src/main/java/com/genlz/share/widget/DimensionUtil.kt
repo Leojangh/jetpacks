@@ -14,5 +14,3 @@ fun Int.toDp(displayMetrics: DisplayMetrics) =
         this.toFloat(),
         displayMetrics
     ).toInt()
-
-//val Int.dp get() = toDp()
