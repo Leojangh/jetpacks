@@ -41,8 +41,13 @@ import com.genlz.share.util.appcompat.*
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -92,26 +97,51 @@ class MainActivity : AppCompatActivity(),
         setupNavigation()
         listenWindowInfo()
         setupViews()
+        lifecycleScope.launch {
+            val statusBarHeight = getStatusBarHeight()
+            Log.d(TAG, "onCreate: $statusBarHeight")
+        }
+    }
+
+    /**
+     * Retrieve status bar height with WindowInsetsCompat.
+     */
+    private suspend fun getStatusBarHeight(): Int {
+        return suspendCoroutine {
+            var resumed = false
+            window.decorView.setOnApplyWindowInsetsListener { _, i, _ ->
+                //Avoid multi-resume
+                if (!resumed) {
+                    it.resume(i.statusBarInsets.top)
+                    resumed = true
+                }
+                i
+            }
+        }
     }
 
     /**
      * Setup views at here,such as setting listeners,adjusting layout params programmatically etc.
      */
     private fun setupViews() {
-        // Make sure the 'content_main' is always adjacent to appbar.
-        // Because update padding has no impact for it's parent,aka the view parent,
-        // view group no need to requestLayout.Recursive occurs in this listener if
-        // update margins.
-        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { abl, offset ->
-            // It seems that the ABL.ScrollViewBehavior can automatically adjust paddings.
-            // Control status bar appearance.
-            val collapse = -offset == abl.height
-            windowInsetsController.isAppearanceLightStatusBars = collapse
-            window.statusBarColor =
-                if (collapse) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
-            windowInsetsController.isAppearanceLightNavigationBars = !collapse
-        })
-
+        edge2edge()
+        binding.toolbarLayout.post {
+            // The padding top is also the status bar height.
+            val statusBarHeight = binding.toolbarLayout.paddingTop
+            // Make sure the 'content_main' is always adjacent to appbar.
+            // Because update padding has no impact for it's parent,aka the view parent,
+            // view group no need to requestLayout.Recursive occurs in this listener if
+            // update margins.
+            binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { abl, offset ->
+                // It seems that the ABL.ScrollViewBehavior can automatically adjust paddings.
+                // Control status bar appearance.
+                val collapse = -offset + statusBarHeight >= abl.height
+                windowInsetsController.isAppearanceLightStatusBars = collapse
+                window.statusBarColor =
+                    if (collapse) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
+                windowInsetsController.isAppearanceLightNavigationBars = !collapse
+            })
+        }
         /**
          * Although the menu item id is as same as fragment node in navigation graph,but in fact
          * the fragment id is the fragment container's id at runtime.
@@ -127,7 +157,6 @@ class MainActivity : AppCompatActivity(),
                 WebFragmentDirections.web(uri),
             )
         }
-        edge2edge()
     }
 
     override fun onTrimMemory(level: Int) {
@@ -303,7 +332,8 @@ class MainActivity : AppCompatActivity(),
         window.setDecorFitsSystemWindowsExt(false)
         //fit status bar
         binding.toolbarLayout.setOnApplyWindowInsetsListener { v, i, ip ->
-            v.updatePadding(top = i.statusBarInsets.top + ip.top)
+            val statusBarHeight = i.statusBarInsets.top
+            v.updatePadding(top = statusBarHeight + ip.top)
             i
         }
         //fit navigation bar and ime.
