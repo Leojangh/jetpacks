@@ -1,5 +1,6 @@
 package com.genlz.jetpacks.ui.web
 
+import android.content.res.Configuration
 import android.graphics.RectF
 import android.os.Bundle
 import android.util.Log
@@ -45,7 +46,6 @@ class WebFragment : Fragment(), DomTouchListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findFullscreenController()?.enterFullscreen(false)
         viewModel.overlays.observe(viewLifecycleOwner) {
             webView.overlay.add(it)
         }
@@ -70,7 +70,10 @@ class WebFragment : Fragment(), DomTouchListener {
                 val img = ImageView(webView.context).apply {
                     val scrollY = webView.scrollY
                     val scrollX = webView.scrollX
-                    // ViewOverlayGroup didn't layout.
+                    // ViewGroupOverlay doesn't perform the layout pass on Views added to it;
+                    // that is, as is automatically performed when adding a View to an existing layout,
+                    // you need to manually perform measure() and layout() on a view in order for
+                    // it to be correctly displayed on screen.
                     layout(
                         rect.left + scrollX,
                         rect.top + scrollY,
@@ -110,9 +113,13 @@ class WebFragment : Fragment(), DomTouchListener {
         webView.onPause()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        findFullscreenController()?.exitFullscreen()
+    /**
+     * Because the view overlay layout step do manually,we need clear overlays when
+     * configuration changed.
+     */
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        webView.overlay.clear()
     }
 
     companion object {

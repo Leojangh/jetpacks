@@ -16,6 +16,11 @@ interface FullscreenController {
     fun exitFullscreen()
 
     companion object {
+
+        /**
+         * The method depends on the container activity as a [FullscreenController] must
+         * implements correctly.
+         */
         fun Fragment.findFullscreenController() = activity as? FullscreenController
     }
 }

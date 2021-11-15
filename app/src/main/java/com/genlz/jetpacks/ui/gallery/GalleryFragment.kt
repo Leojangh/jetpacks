@@ -99,19 +99,22 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         super.onViewCreated(view, savedInstanceState)
         val cacheKeys = args.cacheKeys
         val imageUris = args.imageUris
-        repeat(cacheKeys.size) {
-            LayoutInflater.from(context).inflate(
-                R.layout.simple_radio_button,
-                binding.pagerIndicator,
-                true
-            )
+        cacheKeys.size.takeIf { it > 1 }?.let {
+            repeat(it) {
+                LayoutInflater.from(context).inflate(
+                    R.layout.simple_radio_button,
+                    binding.pagerIndicator,
+                    true
+                )
+            }
         }
         binding.imagePager.apply {
             adapter = PagerAdapter(cacheKeys, imageUris, this@GalleryFragment)
 //            offscreenPageLimit = cacheKeys.size
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
-                    (binding.pagerIndicator[position] as Checkable).isChecked = true
+                    if (position > 0)
+                        (binding.pagerIndicator[position] as Checkable).isChecked = true
                 }
             })
             setCurrentItem(args.initPosition, false)

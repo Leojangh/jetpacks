@@ -8,10 +8,14 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.os.bundleOf
 import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.Type
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
 import coil.memory.MemoryCache
+import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.share.util.appcompat.intent
 import com.genlz.share.util.appcompat.setDecorFitsSystemWindowsExt
 import com.genlz.share.util.appcompat.transitionNameExt
@@ -19,7 +23,15 @@ import com.genlz.share.util.appcompat.transitionNameExt
 /**
  * A container Activity for [GalleryFragment].
  */
-class GalleryActivity : AppCompatActivity() {
+class GalleryActivity : AppCompatActivity(), FullscreenController {
+
+    private val windowInsetsController by lazy {
+        WindowInsetsControllerCompat(
+            window,
+            window.decorView
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val fragmentContainerView = FragmentContainerView(this).apply {
@@ -42,6 +54,17 @@ class GalleryActivity : AppCompatActivity() {
         window.decorView.doOnPreDraw {
             startPostponedEnterTransition()
         }
+    }
+
+    override fun enterFullscreen(sticky: Boolean) {
+        windowInsetsController.hide(Type.ime() or Type.systemBars())
+        windowInsetsController.systemBarsBehavior =
+            if (sticky) WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            else WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE
+    }
+
+    override fun exitFullscreen() {
+        windowInsetsController.show(Type.systemBars())
     }
 
     companion object {

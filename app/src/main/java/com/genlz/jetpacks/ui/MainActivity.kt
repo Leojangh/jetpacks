@@ -353,7 +353,7 @@ class MainActivity : AppCompatActivity(),
 //            v.updatePadding(bottom = ip.bottom + insets.bottom)
 //            CONSUMED
 //        }
-        //TODO animate my keyboard.
+//        TODO: animate insets.
     }
 
     override fun onSupportNavigateUp(): Boolean {
