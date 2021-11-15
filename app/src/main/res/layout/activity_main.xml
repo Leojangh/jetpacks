@@ -40,7 +40,9 @@
                 app:popupTheme="@style/Theme.Jetpacks.PopupOverlay"
                 tools:layout_height="?attr/actionBarSize">
 
-                <include layout="@layout/search_layout" />
+                <include
+                    android:id="@+id/search_bar"
+                    layout="@layout/search_layout" />
 
             </com.google.android.material.appbar.MaterialToolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>

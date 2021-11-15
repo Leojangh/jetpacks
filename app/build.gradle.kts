@@ -130,6 +130,7 @@ dependencies {
 
     val window: String by rootProject.extra
     implementation("androidx.window:window:$window")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     androidTestImplementation("androidx.window:window-testing:$window")
 
     val splash: String by rootProject.extra

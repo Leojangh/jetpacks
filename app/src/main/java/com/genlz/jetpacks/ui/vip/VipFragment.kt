@@ -26,7 +26,6 @@ class VipFragment : Fragment(R.layout.fragment_vip) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val uris = listOf(
             GalleryFragment.localResUri(R.mipmap.unsplash1).toString(),
             GalleryFragment.localResUri(R.mipmap.unsplash2).toString(),
@@ -44,28 +43,8 @@ class VipFragment : Fragment(R.layout.fragment_vip) {
                 }.show()
             }
         }
-        BadgeDrawable.create(requireContext()).apply {
-            number = 10
 
-            setBounds(0, 0, 500, 500)
-            binding.banner.overlay.add(this)
-        }
-
-//        with(
-//            View.inflate(
-//                requireContext(),
-//                android.R.layout.simple_list_item_1,
-//                null
-//            ) as TextView
-//        ) {
-//            text = "Hello"
-//            measure(
-//                View.MeasureSpec.makeMeasureSpec(100, View.MeasureSpec.EXACTLY),
-//                View.MeasureSpec.makeMeasureSpec(100, View.MeasureSpec.EXACTLY)
-//            )
-//            layout(0, 0, 500, 500)
-//            binding.banner.overlay.add(this)
-//        }
+        binding
     }
 
     companion object {

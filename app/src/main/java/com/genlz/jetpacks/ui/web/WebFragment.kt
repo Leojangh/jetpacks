@@ -66,7 +66,7 @@ class WebFragment : Fragment(), DomTouchListener {
         val rect = rectF.toRect()
         when (hitTestResult.type) {
             WebView.HitTestResult.IMAGE_TYPE -> {
-                val uri = hitTestResult.extra!!
+                val uri = hitTestResult.extra ?: return
                 val img = ImageView(webView.context).apply {
                     val scrollY = webView.scrollY
                     val scrollX = webView.scrollX

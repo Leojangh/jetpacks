@@ -19,6 +19,8 @@ import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.commit
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -41,11 +43,8 @@ import com.genlz.share.util.appcompat.*
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -97,10 +96,6 @@ class MainActivity : AppCompatActivity(),
         setupNavigation()
         listenWindowInfo()
         setupViews()
-        lifecycleScope.launch {
-            val statusBarHeight = getStatusBarHeight()
-            Log.d(TAG, "onCreate: $statusBarHeight")
-        }
     }
 
     /**
@@ -157,6 +152,40 @@ class MainActivity : AppCompatActivity(),
                 WebFragmentDirections.web(uri),
             )
         }
+
+        val fm = navHostFragment.childFragmentManager
+        //Make sure search snippet always shown as edit text gained focus.
+        binding.searchBar.editText.setOnClickListener {
+            if (fm.findFragmentByTag(SearchSnippetFragment.TAG) == null) {
+                addSearchSnippetFragment(fm)
+            }
+        }
+        binding.searchBar.editText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                addSearchSnippetFragment(fm)
+            } else {
+                removeSearchSnippetFragment(fm)
+            }
+        }
+    }
+
+    private fun addSearchSnippetFragment(fm: FragmentManager) {
+        fm.commit {
+            add(
+                binding.contentMain.id,
+                SearchSnippetFragment::class.java,
+                null,
+                SearchSnippetFragment.TAG
+            )
+            addToBackStack(SearchSnippetFragment.TAG)
+        }
+    }
+
+    private fun removeSearchSnippetFragment(fm: FragmentManager) {
+        fm.popBackStack(
+            SearchSnippetFragment.TAG,
+            FragmentManager.POP_BACK_STACK_INCLUSIVE
+        )
     }
 
     override fun onTrimMemory(level: Int) {
@@ -396,7 +425,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onPause() {
         super.onPause()
-        requireViewByIdExt<View>(R.id.edit_text).clearFocus()
+        binding.searchBar.editText.clearFocus()
     }
 
     override fun onNewIntent(intent: Intent?) {

@@ -4,4 +4,5 @@
     android:id="@+id/postList"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".ui.community.recommend.RecommendFragment"
     tools:listitem="@layout/post_item" />
