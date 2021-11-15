@@ -37,6 +37,7 @@ import com.genlz.jetpacks.databinding.FragmentGalleryBinding
 import com.genlz.jetpacks.ui.common.FullscreenController.Companion.findFullscreenController
 import com.genlz.share.util.appcompat.transitionNameExt
 import com.genlz.share.util.appcompat.unwrap
+import com.github.chrisbanes.photoview.PhotoView
 
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
@@ -247,7 +248,14 @@ private class PagerAdapter(
         return ImageFragment.newInstance(keys[position], imageUris[position], position)
     }
 
-    class ImageFragment : Fragment(R.layout.simple_pager_item_image) {
+    class ImageFragment : Fragment() {
+
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View = PhotoView(requireContext())
+
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             view.setOnClickListener {
@@ -256,7 +264,7 @@ private class PagerAdapter(
             val position = requireArguments().getInt(PARAM_POSITION)
             val cacheKey = requireArguments()[PARAM_KEY] as MemoryCache.Key
             val originUri = requireArguments()[PARAM_URI] as String
-            val img = view.findViewById<ImageView>(R.id.simple_image)
+            val img = view as ImageView
             // Transition name must unique,so cannot set in XML.
             // Another point to consider when using shared element transitions with a RecyclerView
             // is that you cannot set the transition name in the RecyclerView item's XML layout
