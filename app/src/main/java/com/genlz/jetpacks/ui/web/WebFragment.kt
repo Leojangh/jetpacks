@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.ImageView
 import androidx.core.graphics.toRect
-import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -18,7 +17,6 @@ import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import coil.load
 import coil.memory.MemoryCache
-import com.genlz.jetpacks.ui.common.FullscreenController.Companion.findFullscreenController
 import com.genlz.jetpacks.ui.gallery.GalleryActivity
 import com.genlz.jetpacks.ui.web.bridge.Android
 import com.genlz.share.util.appcompat.*
@@ -53,7 +51,9 @@ class WebFragment : Fragment(), DomTouchListener {
             isNestedScrollingEnabled = false
             val bridge = Android(context, this)
             addJavascriptInterface(bridge, bridge.name)
-
+            setOnClickListener {
+                Log.d(TAG, "onViewCreated: ")
+            }
             domTouchListener = this@WebFragment
 
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {

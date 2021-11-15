@@ -8,13 +8,14 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import android.view.animation.AnticipateInterpolator
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.WindowInsetsControllerCompat
@@ -45,8 +46,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -100,19 +99,11 @@ class MainActivity : AppCompatActivity(),
 
     /**
      * Retrieve status bar height with WindowInsetsCompat.
+     *
+     * @return The status bar height,or 0 if the root view did not attach to window.
      */
-    private suspend fun getStatusBarHeight(): Int {
-        return suspendCoroutine {
-            var resumed = false
-            window.decorView.setOnApplyWindowInsetsListener { _, i, _ ->
-                //Avoid multi-resume
-                if (!resumed) {
-                    it.resume(i.statusBarInsets.top)
-                    resumed = true
-                }
-                i
-            }
-        }
+    private fun getStatusBarHeight(): Int {
+        return binding.root.rootWindowInsetsExt?.getInsets(Type.statusBars())?.top ?: 0
     }
 
     /**
@@ -120,23 +111,21 @@ class MainActivity : AppCompatActivity(),
      */
     private fun setupViews() {
         edge2edge()
-        binding.toolbarLayout.post {
-            // The padding top is also the status bar height.
-            val statusBarHeight = binding.toolbarLayout.paddingTop
-            // Make sure the 'content_main' is always adjacent to appbar.
-            // Because update padding has no impact for it's parent,aka the view parent,
-            // view group no need to requestLayout.Recursive occurs in this listener if
-            // update margins.
-            binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { abl, offset ->
-                // It seems that the ABL.ScrollViewBehavior can automatically adjust paddings.
-                // Control status bar appearance.
-                val collapse = -offset + statusBarHeight >= abl.height
-                windowInsetsController.isAppearanceLightStatusBars = collapse
-                window.statusBarColor =
-                    if (collapse) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
-                windowInsetsController.isAppearanceLightNavigationBars = !collapse
-            })
-        }
+        val statusBarHeight = getStatusBarHeight()
+        // The padding top is also the status bar height.
+        // Make sure the 'content_main' is always adjacent to appbar.
+        // Because update padding has no impact for it's parent,aka the view parent,
+        // view group no need to requestLayout.Recursive occurs in this listener if
+        // update margins.
+        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { abl, offset ->
+            // It seems that the ABL.ScrollViewBehavior can automatically adjust paddings.
+            // Control status bar appearance.
+            val collapse = -offset + statusBarHeight >= abl.height
+            windowInsetsController.isAppearanceLightStatusBars = collapse
+            window.statusBarColor =
+                if (collapse) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
+            windowInsetsController.isAppearanceLightNavigationBars = !collapse
+        })
         /**
          * Although the menu item id is as same as fragment node in navigation graph,but in fact
          * the fragment id is the fragment container's id at runtime.
@@ -358,8 +347,12 @@ class MainActivity : AppCompatActivity(),
      *
      * */
     private fun edge2edge() {
+        // Tell the Window that our app is going to responsible for fitting for any system windows.
+        // This is similar to the now deprecated:
+        // view.setSystemUiVisibility(LAYOUT_STABLE | LAYOUT_FULLSCREEN | LAYOUT_HIDE_NAVIGATION)
         window.setDecorFitsSystemWindowsExt(false)
         //fit status bar
+        animateInsets()
         binding.toolbarLayout.setOnApplyWindowInsetsListener { v, i, ip ->
             val statusBarHeight = i.statusBarInsets.top
             v.updatePadding(top = statusBarHeight + ip.top)
@@ -371,18 +364,41 @@ class MainActivity : AppCompatActivity(),
             v.updatePadding(bottom = ip.bottom + insets.bottom)
             CONSUMED
         }
-        //or
-//        binding.bottomAppBar.setOnApplyWindowInsetsListener { v, i, ip ->
-//            v.updatePadding(bottom = ip.bottom)
-//            i
-//        }
-        //fit
-//        binding.bottomNavigation.setOnApplyWindowInsetsListener { v, i, ip ->
-//            val insets = i.getInsets(Type.navigationBars() or Type.ime())
-//            v.updatePadding(bottom = ip.bottom + insets.bottom)
-//            CONSUMED
-//        }
-//        TODO: animate insets.
+    }
+
+    private fun animateInsets() {
+        val cb = object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+
+            var startBottom = 0
+            var endBottom = 0
+
+            override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+                startBottom = binding.bottomAppBar.bottom
+                Log.d(TAG, "onPrepare: $startBottom")
+            }
+
+            override fun onStart(
+                animation: WindowInsetsAnimationCompat,
+                bounds: WindowInsetsAnimationCompat.BoundsCompat
+            ): WindowInsetsAnimationCompat.BoundsCompat {
+                endBottom = binding.bottomAppBar.bottom
+                Log.d(TAG, "onStart: $endBottom")
+
+                return bounds
+            }
+
+            override fun onProgress(
+                insets: WindowInsetsCompat,
+                runningAnimations: MutableList<WindowInsetsAnimationCompat>
+            ): WindowInsetsCompat {
+                return insets
+            }
+
+            override fun onEnd(animation: WindowInsetsAnimationCompat) {
+
+            }
+        }
+        binding.bottomAppBar.setWindowInsetsAnimationCallback(cb)
     }
 
     override fun onSupportNavigateUp(): Boolean {

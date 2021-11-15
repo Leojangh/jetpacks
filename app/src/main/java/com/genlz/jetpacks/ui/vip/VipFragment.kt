@@ -43,8 +43,6 @@ class VipFragment : Fragment(R.layout.fragment_vip) {
                 }.show()
             }
         }
-
-        binding
     }
 
     companion object {

@@ -13,10 +13,16 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.StyleRes
+import androidx.core.content.withStyledAttributes
 import androidx.core.view.*
 import androidx.core.view.ViewCompat.NestedScrollType
 import androidx.core.view.ViewCompat.ScrollAxis
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @SuppressLint("SetJavaScriptEnabled")
 class PowerfulWebView @JvmOverloads constructor(
@@ -300,13 +306,24 @@ class PowerfulWebView @JvmOverloads constructor(
         childHelper.dispatchNestedScroll(0, myConsumed, 0, myUnconsumed, null, type, consumed)
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        gestureDetector.onTouchEvent(ev)
-        return super.onInterceptTouchEvent(ev)
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        gestureDetector.onTouchEvent(event)
+        return super.onTouchEvent(event)
     }
 
     companion object {
         private const val TAG = "PowerfulWebView"
+
+        /**
+         * Convert the callback style to kotlin coroutine.
+         */
+        suspend fun WebView.evaluateJavascript(script: String): String {
+            return suspendCoroutine { cont ->
+                evaluateJavascript(script) {
+                    cont.resume(it)
+                }
+            }
+        }
     }
 
     // Gesture detector
@@ -352,14 +369,14 @@ class PowerfulWebView @JvmOverloads constructor(
     }
 
     override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-        return singleTapConfirmedListener?.invoke(e) ?: true
+        return singleTapConfirmedListener?.invoke(e) ?: false
     }
 
     override fun onDoubleTap(e: MotionEvent): Boolean {
-        return doubleTapListener?.invoke(e) ?: true
+        return doubleTapListener?.invoke(e) ?: false
     }
 
     override fun onDoubleTapEvent(e: MotionEvent): Boolean {
-        return doubleTapEventListener?.invoke(e) ?: true
+        return doubleTapEventListener?.invoke(e) ?: false
     }
 }
