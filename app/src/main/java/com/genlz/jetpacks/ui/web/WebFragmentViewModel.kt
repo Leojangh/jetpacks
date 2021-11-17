@@ -64,6 +64,7 @@ class WebFragmentViewModel @Inject constructor(
             }.toSet().toMap().also {
                 withContext(Dispatchers.Main) {
                     webView.scripts += it
+                    Log.d(TAG, "the file would inject: $it")
                 }
             }
         }

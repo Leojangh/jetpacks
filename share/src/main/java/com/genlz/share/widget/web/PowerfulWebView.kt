@@ -3,6 +3,7 @@ package com.genlz.share.widget.web
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -89,8 +90,9 @@ class PowerfulWebView @JvmOverloads constructor(
         }
         webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String) {
-                scripts.values.forEach {
-                    evaluateJavascript(it, null)
+                for ((name, content) in scripts) {
+                    evaluateJavascript(content, null)
+                    Log.d(TAG, "script $name inject done")
                 }
             }
 

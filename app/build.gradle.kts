@@ -178,3 +178,18 @@ configurations.all {
         cacheChangingModulesFor(4, "hours")
     }
 }
+
+//TODO
+task("generateJavascriptBridge") {
+
+}
+
+//TODO
+task("copyTheBridge2javascriptSourceSet") {
+
+}
+
+//TODO
+task("compileKotlinJs") {
+
+}
