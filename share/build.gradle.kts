@@ -1,5 +1,3 @@
-@file:Suppress("LocalVariableName")
-
 plugins {
     id("com.android.library") version AGP apply true
     kotlin("android") version KOTLIN apply true
@@ -30,6 +28,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = java_version
+        freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn")
     }
 
     buildFeatures {

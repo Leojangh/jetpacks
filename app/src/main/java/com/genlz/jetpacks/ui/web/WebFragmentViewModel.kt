@@ -28,6 +28,7 @@ class WebFragmentViewModel @Inject constructor(
     val overlays: LiveData<View> = _overlays
 
     //A singleton instance during whole lifecycle.
+    @OptIn(FlowPreview::class)
     private val webView = PowerfulWebView(context).apply {
         injectJavascript()
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)

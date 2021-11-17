@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ComponentCallbacks
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
@@ -11,12 +12,9 @@ class UiModeInspector private constructor(
     context: Context,
 ) {
     init {
-        if (context !is Application) throw IllegalArgumentException("$context is not a application context")
-
-        @Suppress("DEPRECATED")
         context.registerComponentCallbacks(object : ComponentCallbacks {
             override fun onConfigurationChanged(newConfig: Configuration) {
-                getInstance().parseNewConfiguration(newConfig)
+                parseNewConfiguration(newConfig)
             }
 
             override fun onLowMemory() {
@@ -24,7 +22,6 @@ class UiModeInspector private constructor(
             }
         })
     }
-
 
     private val _darkModeLiveData = MutableLiveData(context.isDarkMode)
     val darkModeLiveData: LiveData<Boolean> = _darkModeLiveData
@@ -39,7 +36,7 @@ class UiModeInspector private constructor(
             get() = resources.configuration.isDarkModeActive
 
         /**
-         * Platform R has implemented already.
+         * Platform R has implemented already named [Configuration.isNightModeActive].
          */
         val Configuration.isDarkModeActive
             get() = uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
@@ -57,12 +54,6 @@ class UiModeInspector private constructor(
                 }
             }
             return INSTANCE!!
-        }
-
-        @JvmStatic
-        @Deprecated("Use getInstance(context) instead", ReplaceWith("getInstance(context)"))
-        fun getInstance(): UiModeInspector {
-            return INSTANCE ?: error("Not initialize yet!")
         }
 
         @Suppress("UNUSED")
