@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library") version AGP apply true
-    kotlin("android") version KOTLIN apply true
+    id("com.android.library") /*version AGP*/
+    kotlin("android") /*version KOTLIN*/
 }
 
 android {

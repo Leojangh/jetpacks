@@ -1,9 +1,9 @@
 plugins {
-    id("com.android.application") version AGP
-    kotlin("android") version KOTLIN apply true
-    kotlin("kapt") version KOTLIN apply true
-    id("dagger.hilt.android.plugin") version HILT
-    id("androidx.navigation.safeargs.kotlin") version NAVIGATION
+    id("com.android.application") /*version AGP*/
+    kotlin("android") /*version KOTLIN*/
+    kotlin("kapt") /*version KOTLIN*/
+    id("dagger.hilt.android.plugin") /*version HILT*/
+    id("androidx.navigation.safeargs.kotlin") /*version NAVIGATION*/
 }
 
 android {
