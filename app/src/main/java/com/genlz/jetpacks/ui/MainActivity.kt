@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity(),
     /**
      * Retrieve status bar height with WindowInsetsCompat.
      *
-     * @return The status bar height,or 0 if the root view did not attach to window.
+     * @return The status bar height,or 0 if the root view did not attach to window or API < 20.
      */
     private fun getStatusBarHeight(): Int {
         return binding.root.rootWindowInsetsExt?.getInsets(Type.statusBars())?.top ?: 0
@@ -158,6 +158,10 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    /**
+     * Add [SearchSnippetFragment] to screen with [fm].For consistency experience,
+     * passing in a child fragment manager of [NavHostFragment] is much better.
+     */
     private fun addSearchSnippetFragment(fm: FragmentManager) {
         fm.commit {
             add(
@@ -170,6 +174,10 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    /**
+     * Remove [SearchSnippetFragment] from Fragment manager,make sure using same of fragment
+     * manager as you adding used.
+     */
     private fun removeSearchSnippetFragment(fm: FragmentManager) {
         fm.popBackStack(
             SearchSnippetFragment.TAG,
@@ -430,8 +438,7 @@ class MainActivity : AppCompatActivity(),
     private fun clearEditTextFocus(ev: MotionEvent) {
         val v = currentFocus
         if (ev.action == MotionEvent.ACTION_UP && v is EditText) {
-            val rect = Rect()
-            v.getGlobalVisibleRect(rect)
+            val rect = v.getGlobalVisibleRect()
             if (!rect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
                 v.clearFocus()
                 windowInsetsController.hide(Type.ime())

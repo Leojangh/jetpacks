@@ -6,6 +6,7 @@ import android.content.ClipData
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Paint
+import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -779,3 +780,29 @@ inline var View.foregroundExt: Drawable?
             foreground = value
         }
     }
+
+/**
+ * @see View.getGlobalVisibleRect
+ */
+inline fun View.getGlobalVisibleRect() = Rect().also { getGlobalVisibleRect(it) }
+
+/**
+ * @see View.getGlobalVisibleRect
+ */
+inline fun View.getGlobalVisibleRect(globalOffset: Point) =
+    Rect().also { getGlobalVisibleRect(it, globalOffset) }
+
+/**
+ * @see View.getHitRect
+ */
+inline fun View.getHitRect() = Rect().also { getHitRect(it) }
+
+/**
+ * @see View.getDrawingRect
+ */
+inline fun View.getDrawingRect() = Rect().also { getDrawingRect(it) }
+
+/**
+ * @see View.getFocusedRect
+ */
+inline fun View.getFocusedRect() = Rect().also { getFocusedRect(it) }
