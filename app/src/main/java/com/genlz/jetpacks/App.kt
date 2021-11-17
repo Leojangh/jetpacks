@@ -27,13 +27,16 @@ class App : Application() {
         /**
          * Get application context everywhere.
          *
+         * Note:This is available after the [Application.onCreate] being called.
+         *
          * It will always be recommended to pass in context as a parameter instead of hard-code with this value
          * in third-part component,so that dependency injection can show it's power.Rely on this value as a last resort.
          */
         @JvmStatic
         val INSTANCE
-            get() = _INSTANCE!!
+            get() = _INSTANCE ?: error("This value is unavailable before Application.onCreate!")
 
+        @Suppress("ObjectPropertyName")
         @SuppressLint("StaticFieldLeak")
         private var _INSTANCE: Context? = null
     }

@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.ComponentCallbacks2
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -347,7 +346,7 @@ class MainActivity : AppCompatActivity(),
      * More Reference:
      * [Android Developers Guide](https://developer.android.com/training/gestures/edge-to-edge)
      *
-     * Get Chris Banes's blog for more information:
+     * Get Chris Banes' blog for more information:
      *
      * * [Gesture Navigation: going edge-to-edge](https://medium.com/androiddevelopers/gesture-navigation-going-edge-to-edge-812f62e4e83e)
      *
