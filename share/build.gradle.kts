@@ -1,8 +1,8 @@
 @file:Suppress("LocalVariableName")
 
 plugins {
-    id("com.android.library")
-    kotlin("android")
+    id("com.android.library") version AGP apply true
+    kotlin("android") version KOTLIN apply true
 }
 
 android {
@@ -24,7 +24,6 @@ android {
         }
     }
 
-    val java_version: String by project
     compileOptions {
         sourceCompatibility(java_version)
         targetCompatibility(java_version)
@@ -40,14 +39,13 @@ android {
 
 dependencies {
 
-    val lifecycle: String by rootProject.extra
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle")
 
-    implementation("androidx.core:core-ktx:${rootProject.extra["coreKtx"]}")
-    implementation("androidx.appcompat:appcompat:${rootProject.extra["appcompat"]}")
-    implementation("com.google.android.material:material:${rootProject.extra["material"]}")
+    implementation("androidx.core:core-ktx:$coreKtx")
+    implementation("androidx.appcompat:appcompat:$appcompat")
+    implementation("com.google.android.material:material:$material")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
