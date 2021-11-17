@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = target_sdk
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 31
+        minSdk = min_sdk
+        targetSdk = targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -34,6 +34,11 @@ android {
     buildFeatures {
         viewBinding = true
     }
+}
+
+repositories {
+    google()
+    mavenCentral()
 }
 
 dependencies {

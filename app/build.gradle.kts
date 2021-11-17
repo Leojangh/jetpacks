@@ -95,6 +95,12 @@ android {
     }
 }
 
+repositories {
+    google()
+    mavenCentral()
+    maven { setUrl("https://www.jitpack.io") }
+}
+
 dependencies {
 
     implementation(project(":share"))

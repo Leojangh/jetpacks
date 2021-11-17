@@ -11,6 +11,7 @@
 .DS_Store
 /build
 /buildSrc/build
+/javascript/build
 /captures
 .externalNativeBuild
 .cxx
