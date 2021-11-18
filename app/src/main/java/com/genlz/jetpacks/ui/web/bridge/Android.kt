@@ -4,28 +4,34 @@ import android.content.Context
 import android.graphics.RectF
 import android.util.Log
 import android.webkit.JavascriptInterface
+import android.webkit.WebView
 import android.widget.Toast
 import androidx.annotation.Keep
+import com.genlz.jetpacks.ui.web.bridge.Android.Companion.TAG
 import com.genlz.share.util.appcompat.mainExecutorExt
 import com.genlz.share.widget.web.PowerfulWebView
-import com.genlz.share.widget.web.bridge.InheritedUiThread
-import com.genlz.share.widget.web.bridge.JavascriptBridge
 
 
 /**
- * All method run in a dedicate thread named "JavaBridge",but you don't
- * care about thread.Just define the method method and implement at here.
- * Annotation is redundant.
+ * All method run in a dedicate thread named "JavaBridge".So notice the thread context.
  */
 @Suppress("UNUSED")
-class Android(
-    override val context: Context,
-    private val webView: PowerfulWebView
-) : JavascriptBridge {
+@Keep
+interface Android {
 
-    @Keep
+    val webView: WebView
+
+    val name: String
+
+    /**
+     * The context associate with [webView]
+     */
+    val context: Context get() = webView.context
+
+    /**
+     * Send a default toast message to Android.
+     */
     @JavascriptInterface
-    @InheritedUiThread
     fun toast(message: String) {
         context.mainExecutorExt.execute {
             Toast.makeText(context.applicationContext, message, Toast.LENGTH_SHORT).show()
@@ -35,24 +41,34 @@ class Android(
     /**
      * In html pages,javascript invoke this bridge method to pass the precise position to Android
      * native layer.
-     * [image_listener_hooks.js](#)
      */
-    @Keep
     @JavascriptInterface
-    @InheritedUiThread
-    fun transit(left: Float, top: Float, right: Float, bottom: Float) {
-        val rectF = RectF(left, top, right, bottom)
-        Log.d(TAG, "transit: $rectF")
-        context.mainExecutorExt.execute {
-            webView.domTouchListener?.onDomTouch(
-                webView,
-                webView.hitTestResult,
-                rectF
-            )
-        }
-    }
+    fun transit(left: Float, top: Float, right: Float, bottom: Float)
 
     companion object {
-        private const val TAG = "Android"
+
+        operator fun invoke(webView: PowerfulWebView): Android = AndroidImpl(webView)
+
+        const val TAG = "AndroidBridge"
+    }
+}
+
+internal class AndroidImpl(
+    override val webView: WebView
+) : Android {
+
+    override val name: String = Android::class.java.simpleName
+
+    @JavascriptInterface
+    override fun transit(left: Float, top: Float, right: Float, bottom: Float) {
+        if (webView !is PowerfulWebView) {
+            Log.w(TAG, UnsupportedOperationException())
+            return
+        }
+        //Not post attention.
+        context.mainExecutorExt.execute {
+            val r = RectF(left, top, right, bottom)
+            webView.domTouchListener?.onDomTouch(webView, webView.hitTestResult, r)
+        }
     }
 }

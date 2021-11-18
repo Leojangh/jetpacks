@@ -49,11 +49,8 @@ class WebFragment : Fragment(), DomTouchListener {
         }
         webView.apply {
             isNestedScrollingEnabled = false
-            val bridge = Android(context, this)
+            val bridge = Android(this)
             addJavascriptInterface(bridge, bridge.name)
-            setOnClickListener {
-                Log.d(TAG, "onViewCreated: ")
-            }
             domTouchListener = this@WebFragment
 
             if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
