@@ -189,7 +189,6 @@ task("copyTheBridge2javascriptSourceSet") {
 
 }
 
-//TODO
-task("compileKotlinJs") {
-
+tasks.build.configure {
+    dependsOn += ":javascript:copyCompiledJs2app"
 }

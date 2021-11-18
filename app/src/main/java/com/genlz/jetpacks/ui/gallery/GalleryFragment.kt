@@ -82,9 +82,11 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         }
     }
 
+    // adb shell settings put global animator_duration_scale 20
+    // adb shell settings put global transition_animation_scale 20
+    // adb shell settings put global window_animation_scale 20
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         if (args.showOptions == SHOW_OPTIONS_NORMAL) {
-            //adb shell settings put global transition_duration_scale 20
             findFullscreenController()?.apply {
                 if (enter) {
                     enterFullscreen(true)

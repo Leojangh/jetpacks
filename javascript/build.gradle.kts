@@ -41,13 +41,8 @@ kotlin {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack> {
-    println(outputFile)
-}
-
 task<Copy>("copyCompiledJs2app") {
-
-    dependsOn += tasks["build"]
+    dependsOn += tasks.build
     description =
         "Copy the distribution that compiling from Kotlin/JS to project app's assets directory."
     from(File(buildDir, "distributions/$distributionsName"))
