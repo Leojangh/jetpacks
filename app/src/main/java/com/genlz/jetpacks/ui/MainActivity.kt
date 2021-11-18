@@ -56,17 +56,17 @@ class MainActivity : AppCompatActivity(),
 
     private val viewModel by viewModels<MainActivityViewModel>()
 
-    private val splashScreen by lazy(LazyThreadSafetyMode.NONE) { installSplashScreen() }
+    private val splashScreen by lazyNoneSafe { installSplashScreen() }
 
     private val navController: NavController get() = navHostFragment.navController
 
     private val currentFragment get() = navHostFragment.childFragmentManager.fragments[0]
 
-    private val navHostFragment by lazy(LazyThreadSafetyMode.NONE) {
+    private val navHostFragment by lazyNoneSafe {
         supportFragmentManager.findFragmentById(R.id.content_main) as NavHostFragment
     }
 
-    private val windowInsetsController by lazy(LazyThreadSafetyMode.NONE) {
+    private val windowInsetsController by lazyNoneSafe {
         WindowInsetsControllerCompat(window, window.decorView)
     }
 

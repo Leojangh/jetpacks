@@ -121,7 +121,8 @@ inline fun Activity.setLocusContextExt(locusId: LocusIdCompat?, bundle: Bundle?)
 
 /**
  * The [lazy] wrapper without thread safety promise.
+ * @see lazy
  */
-inline fun <T> Activity.lazyNoneSafe(noinline initializer: () -> T) =
-    lazy(LazyThreadSafetyMode.NONE, initializer)
+inline fun <T> Activity.lazyNoneSafe(crossinline initializer: () -> T) =
+    lazy(LazyThreadSafetyMode.NONE) { initializer() }
 
