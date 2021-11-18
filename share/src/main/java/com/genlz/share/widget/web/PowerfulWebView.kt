@@ -9,19 +9,14 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
-import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.StyleRes
-import androidx.core.content.withStyledAttributes
 import androidx.core.view.*
 import androidx.core.view.ViewCompat.NestedScrollType
 import androidx.core.view.ViewCompat.ScrollAxis
 import androidx.core.widget.NestedScrollView
-import androidx.lifecycle.findViewTreeLifecycleOwner
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -101,10 +96,6 @@ class PowerfulWebView @JvmOverloads constructor(
                 request: WebResourceRequest?
             ): Boolean = false
         }
-        webChromeClient = object : WebChromeClient() {
-
-        }
-
         isNestedScrollingEnabled = true
     }
 
