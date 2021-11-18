@@ -20,14 +20,21 @@ fun setupImageTransition() {
 }
 
 fun HTMLElement.getBoundingOnDeviceRect(): Rect {
+    //the rect refer to parent.
     val rect = getBoundingClientRect()
     val ratio = window.devicePixelRatio
     return rect.toAndroidRect(ratio)
 }
 
-fun DOMRect.toAndroidRect(ratio: Double) = Rect(
-    left * ratio,
-    top * ratio,
-    right * ratio,
-    bottom * ratio
-)
+/**
+ * Transform the [DOMRect] to Android Rect.
+ */
+fun DOMRect.toAndroidRect(ratio: Double): Rect {
+    val documentElement = document.documentElement!!
+    return Rect(
+        (left + documentElement.scrollLeft) * ratio,
+        (top + documentElement.scrollTop) * ratio,
+        (right + documentElement.scrollLeft) * ratio,
+        (bottom + documentElement.scrollTop) * ratio
+    )
+}

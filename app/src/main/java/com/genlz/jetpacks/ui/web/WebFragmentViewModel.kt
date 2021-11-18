@@ -2,7 +2,6 @@ package com.genlz.jetpacks.ui.web
 
 import android.content.Context
 import android.util.Log
-import android.view.View
 import android.webkit.WebView
 import androidx.lifecycle.*
 import com.genlz.jetpacks.BuildConfig
@@ -22,10 +21,6 @@ import javax.inject.Inject
 class WebFragmentViewModel @Inject constructor(
     @ApplicationContext val context: Context,
 ) : ViewModel() {
-
-    //TODO: register overlays and support configuration change.
-    private val _overlays = MutableLiveData<View>()
-    val overlays: LiveData<View> = _overlays
 
     //A singleton instance during whole lifecycle.
     @OptIn(FlowPreview::class)

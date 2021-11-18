@@ -10,7 +10,7 @@ fun interface DomTouchListener {
      *
      * @param webView the host web view.
      * @param hitTestResult the hit test result.
-     * @param rectF the precise position on the device screen.
+     * @param rectF the child dom precise position in the parent,aka the [webView].
      */
     fun onDomTouch(webView: WebView, hitTestResult: WebView.HitTestResult, rectF: RectF)
 }
