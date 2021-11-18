@@ -41,6 +41,10 @@ kotlin {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack> {
+    println(outputFile)
+}
+
 task<Copy>("copyCompiledJs2app") {
 
     dependsOn += tasks["build"]
