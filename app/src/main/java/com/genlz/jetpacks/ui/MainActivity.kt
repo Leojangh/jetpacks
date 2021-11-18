@@ -30,7 +30,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
+import androidx.window.layout.WindowInfoTracker
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
@@ -56,19 +56,17 @@ class MainActivity : AppCompatActivity(),
 
     private val viewModel by viewModels<MainActivityViewModel>()
 
-    private val splashScreen by lazy { installSplashScreen() }
-
-    private val windowInfoRepo by lazy { windowInfoRepository() }
+    private val splashScreen by lazy(LazyThreadSafetyMode.NONE) { installSplashScreen() }
 
     private val navController: NavController get() = navHostFragment.navController
 
     private val currentFragment get() = navHostFragment.childFragmentManager.fragments[0]
 
-    private val navHostFragment by lazy {
+    private val navHostFragment by lazy(LazyThreadSafetyMode.NONE) {
         supportFragmentManager.findFragmentById(R.id.content_main) as NavHostFragment
     }
 
-    private val windowInsetsController by lazy {
+    private val windowInsetsController by lazy(LazyThreadSafetyMode.NONE) {
         WindowInsetsControllerCompat(window, window.decorView)
     }
 
@@ -278,8 +276,9 @@ class MainActivity : AppCompatActivity(),
         //WindowManager 会在应用跨屏显示（以物理或虚拟方式）时提供 LayoutInfo 数据（设备功能类型、设备功能边界和设备折叠状态）。
         // 因此，在上图中，应用在单屏模式下运行时，WindowLayoutInfo 为空。
         lifecycleScope.launch {
-            windowInfoRepo.windowLayoutInfo.flowWithLifecycle(lifecycle).collect {
-                Log.d(TAG, "onCreate: No display features detected")
+            WindowInfoTracker.getOrCreate(
+                applicationContext
+            ).windowLayoutInfo(this@MainActivity).flowWithLifecycle(lifecycle).collect {
                 for (displayFeature in it.displayFeatures) {
                     if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.NONE) {
                         Log.d(TAG, "onCreate: App is spanned across a fold")
