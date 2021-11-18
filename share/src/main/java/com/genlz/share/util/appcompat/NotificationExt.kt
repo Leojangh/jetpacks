@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED")
+@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
 
 package com.genlz.share.util.appcompat
 

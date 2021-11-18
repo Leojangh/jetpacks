@@ -1,13 +1,19 @@
-@file:Suppress("UNUSED")
+@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
 
 package com.genlz.share.util.appcompat
 
 import android.app.ActivityManager
 import androidx.core.app.ActivityManagerCompat
 
-val ActivityManager.isLowRamDeviceExt
+/**
+ * @see ActivityManagerCompat.isLowRamDevice
+ */
+inline val ActivityManager.isLowRamDeviceExt
     get() = ActivityManagerCompat.isLowRamDevice(this)
 
-fun ActivityManager.getMemoryInfo(): ActivityManager.MemoryInfo {
+/**
+ * @see ActivityManager.getMemoryInfo
+ */
+inline fun ActivityManager.getMemoryInfo(): ActivityManager.MemoryInfo {
     return ActivityManager.MemoryInfo().also(this::getMemoryInfo)
 }

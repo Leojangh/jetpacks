@@ -12,5 +12,5 @@ import androidx.core.view.WindowCompat
  *
  * @see WindowCompat.setDecorFitsSystemWindows
  */
-fun Window.setDecorFitsSystemWindowsExt(fitSystemWindow: Boolean) =
+inline fun Window.setDecorFitsSystemWindowsExt(fitSystemWindow: Boolean) =
     WindowCompat.setDecorFitsSystemWindows(this, fitSystemWindow)

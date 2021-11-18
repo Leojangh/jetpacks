@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED")
+@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
 
 package com.genlz.share.util.appcompat
 
@@ -13,11 +13,18 @@ import androidx.annotation.IntRange
 import androidx.core.app.ActivityCompat
 import androidx.core.app.SharedElementCallback
 import androidx.core.content.LocusIdCompat
+import java.lang.IllegalArgumentException
 
-fun Activity.startActivityForResultExt(intent: Intent, requestCode: Int, options: Bundle?) =
+/**
+ * @see ActivityCompat.startActivityForResult
+ */
+inline fun Activity.startActivityForResultExt(intent: Intent, requestCode: Int, options: Bundle?) =
     ActivityCompat.startActivityForResult(this, intent, requestCode, options)
 
-fun Activity.startIntentSenderForResultExt(
+/**
+ * @see ActivityCompat.startIntentSenderForResult
+ */
+inline fun Activity.startIntentSenderForResultExt(
     intent: IntentSender,
     requestCode: Int,
     fillInIntent: Intent?,
@@ -36,42 +43,85 @@ fun Activity.startIntentSenderForResultExt(
     options
 )
 
-fun Activity.finishAffinityExt() = ActivityCompat.finishAffinity(this)
+/**
+ * @see ActivityCompat.finishAffinity
+ */
+inline fun Activity.finishAffinityExt() = ActivityCompat.finishAffinity(this)
 
-fun Activity.finishAfterTransitionExt() = ActivityCompat.finishAfterTransition(this)
+/**
+ * @see ActivityCompat.finishAfterTransition
+ */
+inline fun Activity.finishAfterTransitionExt() = ActivityCompat.finishAfterTransition(this)
 
-fun Activity.getReferrerExt() = ActivityCompat.getReferrer(this)
+/**
+ * @see ActivityCompat.getReferrer
+ */
+inline fun Activity.getReferrerExt() = ActivityCompat.getReferrer(this)
 
-fun <T : View> Activity.requireViewByIdExt(@IdRes id: Int) =
-    ActivityCompat.requireViewById<T>(this, id)
+/**
+ * @see ActivityCompat.requireViewById
+ */
+inline fun <T : View> Activity.requireViewByIdExt(@IdRes id: Int): T = findViewById(id)
+    ?: throw IllegalArgumentException("ID does not reference a View inside this Activity")
 
-fun Activity.setEnterSharedElementCallbackExt(callback: SharedElementCallback?) =
+/**
+ * @see ActivityCompat.setEnterSharedElementCallback
+ */
+inline fun Activity.setEnterSharedElementCallbackExt(callback: SharedElementCallback?) =
     ActivityCompat.setEnterSharedElementCallback(this, callback)
 
-fun Activity.setExitSharedElementCallback(callback: SharedElementCallback?) =
+/**
+ * @see ActivityCompat.setExitSharedElementCallback
+ */
+inline fun Activity.setExitSharedElementCallback(callback: SharedElementCallback?) =
     ActivityCompat.setExitSharedElementCallback(this, callback)
 
-fun Activity.postponeEnterTransitionExt() = ActivityCompat.postponeEnterTransition(this)
+/**
+ * @see ActivityCompat.postponeEnterTransition
+ */
+inline fun Activity.postponeEnterTransitionExt() = ActivityCompat.postponeEnterTransition(this)
 
-fun Activity.startPostponedEnterTransitionExt() = ActivityCompat.startPostponedEnterTransition(this)
+/**
+ * @see ActivityCompat.startPostponedEnterTransition
+ */
+inline fun Activity.startPostponedEnterTransitionExt() =
+    ActivityCompat.startPostponedEnterTransition(this)
 
-fun Activity.requestPermissionsExt(
+/**
+ * @see ActivityCompat.requestPermissions
+ */
+inline fun Activity.requestPermissionsExt(
     permissions: Array<String>,
     @IntRange(from = 0) requestCode: Int
 ) = ActivityCompat.requestPermissions(this, permissions, requestCode)
 
-fun Activity.shouldShowRequestPermissionRationaleExt(permission: String) =
+/**
+ * @see ActivityCompat.shouldShowRequestPermissionRationale
+ */
+inline fun Activity.shouldShowRequestPermissionRationaleExt(permission: String) =
     ActivityCompat.shouldShowRequestPermissionRationale(this, permission)
 
-fun Activity.requestDragAndDropPermissionsExt(dragEvent: DragEvent) =
+/**
+ * @see ActivityCompat.requestDragAndDropPermissions
+ */
+inline fun Activity.requestDragAndDropPermissionsExt(dragEvent: DragEvent) =
     ActivityCompat.requestDragAndDropPermissions(this, dragEvent)
 
-fun Activity.recreateExt() = ActivityCompat.recreate(this)
+/**
+ * @see ActivityCompat.recreate
+ */
+inline fun Activity.recreateExt() = ActivityCompat.recreate(this)
 
-fun Activity.setLocusContextExt(locusId: LocusIdCompat?, bundle: Bundle?) =
+/**
+ * @see ActivityCompat.setLocusContext
+ */
+inline fun Activity.setLocusContextExt(locusId: LocusIdCompat?, bundle: Bundle?) =
     ActivityCompat.setLocusContext(this, locusId, bundle)
 
 
-
-
+/**
+ * The [lazy] wrapper without thread safety promise.
+ */
+inline fun <T> Activity.lazyNoneSafe(noinline initializer: () -> T) =
+    lazy(LazyThreadSafetyMode.NONE, initializer)
 
