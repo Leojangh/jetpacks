@@ -9,14 +9,20 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
+import androidx.annotation.RequiresApi
 import androidx.annotation.StyleRes
 import androidx.core.view.*
 import androidx.core.view.ViewCompat.NestedScrollType
 import androidx.core.view.ViewCompat.ScrollAxis
 import androidx.core.widget.NestedScrollView
+import androidx.webkit.ServiceWorkerClientCompat
+import androidx.webkit.ServiceWorkerControllerCompat
+import androidx.webkit.WebViewCompat
+import androidx.webkit.WebViewFeature
+import androidx.webkit.internal.FrameworkServiceWorkerClient
+import androidx.webkit.internal.ServiceWorkerClientAdapter
+import com.genlz.share.util.appcompat.postVisualStateCallback
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -97,6 +103,29 @@ class PowerfulWebView @JvmOverloads constructor(
             ): Boolean = false
         }
         isNestedScrollingEnabled = true
+        val companion: Companion = Companion
+        addJavascriptInterface(com.genlz.share.widget.web.bridge.Log, "Log")
+    }
+
+    private fun cache() {
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.SERVICE_WORKER_BASIC_USAGE)) {
+            val controller = ServiceWorkerControllerCompat.getInstance()
+            controller.serviceWorkerWebSettings.apply {
+                if (WebViewFeature.isFeatureSupported(WebViewFeature.SERVICE_WORKER_CACHE_MODE)) {
+                    this.cacheMode
+                }
+                if (WebViewFeature.isFeatureSupported(WebViewFeature.SERVICE_WORKER_FILE_ACCESS)) {
+                    this.allowFileAccess = true
+                }
+            }
+            controller.setServiceWorkerClient(object : ServiceWorkerClientCompat() {
+                override fun shouldInterceptRequest(request: WebResourceRequest): WebResourceResponse? {
+
+                    return null
+                }
+            })
+        }
+        postVisualStateCallback(2) {}
     }
 
     override fun onCheckIsTextEditor(): Boolean {

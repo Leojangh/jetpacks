@@ -2,6 +2,7 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.DOMRect
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLImageElement
 
 /**
  * Set click listener that transit the position to Android.
@@ -9,13 +10,17 @@ import org.w3c.dom.HTMLElement
 fun setupImageTransition() {
     document.addEventListener("click", {
         val target = it.target as HTMLElement
-        val rect = target.getBoundingOnDeviceRect()
-        Android.transit(
-            rect.left,
-            rect.top,
-            rect.right,
-            rect.bottom
-        )
+        (it.target as? HTMLImageElement)?.run {
+            if (hasAttribute("data-galleryid")) {
+                val rect = target.getBoundingOnDeviceRect()
+                Android.transit(
+                    rect.left,
+                    rect.top,
+                    rect.right,
+                    rect.bottom
+                )
+            }
+        }
     })
 }
 

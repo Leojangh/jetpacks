@@ -43,13 +43,15 @@ repositories {
 
 dependencies {
 
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle")
+    api("androidx.webkit:webkit:$webkit")
 
-    implementation("androidx.core:core-ktx:$coreKtx")
-    implementation("androidx.appcompat:appcompat:$appcompat")
-    implementation("com.google.android.material:material:$material")
+    api("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle")
+    api("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle")
+    api("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle")
+
+    api("androidx.core:core-ktx:$coreKtx")
+    api("androidx.appcompat:appcompat:$appcompat")
+    api("com.google.android.material:material:$material")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")

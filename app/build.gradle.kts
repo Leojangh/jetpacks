@@ -107,8 +107,6 @@ dependencies {
     implementation(project(":share"))
 //    implementation(project(":vulkan"))
 
-    implementation("androidx.webkit:webkit:$webkit")
-
     implementation("androidx.browser:browser:$browser")
 
     implementation("androidx.palette:palette:$palette")
