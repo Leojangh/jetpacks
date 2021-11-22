@@ -155,6 +155,7 @@ dependencies {
 
     implementation("androidx.core:core-ktx:$coreKtx")
     implementation("androidx.appcompat:appcompat:$appcompat")
+    implementation("androidx.activity:activity-ktx:$activity")
     implementation("com.google.android.material:material:$material")
     implementation("androidx.constraintlayout:constraintlayout:$constraintLayout")
     implementation("androidx.navigation:navigation-fragment-ktx:$NAVIGATION")
