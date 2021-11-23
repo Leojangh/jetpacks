@@ -11,3 +11,8 @@ plugins {
     id("dagger.hilt.android.plugin") version HILT apply false
     id("androidx.navigation.safeargs.kotlin") version NAVIGATION apply false
 }
+
+//Enable kapt cache
+pluginManager.withPlugin("kotlin-kapt") {
+    configure<org.jetbrains.kotlin.gradle.plugin.KaptExtension> { useBuildCache = true }
+}

@@ -194,16 +194,6 @@ configurations.all {
     }
 }
 
-//TODO
-task("generateJavascriptBridge") {
-
-}
-
-//TODO
-task("copyTheBridge2javascriptSourceSet") {
-
-}
-
-tasks.build.configure {
-    dependsOn += ":javascript:copyCompiledJs2app"
-}
+//tasks.assemble.configure {
+//    dependsOn(gradle.includedBuild("javascript").task("javascript:copyCompiledJs2app"))
+//}

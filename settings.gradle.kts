@@ -38,6 +38,9 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "jetpacks"
+// Use kebab case formatting for all project names:
+// A kebab case formatting is when all letters lowercase,
+// words separated with a dash (‘-’) character (e.g.kebab-case-formatting)
 include(":app")
 include(":share")
 include(":javascript")
