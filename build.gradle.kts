@@ -1,4 +1,7 @@
 plugins {
+    // Define all plugins required by subprojects,specifying the versions but
+    // applying false explicitly,then subproject just apply them without
+    // versions.The purpose is for loading plugin only once.
     id("com.android.application") version AGP apply false
     id("com.android.library") version AGP apply false
     kotlin("android") version KOTLIN apply false
