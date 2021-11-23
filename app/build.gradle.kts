@@ -27,6 +27,19 @@ android {
 
         vectorDrawables.useSupportLibrary = true
 
+        ndkVersion = "23.1.7779620"
+        externalNativeBuild {
+            cmake {
+                cppFlags += ""
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            version = "3.18.1"
+            path = file("src/main/cpp/CMakeLists.txt")
+        }
     }
 
     flavorDimensions += "env"
@@ -89,6 +102,7 @@ android {
         viewBinding = true
         dataBinding = true
     }
+    ndkVersion = "23.1.7779620"
 
     lint {
         // if true, only report errors.

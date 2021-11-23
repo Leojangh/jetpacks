@@ -3,6 +3,7 @@ package com.genlz.jetpacks
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import com.genlz.jetpacks.utility.ForegroundTracker
 import dagger.hilt.android.HiltAndroidApp
 
@@ -23,6 +24,13 @@ class App : Application() {
     companion object {
 
         const val TAG = "App"
+
+        private external fun androidJni():Int
+
+        init {
+            System.loadLibrary("jetpacks")
+            Log.d(TAG, ": ${androidJni()}")
+        }
 
         /**
          * Get application context everywhere.
