@@ -24,7 +24,7 @@ object Log {
     fun d(tag: String, msg: String) = Log.d(tag, msg)
 
     @JavascriptInterface
-    fun d(tag: String, msg: String?, t: Throwable?) = Log.d(msg, msg, t)
+    fun d(tag: String, msg: String?, t: Throwable?) = Log.d(tag, msg, t)
 
     @JavascriptInterface
     fun w(tag: String, msg: String) = Log.w(tag, msg)
