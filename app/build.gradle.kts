@@ -1,9 +1,9 @@
 plugins {
-    id("com.android.application") /*version AGP*/
-    kotlin("android") /*version KOTLIN*/
-    kotlin("kapt") /*version KOTLIN*/
-    id("dagger.hilt.android.plugin") /*version HILT*/
-    id("androidx.navigation.safeargs.kotlin") /*version NAVIGATION*/
+    id("com.android.application")
+    kotlin("android")
+    kotlin("kapt")
+    id("dagger.hilt.android.plugin")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -115,12 +115,6 @@ android {
         // if true, only report errors.
         isIgnoreWarnings = true
     }
-}
-
-repositories {
-    google()
-    mavenCentral()
-    maven { setUrl("https://www.jitpack.io") }
 }
 
 dependencies {

@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library") /*version AGP*/
-    kotlin("android") /*version KOTLIN*/
+    id("com.android.library")
+    kotlin("android")
 }
 
 android {
@@ -34,11 +34,6 @@ android {
     buildFeatures {
         viewBinding = true
     }
-}
-
-repositories {
-    google()
-    mavenCentral()
 }
 
 dependencies {
