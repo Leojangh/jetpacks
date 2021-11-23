@@ -28,6 +28,9 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         ndkVersion = "23.1.7779620"
+        ndk {
+            abiFilters += listOf("arm64-v8a", "arm64-v8a", "x86_64")
+        }
         externalNativeBuild {
             cmake {
                 cppFlags += ""
@@ -40,6 +43,10 @@ android {
             version = "3.18.1"
             path = file("src/main/cpp/CMakeLists.txt")
         }
+    }
+
+    sourceSets {
+
     }
 
     flavorDimensions += "env"

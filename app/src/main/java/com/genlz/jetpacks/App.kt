@@ -25,7 +25,7 @@ class App : Application() {
 
         const val TAG = "App"
 
-        private external fun androidJni():Int
+        private external fun androidJni(): Int
 
         init {
             System.loadLibrary("jetpacks")

@@ -12,3 +12,10 @@ buildscript {
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$NAVIGATION")
     }
 }
+
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
