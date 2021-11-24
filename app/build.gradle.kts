@@ -3,6 +3,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+    id("com.google.devtools.ksp")
     id("androidx.navigation.safeargs.kotlin")
 }
 
@@ -18,12 +19,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += "room.schemaLocation" to "$projectDir/schemas"
-            }
-        }
 
         vectorDrawables.useSupportLibrary = true
 
@@ -117,6 +112,11 @@ android {
     }
 }
 
+ksp {
+    // For Room schema export
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
 
     implementation(project(":share"))
@@ -147,7 +147,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle")
 
     implementation("androidx.room:room-ktx:$room")
-    kapt("androidx.room:room-compiler:$room")
+    ksp("androidx.room:room-compiler:$room")
 
     implementation("androidx.work:work-runtime-ktx:$work")
 

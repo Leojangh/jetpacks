@@ -7,11 +7,7 @@ repositories {
     mavenCentral()
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        val java = "11"
-        jvmTarget = java
-        sourceCompatibility = java
-        targetCompatibility = java
-    }
+tasks.compileKotlin.configure {
+    targetCompatibility = "11"
+    sourceCompatibility = "11"
 }

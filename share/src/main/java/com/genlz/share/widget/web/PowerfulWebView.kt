@@ -103,7 +103,6 @@ class PowerfulWebView @JvmOverloads constructor(
             ): Boolean = false
         }
         isNestedScrollingEnabled = true
-        val companion: Companion = Companion
         addJavascriptInterface(com.genlz.share.widget.web.bridge.Log, "Log")
     }
 

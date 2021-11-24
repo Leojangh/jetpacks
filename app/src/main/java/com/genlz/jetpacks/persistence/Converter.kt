@@ -18,12 +18,18 @@ class Converter @Inject constructor(
     }
 
     @TypeConverter
-    fun LocalDateTime.toEpochSecond(): Long {
-        return this.toEpochSecond(offset)
+    fun toEpochSecond(ldt: LocalDateTime): Long {
+        return ldt.toEpochSecond(offset)
     }
 
+    //kapt can recognize extension form.
+//    @TypeConverter
+//    fun Long.toLocalDataTime(): LocalDateTime? {
+//        return LocalDateTime.ofEpochSecond(this, 0, offset)
+//    }
+
     @TypeConverter
-    fun Long.toLocalDataTime(): LocalDateTime? {
-        return LocalDateTime.ofEpochSecond(this, 0, offset)
+    fun toLocalDataTime(timeMills: Long): LocalDateTime? {
+        return LocalDateTime.ofEpochSecond(timeMills, 0, offset)
     }
 }

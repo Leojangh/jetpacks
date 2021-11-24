@@ -10,6 +10,7 @@ plugins {
     kotlin("js") version KOTLIN apply false
     id("dagger.hilt.android.plugin") version HILT apply false
     id("androidx.navigation.safeargs.kotlin") version NAVIGATION apply false
+    id("com.google.devtools.ksp") version KSP apply false
 }
 
 //Enable kapt cache
