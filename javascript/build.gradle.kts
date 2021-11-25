@@ -11,8 +11,8 @@ dependencies {
 }
 
 val distributionsName = "injection.js"
-
 kotlin {
+
     js(IR) {
         browser {
             webpackTask {

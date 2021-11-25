@@ -5,6 +5,8 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp")
     id("androidx.navigation.safeargs.kotlin")
+    id("org.jetbrains.dokka")
+    idea
 }
 
 android {
@@ -24,7 +26,7 @@ android {
 
         ndkVersion = "23.1.7779620"
         ndk {
-            abiFilters += listOf("arm64-v8a", "arm64-v8a", "x86_64")
+            abiFilters += listOf("arm64-v8a")
         }
         externalNativeBuild {
             cmake {
@@ -104,7 +106,6 @@ android {
         viewBinding = true
         dataBinding = true
     }
-    ndkVersion = "23.1.7779620"
 
     lint {
         // if true, only report errors.
@@ -117,9 +118,25 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
 
+kapt {
+    useBuildCache = false
+    correctErrorTypes = true
+}
+
+idea {
+    module {
+        sourceDirs = sourceDirs + file("build/generated/ksp/main/kotlin")
+        testSourceDirs = testSourceDirs + file("build/generated/ksp/test/kotlin")
+        generatedSourceDirs =
+            generatedSourceDirs + file("build/generated/ksp/main/kotlin") + file("build/generated/ksp/test/kotlin")
+    }
+}
+
 dependencies {
 
     implementation(project(":share"))
+    implementation(project(":javascript-bridge-compiler"))
+//    ksp(project(":javascript-bridge-compiler"))
 //    implementation(project(":vulkan"))
 
     implementation("androidx.browser:browser:$browser")
@@ -194,6 +211,6 @@ configurations.all {
     }
 }
 
-//tasks.assemble.configure {
-//    dependsOn(gradle.includedBuild("javascript").task("javascript:copyCompiledJs2app"))
-//}
+tasks.assemble.configure {
+    dependsOn += provider { rootProject.project("native").tasks.getByName("build") }
+}

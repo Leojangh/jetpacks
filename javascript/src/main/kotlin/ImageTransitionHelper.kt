@@ -9,10 +9,9 @@ import org.w3c.dom.HTMLImageElement
  */
 fun setupImageTransition() {
     document.addEventListener("click", {
-        val target = it.target as HTMLElement
         (it.target as? HTMLImageElement)?.run {
             if (hasAttribute("data-galleryid")) {
-                val rect = target.getBoundingOnDeviceRect()
+                val rect = getBoundingOnDeviceRect()
                 Android.transit(
                     rect.left,
                     rect.top,

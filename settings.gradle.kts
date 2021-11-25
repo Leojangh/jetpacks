@@ -33,7 +33,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { setUrl("https://www.jitpack.io") }
+        maven("https://www.jitpack.io")
     }
 }
 
@@ -45,3 +45,5 @@ include(":app")
 include(":share")
 include(":javascript")
 include(":native")
+
+include(":javascript-bridge-compiler")

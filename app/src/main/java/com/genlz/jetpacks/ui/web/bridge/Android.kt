@@ -10,6 +10,7 @@ import androidx.annotation.Keep
 import com.genlz.jetpacks.ui.web.bridge.Android.Companion.TAG
 import com.genlz.share.util.appcompat.mainExecutorExt
 import com.genlz.share.widget.web.PowerfulWebView
+import Javascript
 
 
 /**
@@ -17,6 +18,7 @@ import com.genlz.share.widget.web.PowerfulWebView
  */
 @Suppress("UNUSED")
 @Keep
+//@Javascript
 interface Android {
 
     val webView: WebView

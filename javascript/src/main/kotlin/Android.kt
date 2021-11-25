@@ -1,5 +1,6 @@
 /**
- * The Javascript bridge supplied by Android
+ * TODO: use codegen for this.
+ * The Javascript bridge supplied by Android.
  */
 external object Android {
 
