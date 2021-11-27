@@ -34,6 +34,11 @@ class JavascriptBridgeProcessor(
         }
     }
 
+    class Provider : SymbolProcessorProvider {
+        override fun create(environment: SymbolProcessorEnvironment) =
+            JavascriptBridgeProcessor(environment.codeGenerator, environment.logger)
+    }
+
     companion object {
         fun OutputStream.appendText(str: String) {
             this.write(str.toByteArray())

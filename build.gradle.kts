@@ -18,3 +18,16 @@ plugins {
 pluginManager.withPlugin("kotlin-kapt") {
     configure<org.jetbrains.kotlin.gradle.plugin.KaptExtension> { useBuildCache = true }
 }
+
+allprojects {
+
+    configurations.all {
+
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
+
+        resolutionStrategy {
+            cacheDynamicVersionsFor(10, "minutes")
+            cacheChangingModulesFor(4, "hours")
+        }
+    }
+}

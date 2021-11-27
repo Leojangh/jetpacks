@@ -33,7 +33,7 @@ set_target_properties(
 
         # Provides the path to the library you want to import.
         ${CMAKE_SOURCE_DIR}/lib/${ANDROID_ABI}/libnative.so)
-include_directories(lib/includes/)
+include_directories(lib/includes)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by

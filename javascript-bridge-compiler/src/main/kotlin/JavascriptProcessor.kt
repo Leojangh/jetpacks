@@ -29,5 +29,7 @@ class JavascriptProcessor : AbstractProcessor() {
         val constructor = typeElement.enclosedElements.filterIsInstance<ExecutableElement>()
             .first { it.simpleName.toString() == "<init>" }
 
+        
+
     }
 }

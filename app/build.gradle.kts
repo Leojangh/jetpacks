@@ -23,23 +23,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
-
-        ndkVersion = "23.1.7779620"
-        ndk {
-            abiFilters += listOf("arm64-v8a")
-        }
-        externalNativeBuild {
-            cmake {
-                cppFlags += ""
-            }
-        }
-    }
-
-    externalNativeBuild {
-        cmake {
-            version = "3.18.1"
-            path = file("src/main/cpp/CMakeLists.txt")
-        }
     }
 
     sourceSets {
@@ -136,6 +119,7 @@ dependencies {
 
     implementation(project(":share"))
     implementation(project(":javascript-bridge-compiler"))
+    implementation(project(":native"))
 //    ksp(project(":javascript-bridge-compiler"))
 //    implementation(project(":vulkan"))
 
@@ -199,18 +183,4 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 //    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
-}
-
-configurations.all {
-
-    exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
-
-    resolutionStrategy {
-        cacheDynamicVersionsFor(10, "minutes")
-        cacheChangingModulesFor(4, "hours")
-    }
-}
-
-tasks.assemble.configure {
-    dependsOn += provider { rootProject.project("native").tasks.getByName("build") }
 }

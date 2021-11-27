@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import com.genlz.jetpacks.utility.ForegroundTracker
+import com.genlz.libnative.functionInNative
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -30,6 +31,7 @@ class App : Application() {
         init {
             System.loadLibrary("jetpacks")
             Log.d(TAG, ": ${androidJni()}")
+            functionInNative()
         }
 
         /**
