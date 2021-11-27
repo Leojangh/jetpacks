@@ -15,6 +15,9 @@ val distributionsName = "injection.js"
 kotlin {
 
     js(IR) {
+
+        moduleName = "javascript"
+
         browser {
             webpackTask {
                 cssSupport.enabled = true

@@ -8,8 +8,10 @@ import org.w3c.dom.HTMLImageElement
  * Set click listener that transit the position to Android.
  */
 fun setupImageTransition() {
+
     document.addEventListener("click", {
         (it.target as? HTMLImageElement)?.run {
+            // Use your own identifier.
             if (hasAttribute("data-galleryid")) {
                 val rect = getBoundingOnDeviceRect()
                 Android.transit(
@@ -20,7 +22,7 @@ fun setupImageTransition() {
                 )
             }
         }
-    })
+    }, /*bubble*/false)
 }
 
 fun HTMLElement.getBoundingOnDeviceRect(): Rect {

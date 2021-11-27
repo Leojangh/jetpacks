@@ -1,8 +1,10 @@
 package com.genlz.jetpacks.ui.web
 
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.graphics.RectF
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +13,7 @@ import android.widget.AbsoluteLayout
 import android.widget.ImageView
 import androidx.core.graphics.toRect
 import androidx.core.view.doOnPreDraw
+import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -63,7 +66,10 @@ class WebFragment : Fragment(), DomTouchListener {
         when (hitTestResult.type) {
             WebView.HitTestResult.IMAGE_TYPE -> {
                 val img = ImageView(webView.context)
-                val uri = hitTestResult.extra ?: return
+                val uri = hitTestResult.extra ?: run {
+                    Log.i(TAG, "No image uri support!")
+                    return
+                }
                 val key = MemoryCache.Key(uri)
                 img.load(uri) {
                     memoryCacheKey(key)

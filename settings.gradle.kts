@@ -27,16 +27,6 @@ pluginManagement {
     }
 }
 
-@Suppress("UnstableApiUsage")
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        maven("https://www.jitpack.io")
-    }
-}
-
 rootProject.name = "jetpacks"
 // Use kebab case formatting for all project names:
 // A kebab case formatting is when all letters lowercase,

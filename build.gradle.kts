@@ -19,7 +19,21 @@ pluginManager.withPlugin("kotlin-kapt") {
     configure<org.jetbrains.kotlin.gradle.plugin.KaptExtension> { useBuildCache = true }
 }
 
+plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
+    the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().apply {
+        // The default v14.17.0 not support Apple silicon.The support becomes
+        // available from v16.x but the lasted v17.x is incompatible.
+        nodeVersion = "16.13.0"
+    }
+}
+
 allprojects {
+
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://www.jitpack.io")
+    }
 
     configurations.all {
 

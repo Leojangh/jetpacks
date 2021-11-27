@@ -12,8 +12,8 @@ fun setupCache() {
         }.catch { t ->
             console.log("Registration failed with $t");
         }
-
-    window.addEventListener("install", { e ->
+    
+    window.self.addEventListener("install", { e ->
         (e as ExtendableEvent).waitUntil(
             window.caches.open("v1").then {
                 it.addAll(
@@ -25,7 +25,7 @@ fun setupCache() {
         )
     })
 
-    window.addEventListener("fetch", { e ->
+    window.self.addEventListener("fetch", { e ->
         with(e as FetchEvent) {
             respondWith(window.caches.match(request).unsafeCast<Promise<Response>>())
         }

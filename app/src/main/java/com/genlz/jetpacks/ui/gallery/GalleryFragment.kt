@@ -12,7 +12,6 @@ import android.widget.ImageView
 import androidx.activity.addCallback
 import androidx.annotation.AnyRes
 import androidx.core.os.bundleOf
-import androidx.core.view.ViewCompat
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
@@ -69,17 +68,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 )
             }
         }
-        preload(requireContext())
-    }
 
-    private fun preload(context: Context) {
-        args.imageUris.forEach {
-            val request = ImageRequest.Builder(context).apply {
-                data(it)
-//                size(ViewSizeResolver(img))
-            }.build()
-            context.imageLoader.enqueue(request)
-        }
+        preload(requireContext(), args.imageUris.toList())
     }
 
     // adb shell settings put global animator_duration_scale 20
@@ -233,8 +223,23 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
             )
         }
 
+        /**
+         * Returns uri of any android resource.
+         */
         fun localResUri(@AnyRes resource: Int): Uri =
             Uri.parse("android.resource://${App.INSTANCE.packageName}/$resource")
+
+        /**
+         * Tell the coil preload these data.
+         */
+        fun preload(context: Context, uris: List<String>) {
+            uris.forEach {
+                val request = ImageRequest.Builder(context).apply {
+                    data(it)
+                }
+                context.imageLoader.enqueue(request.build())
+            }
+        }
     }
 }
 
@@ -272,10 +277,16 @@ private class PagerAdapter(
             // is that you cannot set the transition name in the RecyclerView item's XML layout
             // because an arbitrary number of items share that layout. A unique transition name
             // must be assigned so that the transition animation uses the correct view.
-            ViewCompat.setTransitionName(img, "hero_image_$position")
-            img.load(originUri) {
+            img.transitionNameExt = "hero_image_$position"
+            val cache = img.context.imageLoader.memoryCache[cacheKey]
+            val builder: ImageRequest.Builder.() -> Unit = {
                 placeholderMemoryCacheKey(cacheKey)
                 allowHardware(false)
+            }
+            if (cache != null) {
+                img.load(cache, builder = builder)
+            } else {
+                img.load(originUri, builder = builder)
             }
         }
 

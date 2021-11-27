@@ -12,6 +12,7 @@ import android.view.inputmethod.InputConnection
 import android.webkit.*
 import androidx.annotation.RequiresApi
 import androidx.annotation.StyleRes
+import androidx.core.content.withStyledAttributes
 import androidx.core.view.*
 import androidx.core.view.ViewCompat.NestedScrollType
 import androidx.core.view.ViewCompat.ScrollAxis
@@ -89,21 +90,29 @@ class PowerfulWebView @JvmOverloads constructor(
             javaScriptEnabled = true
             domStorageEnabled = true
         }
-        webViewClient = object : WebViewClient() {
-            override fun onPageFinished(view: WebView, url: String) {
-                for ((name, content) in scripts) {
-                    evaluateJavascript(content, null)
-                    Log.d(TAG, "script $name inject done")
-                }
-            }
+        webViewClient = ScriptInjectorWebViewClient(scripts)
 
-            override fun shouldOverrideUrlLoading(
-                view: WebView,
-                request: WebResourceRequest?
-            ): Boolean = false
-        }
-        isNestedScrollingEnabled = true
+        val a = context.obtainStyledAttributes(
+            attrs,
+            intArrayOf(android.R.attr.nestedScrollingEnabled),
+            defStyleAttr,
+            defStyleRes
+        )
+        isNestedScrollingEnabled = a.getBoolean(0, true)
+        a.recycle()
+
         addJavascriptInterface(com.genlz.share.widget.web.bridge.Log, "Log")
+    }
+
+    class ScriptInjectorWebViewClient(
+        private val scripts: Map<String, String>
+    ) : WebViewClient() {
+        override fun onPageFinished(view: WebView, url: String) {
+            for ((name, content) in scripts) {
+                view.evaluateJavascript(content, null)
+                Log.d(TAG, "script $name inject done")
+            }
+        }
     }
 
     private fun cache() {
