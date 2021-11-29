@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import androidx.core.view.children
-import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -32,6 +31,7 @@ import com.genlz.jetpacks.ui.gallery.GalleryFragment
 import com.genlz.jetpacks.ui.common.ReSelectable
 import com.genlz.share.util.appcompat.transitionNameExt
 import com.genlz.share.util.launchAndCollectIn
+import com.genlz.share.util.postponeEnterTransitionUtilDraw
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "ProductsFragment"
@@ -52,10 +52,7 @@ class ProductsFragment : Fragment(R.layout.fragment_products), ReSelectable {
             adapter.submitList(it)
         }
 
-        postponeEnterTransition()
-        (view.parent as? ViewGroup)?.doOnPreDraw {
-            startPostponedEnterTransition()
-        }
+        postponeEnterTransitionUtilDraw()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

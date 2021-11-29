@@ -19,6 +19,7 @@ import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.share.util.appcompat.intent
 import com.genlz.share.util.appcompat.setDecorFitsSystemWindowsExt
 import com.genlz.share.util.appcompat.transitionNameExt
+import com.genlz.share.util.postponeEnterTransitionUtilDraw
 
 /**
  * A container Activity for [GalleryFragment].
@@ -50,10 +51,7 @@ class GalleryActivity : AppCompatActivity(), FullscreenController {
             }
         }
 
-        postponeEnterTransition()
-        window.decorView.doOnPreDraw {
-            startPostponedEnterTransition()
-        }
+        postponeEnterTransitionUtilDraw()
     }
 
     override fun enterFullscreen(sticky: Boolean) {

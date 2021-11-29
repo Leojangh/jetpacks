@@ -1,7 +1,6 @@
 package com.genlz.jetpacks.ui.web
 
 import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.graphics.RectF
 import android.os.Bundle
 import android.util.Log
@@ -12,8 +11,6 @@ import android.webkit.WebView
 import android.widget.AbsoluteLayout
 import android.widget.ImageView
 import androidx.core.graphics.toRect
-import androidx.core.view.doOnPreDraw
-import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -23,6 +20,7 @@ import coil.memory.MemoryCache
 import com.genlz.jetpacks.ui.gallery.GalleryFragment
 import com.genlz.jetpacks.ui.web.bridge.Android
 import com.genlz.share.util.appcompat.*
+import com.genlz.share.util.postponeEnterTransitionUtilDraw
 import com.genlz.share.widget.web.DomTouchListener
 import com.genlz.share.widget.web.PowerfulWebView
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,10 +52,7 @@ class WebFragment : Fragment(), DomTouchListener {
             addJavascriptInterface(bridge, bridge.name)
             domTouchListener = this@WebFragment
         }
-        (webView.parent as? ViewGroup)?.doOnPreDraw {
-            startPostponedEnterTransition()
-        }
-        postponeEnterTransition()
+        postponeEnterTransitionUtilDraw()
     }
 
     @Suppress("DEPRECATION")

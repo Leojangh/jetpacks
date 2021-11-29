@@ -12,7 +12,6 @@ import android.widget.ImageView
 import androidx.activity.addCallback
 import androidx.annotation.AnyRes
 import androidx.core.os.bundleOf
-import androidx.core.view.doOnPreDraw
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -36,6 +35,7 @@ import com.genlz.jetpacks.databinding.FragmentGalleryBinding
 import com.genlz.jetpacks.ui.common.FullscreenController.Companion.findFullscreenController
 import com.genlz.share.util.appcompat.transitionNameExt
 import com.genlz.share.util.appcompat.unwrap
+import com.genlz.share.util.postponeEnterTransitionUtilDraw
 import com.github.chrisbanes.photoview.PhotoView
 
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
@@ -123,11 +123,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         // to another fragment, you must still postpone the fragment using a RecyclerView
         // to ensure that the returning shared element transition functions correctly
         // when popping back to the RecyclerView.
-        postponeEnterTransition()
-
-        (view.parent as? ViewGroup)?.doOnPreDraw {
-            startPostponedEnterTransition()
-        }
+        postponeEnterTransitionUtilDraw()
     }
 
     companion object {
