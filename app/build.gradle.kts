@@ -167,7 +167,6 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:$HILT")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
-    implementation(kotlin("reflect"))
 
     implementation("androidx.core:core-ktx:$coreKtx")
     implementation("androidx.appcompat:appcompat:$appcompat")

@@ -12,7 +12,7 @@
         android:label="@string/gallery_fragment"
         tools:layout="@layout/fragment_gallery">
 
-        <!--XML里内部类用$,IDE尚未完善支持-->
+        <!--XML里内部类用$,IDE支持尚未完善，例如类型显示错误、不支持范型-->
         <argument
             android:name="cacheKeys"
             app:argType="coil.memory.MemoryCache$Key[]"

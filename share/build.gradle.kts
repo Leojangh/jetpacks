@@ -39,6 +39,8 @@ android {
 
 dependencies {
 
+    api(kotlin("reflect"))
+
     api("androidx.webkit:webkit:$webkit")
 
     api("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle")
