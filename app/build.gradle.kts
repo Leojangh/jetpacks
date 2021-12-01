@@ -123,6 +123,9 @@ dependencies {
 //    ksp(project(":javascript-bridge-compiler"))
 //    implementation(project(":vulkan"))
 
+    // The core module is used by all other components
+    implementation ("com.github.topjohnwu.libsu:core:$libsu")
+
     implementation("androidx.browser:browser:$browser")
 
     implementation("androidx.palette:palette:$palette")
