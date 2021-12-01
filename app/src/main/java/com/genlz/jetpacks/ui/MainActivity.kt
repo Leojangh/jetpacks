@@ -1,10 +1,10 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
+import android.app.StatusBarManager
 import android.content.ComponentCallbacks2
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -13,7 +13,6 @@ import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
@@ -42,8 +41,6 @@ import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.jetpacks.ui.common.ReSelectable
 import com.genlz.jetpacks.ui.web.WebFragmentDirections
 import com.genlz.share.util.appcompat.*
-import com.genlz.share.util.call
-import com.genlz.share.util.get
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -96,7 +93,7 @@ class MainActivity : AppCompatActivity(),
         setupNavigation()
         listenWindowInfo()
         setupViews()
-        Log.d(TAG, "onCreate: ${LocaleListCompat.getDefault()[0]}")
+        val statusBarManager = getSystemService<StatusBarManager>()
     }
 
     /**
