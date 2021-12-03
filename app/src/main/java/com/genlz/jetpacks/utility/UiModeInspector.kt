@@ -1,13 +1,12 @@
 package com.genlz.jetpacks.utility
 
-import android.app.Application
 import android.content.ComponentCallbacks
 import android.content.Context
 import android.content.res.Configuration
-import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
+@Suppress("UNUSED")
 class UiModeInspector private constructor(
     context: Context,
 ) {
@@ -56,7 +55,6 @@ class UiModeInspector private constructor(
             return INSTANCE!!
         }
 
-        @Suppress("UNUSED")
         private const val TAG = "UiModeInspector"
     }
 }
