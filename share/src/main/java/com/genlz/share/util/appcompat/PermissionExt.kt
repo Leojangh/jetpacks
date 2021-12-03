@@ -2,10 +2,12 @@ package com.genlz.share.util.appcompat
 
 import android.content.pm.PackageManager
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import org.jetbrains.annotations.Contract
+import androidx.core.app.ActivityOptionsCompat
+import androidx.fragment.app.Fragment
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -28,8 +30,8 @@ suspend fun ComponentActivity.doWithPermission(
 
     else -> {
         val granted = launchActivityResultContract(
-            ActivityResultContracts.RequestPermission(),
-            permission
+            contract = ActivityResultContracts.RequestPermission(),
+            input = permission
         )
         if (granted) {
             action()
@@ -40,32 +42,24 @@ suspend fun ComponentActivity.doWithPermission(
 }
 
 /**
- * The **Activity Result API** powered by coroutines.
+ * The **[Activity Result API](https://developer.android.com/training/basics/intents/result#register)** powered by coroutines.
  *
- * @see ComponentActivity.registerForActivityResult
+ * @see ActivityResultCaller.registerForActivityResult
  */
-suspend fun <I, O> ComponentActivity.launchActivityResultContract(
+suspend fun <I, O> ActivityResultCaller.launchActivityResultContract(
     contract: ActivityResultContract<I, O>,
-    input: I
+    registry: ActivityResultRegistry? = null,
+    input: I,
+    options: ActivityOptionsCompat? = null
 ): O = suspendCoroutine { continuation ->
-    registerForActivityResult(contract) {
+    val launcher = if (registry != null)
+        registerForActivityResult(contract, registry) {
+            continuation.resume(it)
+        }
+    else registerForActivityResult(contract) {
         continuation.resume(it)
-    }.launch(input)
-}
-
-/**
- * The **Activity Result API** powered by coroutines.
- *
- * @see ComponentActivity.registerForActivityResult
- */
-suspend fun <I, O> ComponentActivity.launchActivityResultContract(
-    contract: ActivityResultContract<I, O>,
-    registry: ActivityResultRegistry,
-    input: I
-): O = suspendCoroutine { continuation ->
-    registerForActivityResult(contract, registry) {
-        continuation.resume(it)
-    }.launch(input)
+    }
+    launcher.launch(input, options)
 }
 
 /**
@@ -80,8 +74,8 @@ suspend fun ComponentActivity.doWithPermissions(
     permissions.all { checkSelfPermissionExt(it) == PackageManager.PERMISSION_GRANTED } -> action()
     else -> {
         val grantedResults = launchActivityResultContract(
-            ActivityResultContracts.RequestMultiplePermissions(),
-            permissions
+            contract = ActivityResultContracts.RequestMultiplePermissions(),
+            input = permissions
         )
         if (grantedResults.all { it.value }) {
             action()
