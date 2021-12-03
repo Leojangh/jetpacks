@@ -5,18 +5,13 @@ import android.content.ComponentCallbacks2
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
 import android.view.animation.AnticipateInterpolator
 import android.widget.EditText
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.EnvironmentCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.*
 import androidx.core.view.WindowInsetsCompat.CONSUMED
@@ -47,7 +42,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.io.File
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),

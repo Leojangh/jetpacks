@@ -39,6 +39,11 @@ suspend fun ComponentActivity.doWithPermission(
     }
 }
 
+/**
+ * The **Activity Result API** powered by coroutines.
+ *
+ * @see ComponentActivity.registerForActivityResult
+ */
 suspend fun <I, O> ComponentActivity.launchActivityResultContract(
     contract: ActivityResultContract<I, O>,
     input: I
@@ -48,6 +53,11 @@ suspend fun <I, O> ComponentActivity.launchActivityResultContract(
     }.launch(input)
 }
 
+/**
+ * The **Activity Result API** powered by coroutines.
+ *
+ * @see ComponentActivity.registerForActivityResult
+ */
 suspend fun <I, O> ComponentActivity.launchActivityResultContract(
     contract: ActivityResultContract<I, O>,
     registry: ActivityResultRegistry,
@@ -58,6 +68,9 @@ suspend fun <I, O> ComponentActivity.launchActivityResultContract(
     }.launch(input)
 }
 
+/**
+ * Request a bundle of permissions.
+ */
 suspend fun ComponentActivity.doWithPermissions(
     permissions: Array<String>,
     onRejected: suspend (String) -> Unit = {},
@@ -73,10 +86,9 @@ suspend fun ComponentActivity.doWithPermissions(
         if (grantedResults.all { it.value }) {
             action()
         } else {
-            val rejectedPermissions = grantedResults.filter {
+            grantedResults.filter {
                 !it.value /*filter rejected permissions*/
-            }
-            rejectedPermissions.forEach {
+            }.forEach {
                 if (shouldShowRequestPermissionRationaleExt(it.key)) {
                     onShowRationale(it.key)
                 } else {
