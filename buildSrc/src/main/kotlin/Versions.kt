@@ -24,8 +24,8 @@ const val browser = "1.4.0-rc01"
 const val webkit = "1.4.0"
 
 //Dynamic version
-const val window = "+"
-const val splash = "+"
+const val window = "1.0.0-beta04"
+const val splash = "1.0.0-alpha02"
 
 //Third party
 const val retrofit = "2.9.0"

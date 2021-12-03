@@ -1,25 +1,26 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
-import android.app.StatusBarManager
 import android.content.ComponentCallbacks2
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
 import android.view.animation.AnticipateInterpolator
 import android.widget.EditText
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.EnvironmentCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowInsetsAnimationCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.*
 import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.WindowInsetsCompat.Type
-import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.view.updatePadding
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.flowWithLifecycle
@@ -46,6 +47,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.io.File
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -89,11 +91,24 @@ class MainActivity : AppCompatActivity(),
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         customExitAnimation()
-        doWithPermission(Manifest.permission.READ_CALL_LOG)
+        lifecycleScope.launch {
+            val permissions = arrayOf(
+                Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            doWithPermissions(
+                permissions,
+                onRejected = {
+                    Log.d(TAG, "onCreate: $it rejected")
+                }, onShowRationale = {
+                    Log.d(TAG, "onCreate: $it show rationale")
+                }) {
+                Log.d(TAG, "onCreate: all done")
+            }
+        }
         setupNavigation()
         listenWindowInfo()
         setupViews()
-        val statusBarManager = getSystemService<StatusBarManager>()
     }
 
     /**
