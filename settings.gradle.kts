@@ -37,3 +37,4 @@ include(":javascript")
 include(":native")
 
 include(":javascript-bridge-compiler")
+include(":java-lib")

@@ -3,15 +3,26 @@ package com.genlz.jetpacks.ui
 import android.Manifest
 import android.content.ComponentCallbacks2
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
 import android.view.animation.AnticipateInterpolator
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import androidx.core.content.PackageManagerCompat
+import androidx.core.content.contentValuesOf
+import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.*
 import androidx.core.view.WindowInsetsCompat.CONSUMED
@@ -40,8 +51,11 @@ import com.genlz.share.util.appcompat.*
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -85,24 +99,78 @@ class MainActivity : AppCompatActivity(),
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         customExitAnimation()
-        lifecycleScope.launch {
-            val permissions = arrayOf(
-                Manifest.permission.READ_CALL_LOG,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-            doWithPermissions(
-                permissions,
-                onRejected = {
-                    Log.d(TAG, "onCreate: $it rejected")
-                }, onShowRationale = {
-                    Log.d(TAG, "onCreate: $it show rationale")
-                }) {
-                Log.d(TAG, "onCreate: all done")
-            }
-        }
         setupNavigation()
         listenWindowInfo()
         setupViews()
+
+        binding.root.post {
+            val bp = binding.root.drawToBitmap()
+            val insert = application.contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValuesOf(
+                    MediaStore.MediaColumns.DISPLAY_NAME to "a.png",
+                    MediaStore.MediaColumns.RELATIVE_PATH to "${Environment.DIRECTORY_DCIM}/${Environment.DIRECTORY_SCREENSHOTS}"
+                )
+            ) ?: error("Insert failed!")
+            application.contentResolver.openOutputStream(insert)?.use {
+                bp.compress(Bitmap.CompressFormat.PNG, 100, it)
+            }
+        }
+//        lifecycleScope.launch {
+//            takePicture()
+//        }
+    }
+
+    @RequiresApi(29)
+    private suspend fun download(fileName: String) {
+        val insert = application.contentResolver.insert(
+            MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+            contentValuesOf(
+                MediaStore.DownloadColumns.DISPLAY_NAME to fileName
+            )
+        ) ?: error("Create file $fileName failed.")
+        withContext(Dispatchers.IO) {
+            application.contentResolver.openOutputStream(insert)?.use {
+                it.write("Hello".toByteArray())
+            }
+        }
+    }
+
+    /**
+     * Taking a picture and save as [fileName] to external pictures albums.
+     */
+    private suspend fun takePicture(fileName: String = "${System.currentTimeMillis()}.png") {
+        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            Log.d(TAG, "takePicture: No camera")
+            return
+        }
+        if (Build.VERSION.SDK_INT >= 29) {
+            // scope storage on device API 29+ no need to request permission.
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            val insert = application.contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValuesOf(
+                    MediaStore.Images.Media.DISPLAY_NAME to fileName,
+                    //Default path is Pictures,DCIM is alternative
+                    MediaStore.MediaColumns.RELATIVE_PATH to "${Environment.DIRECTORY_PICTURES}/$packageName",
+                )
+            ) ?: error("something error...")
+            launchActivityResultContract(ActivityResultContracts.TakePicture(), input = insert)
+        } else {
+            try {
+                doWithPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) {
+                    val file = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), fileName)
+                    val uriForFile =
+                        FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
+                    launchActivityResultContract(
+                        ActivityResultContracts.TakePicture(),
+                        input = uriForFile
+                    )
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
     }
 
     /**
