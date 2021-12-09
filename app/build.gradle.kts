@@ -11,7 +11,7 @@ plugins {
 
 android {
     compileSdk = target_sdk
-    buildToolsVersion = "32.0.0-rc1"
+    buildToolsVersion = "32.0.0"
 
     defaultConfig {
         applicationId = "com.genlz.jetpacks"
@@ -93,6 +93,7 @@ android {
     lint {
         // if true, only report errors.
         isIgnoreWarnings = true
+        isCheckDependencies = true
     }
 }
 

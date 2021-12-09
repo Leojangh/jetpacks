@@ -1,6 +1,6 @@
 const val HILT = "2.40.2"
 const val NAVIGATION = "2.4.0-beta01"
-const val AGP = "7.0.3"
+const val AGP = "7.0.4"
 const val min_sdk = 21
 const val target_sdk = 31
 const val java_version = "11"

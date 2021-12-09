@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
-import android.widget.AbsoluteLayout
 import android.widget.ImageView
 import androidx.core.graphics.toRect
 import androidx.fragment.app.Fragment
@@ -55,7 +54,6 @@ class WebFragment : Fragment(), DomTouchListener {
         postponeEnterTransitionUtilDraw()
     }
 
-    @Suppress("DEPRECATION")
     override fun onDomTouch(webView: WebView, hitTestResult: WebView.HitTestResult, rectF: RectF) {
         val rect = rectF.toRect()
         when (hitTestResult.type) {
@@ -70,7 +68,9 @@ class WebFragment : Fragment(), DomTouchListener {
                     memoryCacheKey(key)
                 }
                 webView.addView(
-                    img, AbsoluteLayout.LayoutParams(
+                    img,
+                    @Suppress("DEPRECATION")
+                    android.widget.AbsoluteLayout.LayoutParams(
                         rect.width(),
                         rect.height(),
                         rect.left,

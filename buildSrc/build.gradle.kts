@@ -2,6 +2,10 @@ plugins {
     `kotlin-dsl`
 }
 
+tasks.compileKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
+
 repositories {
     google()
     mavenCentral()
@@ -15,7 +19,7 @@ gradlePlugin {
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle-api:7.0.3")
+    implementation("com.android.tools.build:gradle-api:7.0.4")
     gradleApi()
 }
 
