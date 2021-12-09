@@ -1,5 +1,8 @@
 package com.genlz.jetpacks.utility
 
+/**
+ * A best practice that UI listen data source safely and efficiently.
+ */
 sealed interface UiState<out T>
 
 object Loading : UiState<Nothing>

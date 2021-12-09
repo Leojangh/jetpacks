@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+
 package com.genlz.share.util.appcompat
 
 import android.content.pm.PackageManager
@@ -7,7 +9,6 @@ import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityOptionsCompat
-import androidx.fragment.app.Fragment
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -29,10 +30,8 @@ suspend fun ComponentActivity.doWithPermission(
     shouldShowRequestPermissionRationaleExt(permission) -> onShowRationale(permission)
 
     else -> {
-        val granted = launchActivityResultContract(
-            contract = ActivityResultContracts.RequestPermission(),
-            input = permission
-        )
+        val granted =
+            registerForActivityResult(ActivityResultContracts.RequestPermission())(permission)
         if (granted) {
             action()
         } else {
@@ -60,6 +59,21 @@ suspend fun <I, O> ActivityResultCaller.launchActivityResultContract(
         continuation.resume(it)
     }
     launcher.launch(input, options)
+}
+
+fun <I, O> ActivityResultCaller.registerForActivityResult(
+    contract: ActivityResultContract<I, O>,
+    registry: ActivityResultRegistry? = null,
+    options: ActivityOptionsCompat? = null
+): suspend (I) -> O = { input ->
+    suspendCoroutine { continuation ->
+        val launcher = if (registry == null) registerForActivityResult(contract) {
+            continuation.resume(it)
+        } else registerForActivityResult(contract, registry) {
+            continuation.resume(it)
+        }
+        launcher.launch(input, options)
+    }
 }
 
 /**

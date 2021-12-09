@@ -124,7 +124,7 @@ dependencies {
 //    implementation(project(":vulkan"))
 
     // The core module is used by all other components
-    implementation ("com.github.topjohnwu.libsu:core:$libsu")
+    implementation("com.github.topjohnwu.libsu:core:$libsu")
 
     implementation("androidx.browser:browser:$browser")
 

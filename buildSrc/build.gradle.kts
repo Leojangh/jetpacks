@@ -18,3 +18,8 @@ dependencies {
     implementation("com.android.tools.build:gradle-api:7.0.3")
     gradleApi()
 }
+
+tasks.compileKotlin {
+    targetCompatibility = "11"
+    sourceCompatibility = "11"
+}

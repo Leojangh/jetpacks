@@ -5,7 +5,7 @@
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="true" />
+        android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -34,8 +34,7 @@
         android:networkSecurityConfig="@xml/network_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Jetpacks"
-        tools:targetApi="n">
+        android:theme="@style/Theme.Jetpacks">
         <meta-data
             android:name="android.allow_multiple_resumed_activities"
             android:value="true" />
@@ -63,11 +62,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.gallery.GalleryActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Jetpacks.NoActionBar" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"
