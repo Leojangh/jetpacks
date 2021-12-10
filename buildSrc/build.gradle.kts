@@ -20,8 +20,5 @@ dependencies {
 }
 
 tasks.compileKotlin {
-    targetCompatibility = "11"
-    sourceCompatibility = "11"
-
     kotlinOptions.jvmTarget = "11"
 }
