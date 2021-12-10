@@ -2,10 +2,6 @@ plugins {
     `kotlin-dsl`
 }
 
-tasks.compileKotlin {
-    kotlinOptions.jvmTarget = "11"
-}
-
 repositories {
     google()
     mavenCentral()
@@ -26,4 +22,6 @@ dependencies {
 tasks.compileKotlin {
     targetCompatibility = "11"
     sourceCompatibility = "11"
+
+    kotlinOptions.jvmTarget = "11"
 }
