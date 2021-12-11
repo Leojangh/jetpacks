@@ -25,10 +25,10 @@ android {
     }
 
     sourceSets {
-//        val dir = project(":javascript-bridge").projectDir
-//        getByName("main") {
-//            kotlin.srcDir("$dir/src/main/kotlin")
-//        }
+        val dir = project(":javascript-bridge").projectDir
+        getByName("main") {
+            kotlin.srcDir("$dir/src/main/kotlin")
+        }
     }
 
     flavorDimensions += "env"
@@ -99,14 +99,6 @@ android {
     }
 }
 
-kotlin {
-    jvmToolchain {
-        with(this as JavaToolchainSpec) {
-            languageVersion.set(JavaLanguageVersion.of(11))
-        }
-    }
-}
-
 ksp {
     // For Room schema export
     arg("room.schemaLocation", "$projectDir/schemas")
@@ -121,8 +113,6 @@ dependencies {
 
     implementation(project(":share"))
     implementation(project(":native"))
-
-    implementation(project(":javascript-bridge"))
 
     // The core module is used by all other components
     implementation("com.github.topjohnwu.libsu:core:$libsu")

@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter
  */
 class JavascriptBridgeProcessor(
     private val codeGenerator: CodeGenerator,
+    @Suppress("UNUSED")
     private val logger: KSPLogger
 ) : SymbolProcessor {
 
@@ -40,6 +41,7 @@ class JavascriptBridgeProcessor(
             ).wrap()
             writer.use { file ->
                 file.newLine()
+                //language=kotlin
                 file.append("external object $className {$ln$ln")
                 classDeclaration.getAllFunctions().forEach { it.accept(this, data) }
                 file.newLine()
@@ -47,9 +49,6 @@ class JavascriptBridgeProcessor(
             }
         }
 
-        /**
-         *
-         */
         override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
             if (function.simpleName.asString() in setOf("equals", "hashCode", "toString")) return
             writer.append("fun ${function.simpleName.asString()}(")

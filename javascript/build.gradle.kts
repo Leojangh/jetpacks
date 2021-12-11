@@ -25,6 +25,9 @@ kotlin {
     //Because project implementation as dependencies is unavailable.
     val dir = project(":javascript-bridge").projectDir
     sourceSets["main"].kotlin.srcDir("$dir/src/main/kotlin")
+    //Although ksp added it to classpath,idea not recognized yet...
+    sourceSets["main"].kotlin.srcDir("$buildDir/generated/ksp/main/kotlin")
+
     //I can't use IR compiler as using ksp...
     js(/*IR*/) {
 
