@@ -10,7 +10,6 @@ import androidx.annotation.Keep
 import com.genlz.jetpacks.ui.web.bridge.Android.Companion.TAG
 import com.genlz.share.util.appcompat.mainExecutorExt
 import com.genlz.share.widget.web.PowerfulWebView
-import Javascript
 
 
 /**
@@ -18,7 +17,7 @@ import Javascript
  */
 @Suppress("UNUSED")
 @Keep
-//@Javascript
+@com.genlz.javascript.Javascript
 interface Android {
 
     val webView: WebView
@@ -67,7 +66,7 @@ internal class AndroidImpl(
             Log.w(TAG, UnsupportedOperationException())
             return
         }
-        //Not post attention.
+        //Not post attention because web view has it's own looper.
         context.mainExecutorExt.execute {
             val r = RectF(left, top, right, bottom)
             webView.domTouchListener?.onDomTouch(webView, webView.hitTestResult, r)

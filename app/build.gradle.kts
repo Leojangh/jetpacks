@@ -119,9 +119,10 @@ idea {
 dependencies {
 
     implementation(project(":share"))
-    implementation(project(":javascript-bridge-compiler"))
     implementation(project(":native"))
-//    ksp(project(":javascript-bridge-compiler"))
+
+    implementation(project(":javascript-bridge"))
+    ksp(project(":javascript-bridge-compiler"))
 //    implementation(project(":vulkan"))
 
     // The core module is used by all other components

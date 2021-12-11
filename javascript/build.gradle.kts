@@ -3,9 +3,6 @@ plugins {
     kotlin("js")
 }
 
-group = "com.genlz"
-version = "1.0-SNAPSHOT"
-
 dependencies {
     implementation(kotlin("stdlib-js"))
     testImplementation(kotlin("test-js"))
