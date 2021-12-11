@@ -1,17 +1,32 @@
 plugins {
-//    id("com.android.library")
+//    id("com.android.library") incompatible
     kotlin("js")
+    id("com.google.devtools.ksp")
+    idea
+}
+//seems no effects
+idea {
+    module {
+        sourceDirs = sourceDirs + file("build/generated/ksp/main/kotlin")
+        testSourceDirs = testSourceDirs + file("build/generated/ksp/test/kotlin")
+        generatedSourceDirs =
+            generatedSourceDirs + file("build/generated/ksp/main/kotlin") + file("build/generated/ksp/test/kotlin")
+    }
 }
 
 dependencies {
-    implementation(kotlin("stdlib-js"))
+    ksp(project(":javascript-bridge-compiler"))
     testImplementation(kotlin("test-js"))
 }
 
 val distributionsName = "injection.js"
 kotlin {
 
-    js(IR) {
+    //Because project implementation as dependencies is unavailable.
+    val dir = project(":javascript-bridge").projectDir
+    sourceSets["main"].kotlin.srcDir("$dir/src/main/kotlin")
+    //I can't use IR compiler as using ksp...
+    js(/*IR*/) {
 
         moduleName = "javascript"
 
@@ -20,17 +35,6 @@ kotlin {
                 cssSupport.enabled = true
                 outputFileName = distributionsName
                 output.libraryTarget = "commonjs2"
-            }
-
-            runTask {
-                cssSupport.enabled = true
-            }
-
-            testTask {
-                useKarma {
-                    useChromeHeadless()
-                    webpackConfig.cssSupport.enabled = true
-                }
             }
         }
 

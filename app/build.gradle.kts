@@ -6,7 +6,6 @@ plugins {
     id("com.google.devtools.ksp")
     id("androidx.navigation.safeargs.kotlin")
     id("org.jetbrains.dokka")
-    idea
 }
 
 android {
@@ -26,7 +25,10 @@ android {
     }
 
     sourceSets {
-
+//        val dir = project(":javascript-bridge").projectDir
+//        getByName("main") {
+//            kotlin.srcDir("$dir/src/main/kotlin")
+//        }
     }
 
     flavorDimensions += "env"
@@ -97,6 +99,14 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain {
+        with(this as JavaToolchainSpec) {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }
+    }
+}
+
 ksp {
     // For Room schema export
     arg("room.schemaLocation", "$projectDir/schemas")
@@ -107,23 +117,12 @@ kapt {
     correctErrorTypes = true
 }
 
-idea {
-    module {
-        sourceDirs = sourceDirs + file("build/generated/ksp/main/kotlin")
-        testSourceDirs = testSourceDirs + file("build/generated/ksp/test/kotlin")
-        generatedSourceDirs =
-            generatedSourceDirs + file("build/generated/ksp/main/kotlin") + file("build/generated/ksp/test/kotlin")
-    }
-}
-
 dependencies {
 
     implementation(project(":share"))
     implementation(project(":native"))
 
     implementation(project(":javascript-bridge"))
-    ksp(project(":javascript-bridge-compiler"))
-//    implementation(project(":vulkan"))
 
     // The core module is used by all other components
     implementation("com.github.topjohnwu.libsu:core:$libsu")

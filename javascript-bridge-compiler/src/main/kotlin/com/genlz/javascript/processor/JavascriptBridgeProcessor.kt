@@ -32,7 +32,6 @@ class JavascriptBridgeProcessor(
         private lateinit var writer: BufferedWriter
 
         override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
-            val packageName = classDeclaration.packageName.asString()
             val className = classDeclaration.simpleName.asString()
             writer = codeGenerator.createNewFile(
                 Dependencies(true, classDeclaration.containingFile!!),
@@ -40,29 +39,26 @@ class JavascriptBridgeProcessor(
                 className
             ).wrap()
             writer.use { file ->
-//                file.append("package $packageName$ln$ln")
                 file.newLine()
-                file.append("object ${className}Generated {$ln")
+                file.append("external object $className {$ln$ln")
                 classDeclaration.getAllFunctions().forEach { it.accept(this, data) }
+                file.newLine()
                 file.append("}$ln")
             }
         }
 
+        /**
+         *
+         */
         override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
-            val annotated = function.annotations.any {
-                it.annotationType
-                    .resolve()
-                    .declaration
-                    .qualifiedName?.asString() == "android.webkit.JavascriptInterface"
-            }
-            if (!annotated) return
+            if (function.simpleName.asString() in setOf("equals", "hashCode", "toString")) return
             writer.append("fun ${function.simpleName.asString()}(")
             function.parameters.forEach {
                 val name = it.name!!.asString()
                 val typeName = it.type.resolve().declaration.qualifiedName?.asString() ?: "<ERROR>"
                 writer.append("$name:$typeName,")
             }
-            writer.append("){}$ln")
+            writer.append(")$ln$ln")
         }
     }
 

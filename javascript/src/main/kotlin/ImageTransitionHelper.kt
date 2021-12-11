@@ -38,9 +38,9 @@ fun HTMLElement.getBoundingOnDeviceRect(): Rect {
 fun DOMRect.toAndroidRect(ratio: Double): Rect {
     val documentElement = document.documentElement!!
     return Rect(
-        (left + documentElement.scrollLeft) * ratio,
-        (top + documentElement.scrollTop) * ratio,
-        (right + documentElement.scrollLeft) * ratio,
-        (bottom + documentElement.scrollTop) * ratio
+        ((left + documentElement.scrollLeft) * ratio).toFloat(),
+        ((top + documentElement.scrollTop) * ratio).toFloat(),
+        ((right + documentElement.scrollLeft) * ratio).toFloat(),
+        ((bottom + documentElement.scrollTop) * ratio).toFloat()
     )
 }

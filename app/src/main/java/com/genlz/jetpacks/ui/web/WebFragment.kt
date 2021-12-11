@@ -17,7 +17,7 @@ import androidx.navigation.fragment.navArgs
 import coil.load
 import coil.memory.MemoryCache
 import com.genlz.jetpacks.ui.gallery.GalleryFragment
-import com.genlz.jetpacks.ui.web.bridge.Android
+import com.genlz.jetpacks.ui.web.bridge.AndroidImpl
 import com.genlz.share.util.appcompat.*
 import com.genlz.share.util.postponeEnterTransitionUtilDraw
 import com.genlz.share.widget.web.DomTouchListener
@@ -47,7 +47,7 @@ class WebFragment : Fragment(), DomTouchListener {
 
         webView.apply {
             isNestedScrollingEnabled = false
-            val bridge = Android(this)
+            val bridge = AndroidImpl(this)
             addJavascriptInterface(bridge, bridge.name)
             domTouchListener = this@WebFragment
         }
