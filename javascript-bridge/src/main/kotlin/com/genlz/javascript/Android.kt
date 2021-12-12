@@ -1,7 +1,7 @@
 package com.genlz.javascript
 
 /**
- * All method run in a dedicate thread named "JavaBridge".So notice the thread context when
+ * All method run in a dedicated thread named "JavaBridge".So notice the thread context when
  * you implement.
  */
 @Suppress("UNUSED")

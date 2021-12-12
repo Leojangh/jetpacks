@@ -72,7 +72,13 @@ android {
     }
 
     androidComponents {
+        beforeVariants {
+            //filter some combinations
+        }
+    }
 
+    tasks.assemble.configure {
+        dependsOn += ":javascript:copyCompiledJs2app"
     }
 
     compileOptions {
@@ -107,6 +113,10 @@ ksp {
 kapt {
     useBuildCache = false
     correctErrorTypes = true
+}
+
+repositories {
+    maven("https://www.jitpack.io")
 }
 
 dependencies {

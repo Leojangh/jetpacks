@@ -1,15 +1,11 @@
 package com.genlz.jetpacks.adapter
 
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.annotation.StringRes
-import androidx.core.view.*
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.BindingAdapter
 import coil.load
-
-private const val TAG = "DataBindingAdapter"
 
 @BindingAdapter("srcUri")
 fun loadFromUri(img: ImageView, uri: String) {
@@ -19,13 +15,6 @@ fun loadFromUri(img: ImageView, uri: String) {
 @BindingAdapter("identified")
 fun isIdentifiedUser(imageView: ImageView, identified: Boolean) {
     imageView.isVisible = identified
-}
-
-@BindingAdapter("layout_marginTop")
-fun View.adjustMarginTop(top: Int) {
-    updateLayoutParams<ViewGroup.MarginLayoutParams> {
-        topMargin = top + marginTop
-    }
 }
 
 /**
