@@ -49,7 +49,7 @@ suspend fun <I, O> ActivityResultCaller.launchActivityResultContract(
     contract: ActivityResultContract<I, O>,
     registry: ActivityResultRegistry? = null,
     input: I,
-    options: ActivityOptionsCompat? = null
+    options: ActivityOptionsCompat? = null,
 ): O = suspendCoroutine { continuation ->
     val launcher = if (registry != null)
         registerForActivityResult(contract, registry) {
@@ -64,7 +64,7 @@ suspend fun <I, O> ActivityResultCaller.launchActivityResultContract(
 fun <I, O> ActivityResultCaller.registerForActivityResult(
     contract: ActivityResultContract<I, O>,
     registry: ActivityResultRegistry? = null,
-    options: ActivityOptionsCompat? = null
+    options: ActivityOptionsCompat? = null,
 ): suspend (I) -> O = { input ->
     suspendCoroutine { continuation ->
         val launcher = if (registry == null) registerForActivityResult(contract) {

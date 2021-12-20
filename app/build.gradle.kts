@@ -124,6 +124,7 @@ dependencies {
     implementation(project(":share"))
     implementation(project(":native"))
 
+    implementation("org.ow2.asm:asm:$asm")
     // The core module is used by all other components
     implementation("com.github.topjohnwu.libsu:core:$libsu")
 
