@@ -4,12 +4,13 @@ const val AGP = "7.0.4"
 const val min_sdk = 21
 const val target_sdk = 31
 const val java_version = "11"
-const val KOTLIN = "1.6.0"
-const val KSP = "$KOTLIN-1.0.1"
+const val KOTLIN = "1.6.10"
+const val KSP = "$KOTLIN-1.0.2"
 const val DOKKA = "1.6.0"
 
 const val coreKtx = "1.7.0"
 const val lifecycle = "2.4.0"
+const val coroutines = "1.6.0-RC3"
 const val appcompat = "1.3.1"
 const val activity = "1.4.0"
 const val material = "1.4.0"
@@ -19,7 +20,7 @@ const val palette = "1.0.0"
 const val paging = "3.1.0"
 const val swiperRefreshLayout = "1.1.0"
 const val constraintLayout = "2.1.2"
-const val work = "2.7.1" //for targeting S+
+const val work = "2.7.1" //for targeting S+ since 2.7.0
 const val browser = "1.4.0"
 const val webkit = "1.4.0"
 

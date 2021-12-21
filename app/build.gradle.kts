@@ -151,6 +151,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines")
 
     implementation("androidx.room:room-ktx:$room")
     ksp("androidx.room:room-compiler:$room")

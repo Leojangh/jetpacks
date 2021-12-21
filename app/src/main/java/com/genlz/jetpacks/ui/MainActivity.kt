@@ -50,7 +50,6 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import java.io.File
 import kotlin.coroutines.suspendCoroutine
 
@@ -90,6 +89,9 @@ class MainActivity : AppCompatActivity(),
         )
     )
 
+    /**
+     * Access [Build.SOC_MODEL] and some other maybe crash...
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         waitForReady()
@@ -114,9 +116,11 @@ class MainActivity : AppCompatActivity(),
                         .build(),
                     mainExecutorExt
                 ) {
-                    Toast.makeText(applicationContext,
+                    Toast.makeText(
+                        applicationContext,
                         "${it.latitude},${it.longitude}",
-                        Toast.LENGTH_SHORT).show()
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
