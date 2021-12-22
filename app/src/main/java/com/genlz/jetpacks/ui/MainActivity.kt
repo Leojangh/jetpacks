@@ -48,7 +48,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.io.File
-import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -125,19 +124,15 @@ class MainActivity : AppCompatActivity(),
                 )
             ) ?: error("something error...")
         } else {
-            suspendCoroutine {
-                runBlocking {
-                    doWithPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) {
-                        //External Android/data/{package name}/files/{type}
-                        val file =
-                            File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), fileName)
-                        FileProvider.getUriForFile(
-                            applicationContext,
-                            "$packageName.fileprovider",
-                            file
-                        )
-                    }
-                }
+            withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) {
+                //External Android/data/{package name}/files/{type}
+                val file =
+                    File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), fileName)
+                FileProvider.getUriForFile(
+                    applicationContext,
+                    "$packageName.fileprovider",
+                    file
+                )
             }
         }
         Log.d(TAG, "takePicture: $uri")

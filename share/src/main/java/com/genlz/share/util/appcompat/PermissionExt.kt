@@ -41,6 +41,27 @@ suspend fun ComponentActivity.doWithPermission(
 }
 
 /**
+ * The variants of [doWithPermission] but it brings the result typed [R].
+ */
+suspend fun <R> ComponentActivity.withPermission(
+    permission: String,
+    onRejected: suspend (String) -> R? = { null },
+    onShowRationale: suspend (String) -> R? = { null },
+    action: suspend () -> R,
+): R? = when {
+    checkSelfPermissionExt(permission) == PackageManager.PERMISSION_GRANTED -> action()
+
+    shouldShowRequestPermissionRationaleExt(permission) -> onShowRationale(permission)
+
+    else -> {
+        val granted =
+            registerForActivityResult(ActivityResultContracts.RequestPermission())(permission)
+        if (granted) action()
+        else onRejected(permission)
+    }
+}
+
+/**
  * The **[Activity Result API](https://developer.android.com/training/basics/intents/result#register)** powered by coroutines.
  *
  * @see ActivityResultCaller.registerForActivityResult
