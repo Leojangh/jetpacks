@@ -2,6 +2,14 @@ plugins {
     `kotlin-dsl`
 }
 
+kotlin {
+    jvmToolchain {
+        with(this as JavaToolchainSpec) {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }
+    }
+}
+
 repositories {
     google()
     mavenCentral()
@@ -18,8 +26,4 @@ dependencies {
     implementation("com.android.tools.build:gradle-api:7.0.4")
     gradleApi()
     gradleKotlinDsl()
-}
-
-tasks.compileKotlin {
-    kotlinOptions.jvmTarget = "11"
 }
