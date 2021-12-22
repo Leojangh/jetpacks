@@ -5,7 +5,6 @@ import android.content.ComponentCallbacks2
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -14,13 +13,11 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.animation.AnticipateInterpolator
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.content.contentValuesOf
-import androidx.core.location.LocationRequestCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.*
 import androidx.core.view.WindowInsetsCompat.CONSUMED
@@ -101,29 +98,6 @@ class MainActivity : AppCompatActivity(),
         setupNavigation()
         listenWindowInfo()
         setupViews()
-        val locationManager = getSystemService<LocationManager>()
-        lifecycleScope.launch {
-            doWithPermissions(
-                permissions = arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            ) {
-                @Suppress("MissingPermission")
-                locationManager.requestLocationUpdates(
-                    "gps",
-                    LocationRequestCompat.Builder(1000L)
-                        .build(),
-                    mainExecutorExt
-                ) {
-                    Toast.makeText(
-                        applicationContext,
-                        "${it.latitude},${it.longitude}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
     }
 
     /**

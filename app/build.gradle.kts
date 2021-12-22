@@ -139,7 +139,6 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:$swiperRefreshLayout")
 
     implementation("androidx.window:window:$window")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     androidTestImplementation("androidx.window:window-testing:$window")
 
     implementation("androidx.core:core-splashscreen:$splash")

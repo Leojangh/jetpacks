@@ -6,4 +6,4 @@ import kotlin.reflect.KProperty
 /**
  * The delegate for Java [Reference].
  */
-operator fun <T> Reference<T>.getValue(thisRef: T, property: KProperty<*>) = get()
+operator fun <T> Reference<T>.getValue(thisRef: Any, property: KProperty<*>) = get()
