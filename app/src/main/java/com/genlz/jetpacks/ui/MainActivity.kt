@@ -5,6 +5,8 @@ import android.content.ComponentCallbacks2
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Geocoder
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -24,7 +26,6 @@ import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.WindowInsetsCompat.Type
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -37,17 +38,23 @@ import androidx.window.layout.WindowInfoTracker
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
+import com.genlz.jetpacks.di.ApplicationScope
 import com.genlz.jetpacks.ui.common.ActionBarCustomizer
 import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.jetpacks.ui.common.ReSelectable
 import com.genlz.jetpacks.ui.web.WebFragmentDirections
 import com.genlz.share.util.appcompat.*
+import com.genlz.share.util.launchAndCollectIn
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.shareIn
 import java.io.File
+import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -63,6 +70,9 @@ class MainActivity : AppCompatActivity(),
 
     private val navController: NavController get() = navHostFragment.navController
 
+    /**
+     * The current fragment in [navHostFragment].
+     */
     private val currentFragment get() = navHostFragment.childFragmentManager.fragments[0]
 
     private val navHostFragment by lazyNoneSafe {
@@ -72,6 +82,10 @@ class MainActivity : AppCompatActivity(),
     private val windowInsetsController by lazyNoneSafe {
         WindowInsetsControllerCompat(window, window.decorView)
     }
+
+    @Inject
+    @ApplicationScope
+    internal lateinit var applicationScope: CoroutineScope
 
     /**
      * Use this constructor to show top level destinations.
@@ -97,6 +111,29 @@ class MainActivity : AppCompatActivity(),
         setupNavigation()
         listenWindowInfo()
         setupViews()
+        lifecycleScope.launch {
+            @Suppress("MissingPermission")
+            doWithPermissions(
+                arrayOf(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            ) {
+                val locationManager = getSystemService<LocationManager>()
+                val geocoder = Geocoder(this@MainActivity, Locale.getDefault())
+                locationManager
+                    .locationFlow("network")
+                    .shareIn(applicationScope, SharingStarted.WhileSubscribed(), 1)
+                    .launchAndCollectIn(
+                        this@MainActivity,
+                    ) { location ->
+                        val geo = withContext(Dispatchers.IO) {
+                            geocoder.getFromLocation(location.latitude, location.longitude, 1)[0]
+                        }
+                        Log.d(TAG, "onCreate: $geo")
+                    }
+            }
+        }
     }
 
     /**
@@ -338,7 +375,7 @@ class MainActivity : AppCompatActivity(),
         lifecycleScope.launch {
             WindowInfoTracker.getOrCreate(
                 applicationContext
-            ).windowLayoutInfo(this@MainActivity).flowWithLifecycle(lifecycle).collect {
+            ).windowLayoutInfo(this@MainActivity).launchAndCollectIn(this@MainActivity) {
                 for (displayFeature in it.displayFeatures) {
                     if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.NONE) {
                         Log.d(TAG, "onCreate: App is spanned across a fold")
