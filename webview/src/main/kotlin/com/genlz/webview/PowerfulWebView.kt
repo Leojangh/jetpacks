@@ -9,18 +9,18 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
-import android.webkit.*
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.annotation.StyleRes
 import androidx.core.view.*
-import androidx.core.view.NestedScrollingParent3
 import androidx.core.view.ViewCompat.NestedScrollType
 import androidx.core.view.ViewCompat.ScrollAxis
 import androidx.core.widget.NestedScrollView
 import androidx.webkit.ServiceWorkerClientCompat
 import androidx.webkit.ServiceWorkerControllerCompat
 import androidx.webkit.WebViewFeature
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @SuppressLint("SetJavaScriptEnabled")
 class PowerfulWebView @JvmOverloads constructor(
@@ -128,10 +128,6 @@ class PowerfulWebView @JvmOverloads constructor(
                 }
             })
         }
-    }
-
-    override fun onCheckIsTextEditor(): Boolean {
-        return super.onCheckIsTextEditor()
     }
 
     override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection {
@@ -337,15 +333,6 @@ class PowerfulWebView @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "PowerfulWebView"
-
-        /**
-         * Convert the callback style to kotlin coroutine.
-         */
-        suspend fun WebView.evaluateJavascript(script: String): String {
-            return suspendCoroutine { cont ->
-                evaluateJavascript(script) { cont.resume(it) }
-            }
-        }
     }
 
     // Gesture detector

@@ -7,6 +7,8 @@ import androidx.annotation.NonNull
 import androidx.annotation.RequiresFeature
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * @see WebViewCompat.postVisualStateCallback
@@ -21,4 +23,10 @@ inline fun WebView.postVisualStateCallback(
 ) {
     WebViewCompat.postVisualStateCallback(this, requestId, callback)
 }
+
+/**
+ * Convert the callback style to kotlin coroutine.
+ */
+suspend fun WebView.evaluateJavascript(script: String): String =
+    suspendCoroutine { cont -> evaluateJavascript(script) { cont.resume(it) } }
 
