@@ -20,8 +20,8 @@ import com.genlz.jetpacks.ui.gallery.GalleryFragment
 import com.genlz.jetpacks.ui.web.bridge.AndroidImpl
 import com.genlz.share.util.appcompat.*
 import com.genlz.share.util.postponeEnterTransitionUtilDraw
-import com.genlz.share.widget.web.DomTouchListener
-import com.genlz.share.widget.web.PowerfulWebView
+import com.genlz.webview.DomTouchListener
+import com.genlz.webview.PowerfulWebView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

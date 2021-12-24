@@ -1,4 +1,4 @@
-package com.genlz.share.widget.web
+package com.genlz.webview
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,20 +10,15 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.webkit.*
-import androidx.annotation.RequiresApi
 import androidx.annotation.StyleRes
-import androidx.core.content.withStyledAttributes
 import androidx.core.view.*
+import androidx.core.view.NestedScrollingParent3
 import androidx.core.view.ViewCompat.NestedScrollType
 import androidx.core.view.ViewCompat.ScrollAxis
 import androidx.core.widget.NestedScrollView
 import androidx.webkit.ServiceWorkerClientCompat
 import androidx.webkit.ServiceWorkerControllerCompat
-import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
-import androidx.webkit.internal.FrameworkServiceWorkerClient
-import androidx.webkit.internal.ServiceWorkerClientAdapter
-import com.genlz.share.util.appcompat.postVisualStateCallback
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -101,7 +96,7 @@ class PowerfulWebView @JvmOverloads constructor(
         isNestedScrollingEnabled = a.getBoolean(0, true)
         a.recycle()
 
-        addJavascriptInterface(com.genlz.share.widget.web.bridge.Log, "Log")
+        addJavascriptInterface(com.genlz.webview.bridge.Log, "Log")
     }
 
     class ScriptInjectorWebViewClient(
@@ -133,7 +128,6 @@ class PowerfulWebView @JvmOverloads constructor(
                 }
             })
         }
-        postVisualStateCallback(2) {}
     }
 
     override fun onCheckIsTextEditor(): Boolean {
@@ -349,9 +343,7 @@ class PowerfulWebView @JvmOverloads constructor(
          */
         suspend fun WebView.evaluateJavascript(script: String): String {
             return suspendCoroutine { cont ->
-                evaluateJavascript(script) {
-                    cont.resume(it)
-                }
+                evaluateJavascript(script) { cont.resume(it) }
             }
         }
     }

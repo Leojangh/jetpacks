@@ -1,4 +1,4 @@
-package com.genlz.share.widget.web
+package com.genlz.webview
 
 import android.graphics.RectF
 import android.webkit.WebView

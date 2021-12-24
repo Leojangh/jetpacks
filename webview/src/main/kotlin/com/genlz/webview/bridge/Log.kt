@@ -1,4 +1,4 @@
-package com.genlz.share.widget.web.bridge
+package com.genlz.webview.bridge
 
 import android.util.Log
 import android.webkit.JavascriptInterface

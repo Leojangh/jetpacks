@@ -1,4 +1,4 @@
-package com.genlz.share.widget.web.bridge
+package com.genlz.webview
 
 import java.lang.annotation.Inherited
 

@@ -5,7 +5,7 @@ import android.util.Log
 import android.webkit.WebView
 import androidx.lifecycle.*
 import com.genlz.jetpacks.BuildConfig
-import com.genlz.share.widget.web.PowerfulWebView
+import com.genlz.webview.PowerfulWebView
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers

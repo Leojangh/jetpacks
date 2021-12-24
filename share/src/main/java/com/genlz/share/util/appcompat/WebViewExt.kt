@@ -7,7 +7,6 @@ import androidx.annotation.NonNull
 import androidx.annotation.RequiresFeature
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
-import com.genlz.share.widget.web.PowerfulWebView
 
 /**
  * @see WebViewCompat.postVisualStateCallback

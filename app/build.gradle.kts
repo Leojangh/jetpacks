@@ -122,6 +122,7 @@ repositories {
 dependencies {
 
     implementation(project(":share"))
+    implementation(project(":webview"))
     implementation(project(":native"))
 
     implementation("org.ow2.asm:asm:$asm")

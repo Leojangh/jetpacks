@@ -33,6 +33,7 @@ rootProject.name = "jetpacks"
 // words separated with a dash (‘-’) character (e.g.kebab-case-formatting)
 include(":app")
 include(":share")
+include(":webview")
 include(":javascript")
 include(":native")
 include(":vulkan")

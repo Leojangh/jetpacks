@@ -7,7 +7,7 @@ import android.webkit.WebView
 import android.widget.Toast
 import com.genlz.javascript.Android
 import com.genlz.share.util.appcompat.mainExecutorExt
-import com.genlz.share.widget.web.PowerfulWebView
+import com.genlz.webview.PowerfulWebView
 
 class AndroidImpl(
     private val webView: WebView
