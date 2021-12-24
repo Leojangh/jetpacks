@@ -35,6 +35,7 @@ include(":app")
 include(":share")
 include(":javascript")
 include(":native")
+include(":vulkan")
 
 include(":javascript-bridge-compiler")
 include(":javascript-bridge")
