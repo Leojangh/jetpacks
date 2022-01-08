@@ -111,6 +111,10 @@ class MainActivity : AppCompatActivity(),
         setupNavigation()
         listenWindowInfo()
         setupViews()
+        requestLocations()
+    }
+
+    private fun requestLocations() {
         lifecycleScope.launch {
             @Suppress("MissingPermission")
             doWithPermissions(
@@ -127,6 +131,7 @@ class MainActivity : AppCompatActivity(),
                     .launchAndCollectIn(
                         this@MainActivity,
                     ) { location ->
+                        @Suppress("BlockingMethodInNonBlockingContext")
                         val geo = withContext(Dispatchers.IO) {
                             geocoder.getFromLocation(location.latitude, location.longitude, 1)[0]
                         }
@@ -159,7 +164,7 @@ class MainActivity : AppCompatActivity(),
                     //Default path is Pictures,DCIM is alternative
                     MediaStore.MediaColumns.RELATIVE_PATH to "${Environment.DIRECTORY_PICTURES}${File.separator}$packageName",
                 )
-            ) ?: error("something error...")
+            )
         } else {
             withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) {
                 //External Android/data/{package name}/files/{type}

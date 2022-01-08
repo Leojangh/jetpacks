@@ -8,6 +8,7 @@ object ForegroundTracker : Application.ActivityLifecycleCallbacks {
 
     @Volatile
     var foreground: Activity? = null
+        private set
 
     val hasForeground get() = foreground != null
 
