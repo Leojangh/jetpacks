@@ -124,6 +124,7 @@ dependencies {
     implementation(project(":share"))
     implementation(project(":webview"))
     implementation(project(":native"))
+    implementation(project(":app-widgets"))
 
     implementation("org.ow2.asm:asm:$asm")
     // The core module is used by all other components
@@ -146,8 +147,11 @@ dependencies {
 
     implementation("io.coil-kt:coil:$coil")
 
+    // Typed DataStore (Typed API surface, such as Proto)
+    implementation("androidx.datastore:datastore:$datastore")
+    // Preferences DataStore (SharedPreferences like APIs)
+    implementation("androidx.datastore:datastore-preferences:$datastore")
     implementation("androidx.startup:startup-runtime:$startup")
-
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle")

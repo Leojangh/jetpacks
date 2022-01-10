@@ -13,9 +13,12 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
+import android.view.RoundedCorner
+import android.view.WindowInsets
 import android.view.animation.AnticipateInterpolator
 import android.widget.EditText
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -49,6 +52,7 @@ import com.genlz.share.util.launchAndCollectIn
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
+import dalvik.system.DexClassLoader
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
@@ -99,9 +103,6 @@ class MainActivity : AppCompatActivity(),
         )
     )
 
-    /**
-     * Access [Build.SOC_MODEL] and some other maybe crash...
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         waitForReady()
@@ -111,35 +112,13 @@ class MainActivity : AppCompatActivity(),
         setupNavigation()
         listenWindowInfo()
         setupViews()
-        requestLocations()
+        
     }
 
-    private fun requestLocations() {
-        lifecycleScope.launch {
-            @Suppress("MissingPermission")
-            doWithPermissions(
-                arrayOf(
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-            ) {
-                val locationManager = getSystemService<LocationManager>()
-                val geocoder = Geocoder(this@MainActivity, Locale.getDefault())
-                locationManager
-                    .locationFlow("network")
-                    .shareIn(applicationScope, SharingStarted.WhileSubscribed(), 1)
-                    .launchAndCollectIn(
-                        this@MainActivity,
-                    ) { location ->
-                        @Suppress("BlockingMethodInNonBlockingContext")
-                        val geo = withContext(Dispatchers.IO) {
-                            geocoder.getFromLocation(location.latitude, location.longitude, 1)[0]
-                        }
-                        Log.d(TAG, "onCreate: $geo")
-                    }
-            }
-        }
-    }
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun retrieveRoundedCorner(position: Int) =
+        binding.root.rootWindowInsetsExt?.toWindowInsets()
+            ?.getRoundedCorner(position)
 
     /**
      * Taking a picture and save as [fileName] to external pictures albums.

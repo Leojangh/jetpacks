@@ -16,6 +16,7 @@ const val activity = "1.4.0"
 const val material = "1.4.0"
 const val room = "2.4.0" //kapt for Apple silicon since 2.4.0-beta01.
 const val startup = "1.1.0"
+const val datastore = "1.0.0"
 const val palette = "1.0.0"
 const val paging = "3.1.0"
 const val swiperRefreshLayout = "1.1.0"

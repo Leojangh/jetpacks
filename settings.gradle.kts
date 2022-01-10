@@ -16,11 +16,11 @@ pluginManagement {
                 useModule("com.android.tools.build:gradle:${requested.version}")
             }
             //hilt
-            if (requested.id.id == "dagger.hilt.android.plugin") {
+            if (requested.id.namespace == "dagger.hilt.android") {
                 useModule("com.google.dagger:hilt-android-gradle-plugin:${requested.version}")
             }
             //navigation
-            if (requested.id.id == "androidx.navigation.safeargs.kotlin") {
+            if (requested.id.namespace == "androidx.navigation.safeargs") {
                 useModule("androidx.navigation:navigation-safe-args-gradle-plugin:${requested.version}")
             }
         }
@@ -37,6 +37,9 @@ include(":webview")
 include(":javascript")
 include(":native")
 include(":vulkan")
+include(":app-widgets")
+include(":app-plugins")
+include(":app-host")
 
 include(":javascript-bridge-compiler")
 include(":javascript-bridge")

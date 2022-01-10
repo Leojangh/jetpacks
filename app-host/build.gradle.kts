@@ -34,5 +34,4 @@ android {
 
 dependencies {
     api(project(":share"))
-    implementation("androidx.webkit:webkit:$webkit")
 }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="time_separator">:</string>
+    <string name="time_default_text">0</string>
+</resources>
