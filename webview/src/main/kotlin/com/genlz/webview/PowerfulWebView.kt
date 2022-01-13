@@ -22,6 +22,9 @@ import androidx.webkit.ServiceWorkerClientCompat
 import androidx.webkit.ServiceWorkerControllerCompat
 import androidx.webkit.WebViewFeature
 
+/**
+ * For security reasons, WebView is not allowed in privileged processes.
+ */
 @SuppressLint("SetJavaScriptEnabled")
 class PowerfulWebView @JvmOverloads constructor(
     context: Context,

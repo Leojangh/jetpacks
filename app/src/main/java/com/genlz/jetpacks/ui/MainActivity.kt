@@ -2,19 +2,15 @@ package com.genlz.jetpacks.ui
 
 import android.Manifest
 import android.content.ComponentCallbacks2
+import android.content.ComponentName
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.Geocoder
-import android.location.LocationManager
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
+import android.os.*
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
-import android.view.RoundedCorner
-import android.view.WindowInsets
 import android.view.animation.AnticipateInterpolator
 import android.widget.EditText
 import androidx.activity.viewModels
@@ -42,20 +38,17 @@ import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
 import com.genlz.jetpacks.di.ApplicationScope
+import com.genlz.jetpacks.service.WorkerService
 import com.genlz.jetpacks.ui.common.ActionBarCustomizer
 import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.jetpacks.ui.common.ReSelectable
-import com.genlz.jetpacks.ui.web.WebFragmentDirections
 import com.genlz.share.util.appcompat.*
 import com.genlz.share.util.launchAndCollectIn
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
-import dalvik.system.DexClassLoader
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.shareIn
 import java.io.File
 import java.util.*
 import javax.inject.Inject
@@ -103,6 +96,33 @@ class MainActivity : AppCompatActivity(),
         )
     )
 
+    private var serverMessenger: Messenger? = null
+
+    private val clientMessenger = Messenger(object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            when (msg.what) {
+                WorkerService.MSG_REGISTER_SUCCESS -> {
+                    Log.d(TAG, "handleMessage: success")
+                }
+            }
+        }
+    })
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            serverMessenger = Messenger(service).apply {
+                val msg = Message.obtain(null, WorkerService.MSG_REGISTER_CLIENT).apply {
+                    replyTo = clientMessenger
+                }
+                send(msg)
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            serverMessenger = null
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         waitForReady()
@@ -112,7 +132,8 @@ class MainActivity : AppCompatActivity(),
         setupNavigation()
         listenWindowInfo()
         setupViews()
-        
+
+        bindService(intent<WorkerService>(), serviceConnection, BIND_AUTO_CREATE)
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -206,11 +227,13 @@ class MainActivity : AppCompatActivity(),
         }
 
         binding.fab.setOnClickListener {
-            val uri =
-                "https://mp.weixin.qq.com/s?__biz=Mzk0NDIwMTExNw==&mid=2247502282&idx=1&sn=ed9fe9ab8c3f03499e4a6766e53287de&chksm=c32ac538f45d4c2e2803933233dc191a8216914c462aecf817fe7c7d5e9b88a5835d7b32c64b&scene=0&subscene=91&sessionid=1636875512&clicktime=1636875524&enterid=1636875524&ascene=7&devicetype=android-30&version=2800103b&nettype=WIFI&abtest_cookie=AAACAA%3D%3D&lang=zh_CN&exportkey=A2m99ii%2FhukReN80W6g3A6M%3D&pass_ticket=UrTCnLOw4r%2BY093kmNUyx4K49UfzdEUnzd%2BUgbJ8sX0pWLcZu3aTHX5Wgn2UcdLP&wx_header=1"
-            navController.navigate(
-                WebFragmentDirections.web(uri),
-            )
+//            val uri =
+//                "https://mp.weixin.qq.com/s?__biz=Mzk0NDIwMTExNw==&mid=2247502282&idx=1&sn=ed9fe9ab8c3f03499e4a6766e53287de&chksm=c32ac538f45d4c2e2803933233dc191a8216914c462aecf817fe7c7d5e9b88a5835d7b32c64b&scene=0&subscene=91&sessionid=1636875512&clicktime=1636875524&enterid=1636875524&ascene=7&devicetype=android-30&version=2800103b&nettype=WIFI&abtest_cookie=AAACAA%3D%3D&lang=zh_CN&exportkey=A2m99ii%2FhukReN80W6g3A6M%3D&pass_ticket=UrTCnLOw4r%2BY093kmNUyx4K49UfzdEUnzd%2BUgbJ8sX0pWLcZu3aTHX5Wgn2UcdLP&wx_header=1"
+//            navController.navigate(
+//                WebFragmentDirections.web(uri),
+//            )
+            val msg = Message.obtain(null, WorkerService.MSG_HELLO, null)
+            serverMessenger?.send(msg)
         }
 
         val fm = navHostFragment.childFragmentManager

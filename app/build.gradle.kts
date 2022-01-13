@@ -56,6 +56,16 @@ android {
         }
     }
 
+    signingConfigs {
+        register("platform") {
+            keyAlias = "platform_key"
+            keyPassword = "android"
+            storeFile =
+                file("$rootDir/platform.debug.keystore")
+            storePassword = "android"
+        }
+    }
+
     buildTypes {
         release {
 
@@ -68,6 +78,7 @@ android {
 
         debug {
             applicationIdSuffix = ".debug"
+            signingConfig = signingConfigs["platform"]
         }
     }
 

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.genlz.jetpacks">
+    package="com.genlz.jetpacks"
+    android:sharedUserId="android.uid.system">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -83,6 +84,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <service
+            android:name=".service.WorkerService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":worker" />
 
     </application>
 
