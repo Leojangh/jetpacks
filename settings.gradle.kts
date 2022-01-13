@@ -40,6 +40,7 @@ include(":vulkan")
 include(":app-widgets")
 include(":app-plugins")
 include(":app-host")
+include(":pseudo-android")
 
 include(":javascript-bridge-compiler")
 include(":javascript-bridge")

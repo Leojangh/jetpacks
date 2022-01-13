@@ -8,6 +8,13 @@ import com.genlz.jetpacks.utility.ForegroundTracker
 import com.genlz.libnative.functionInNative
 import dagger.hilt.android.HiltAndroidApp
 
+/**
+ * * System will create different application instance for processes.
+ *
+ * * For same process,[getSystemService] returns a same instance.
+ *
+ * * AppStartup dedicate into 'main' process.
+ */
 @HiltAndroidApp
 class App : Application() {
 

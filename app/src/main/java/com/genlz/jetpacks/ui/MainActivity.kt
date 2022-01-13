@@ -136,6 +136,11 @@ class MainActivity : AppCompatActivity(),
         bindService(intent<WorkerService>(), serviceConnection, BIND_AUTO_CREATE)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(serviceConnection)
+    }
+
     @RequiresApi(Build.VERSION_CODES.S)
     private fun retrieveRoundedCorner(position: Int) =
         binding.root.rootWindowInsetsExt?.toWindowInsets()

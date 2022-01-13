@@ -77,8 +77,11 @@ android {
         }
 
         debug {
-            applicationIdSuffix = ".debug"
+            applicationIdSuffix = ".$name"
+            // I can't create a new build type for follow configurations
             signingConfig = signingConfigs["platform"]
+            manifestPlaceholders["sharedUserId"] =
+                if (signingConfig?.name == "platform") "android.uid.system" else ""
         }
     }
 
@@ -136,6 +139,7 @@ dependencies {
     implementation(project(":webview"))
     implementation(project(":native"))
     implementation(project(":app-widgets"))
+    compileOnly(project(":pseudo-android"))//escape non-public API restriction
 
     implementation("org.ow2.asm:asm:$asm")
     // The core module is used by all other components

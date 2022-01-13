@@ -5,16 +5,14 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
+import com.genlz.share.util.appcompat.getSystemService
 
 class ConnectivityInspector(
     context: Context,
 ) : LiveData<Boolean>() {
-    private val connectivityManager = ContextCompat.getSystemService(
-        context,
-        ConnectivityManager::class.java
-    ) as ConnectivityManager
+
+    private val connectivityManager = context.getSystemService<ConnectivityManager>()
 
     private val validNetworks = mutableSetOf<Network>()
 

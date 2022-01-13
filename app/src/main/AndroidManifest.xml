@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.genlz.jetpacks"
-    android:sharedUserId="android.uid.system">
+    android:sharedUserId="${sharedUserId}">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -70,7 +70,10 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
-                android:name="com.genlz.jetpacks.utility.UiModeInspectorInitializer"
+                android:name="com.genlz.jetpacks.startup.UiModeInspectorInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="com.genlz.jetpacks.startup.ServiceZygote"
                 android:value="androidx.startup" />
         </provider>
 
