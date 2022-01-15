@@ -31,7 +31,7 @@ inline fun Activity.startIntentSenderForResultExt(
     flagsMask: Int,
     flagsValue: Int,
     extraFlags: Int,
-    options: Bundle?
+    options: Bundle?,
 ) = ActivityCompat.startIntentSenderForResult(
     this,
     intent,
@@ -92,7 +92,7 @@ inline fun Activity.startPostponedEnterTransitionExt() =
  */
 inline fun Activity.requestPermissionsExt(
     permissions: Array<String>,
-    @IntRange(from = 0) requestCode: Int
+    @IntRange(from = 0) requestCode: Int,
 ) = ActivityCompat.requestPermissions(this, permissions, requestCode)
 
 /**
@@ -123,6 +123,6 @@ inline fun Activity.setLocusContextExt(locusId: LocusIdCompat?, bundle: Bundle?)
  * The [lazy] wrapper without thread safety promise.
  * @see lazy
  */
-inline fun <T> Activity.lazyNoneSafe(crossinline initializer: () -> T) =
+inline fun <T> lazyNoneSafe(crossinline initializer: () -> T) =
     lazy(LazyThreadSafetyMode.NONE) { initializer() }
 

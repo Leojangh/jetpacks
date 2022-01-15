@@ -38,6 +38,8 @@ import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
 import com.genlz.jetpacks.di.ApplicationScope
+import com.genlz.jetpacks.service.IRemoteService
+import com.genlz.jetpacks.service.RemoteService
 import com.genlz.jetpacks.service.WorkerService
 import com.genlz.jetpacks.ui.common.ActionBarCustomizer
 import com.genlz.jetpacks.ui.common.FabSetter
@@ -96,6 +98,9 @@ class MainActivity : AppCompatActivity(),
         )
     )
 
+    /**
+     * The messenger between [clientMessenger] and [WorkerService].
+     */
     private var serverMessenger: Messenger? = null
 
     private val clientMessenger = Messenger(object : Handler(Looper.getMainLooper()) {
@@ -108,18 +113,28 @@ class MainActivity : AppCompatActivity(),
         }
     })
 
+    private var remoteService: IRemoteService? = null
+
     private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            serverMessenger = Messenger(service).apply {
-                val msg = Message.obtain(null, WorkerService.MSG_REGISTER_CLIENT).apply {
-                    replyTo = clientMessenger
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            when (name.className) {
+                WorkerService::class.java.name -> serverMessenger = Messenger(service).apply {
+                    Message.obtain(null, WorkerService.MSG_REGISTER_CLIENT).apply {
+                        replyTo = clientMessenger
+                    }.let(::send)
                 }
-                send(msg)
+
+                RemoteService::class.java.name ->
+                    remoteService = IRemoteService.Stub.asInterface(service)
             }
         }
 
-        override fun onServiceDisconnected(name: ComponentName?) {
-            serverMessenger = null
+        override fun onServiceDisconnected(name: ComponentName) {
+            when (name.className) {
+                WorkerService::class.java.name -> serverMessenger = null
+
+                RemoteService::class.java.name -> remoteService = null
+            }
         }
     }
 
@@ -134,6 +149,7 @@ class MainActivity : AppCompatActivity(),
         setupViews()
 
         bindService(intent<WorkerService>(), serviceConnection, BIND_AUTO_CREATE)
+        bindService(intent<RemoteService>(), serviceConnection, BIND_AUTO_CREATE)
     }
 
     override fun onDestroy() {
@@ -239,6 +255,7 @@ class MainActivity : AppCompatActivity(),
 //            )
             val msg = Message.obtain(null, WorkerService.MSG_HELLO, null)
             serverMessenger?.send(msg)
+            remoteService?.basicTypes(0, 0L, false, 0f, .0, "")
         }
 
         val fm = navHostFragment.childFragmentManager

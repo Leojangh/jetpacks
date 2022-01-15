@@ -20,6 +20,7 @@ class WorkerService : Service() {
     @ApplicationScope
     internal lateinit var scope: CoroutineScope
 
+    //Only create once.
     override fun onBind(intent: Intent?): IBinder =
         Messenger(object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
