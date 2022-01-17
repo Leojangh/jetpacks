@@ -147,7 +147,10 @@ class MainActivity : AppCompatActivity(),
         setupNavigation()
         listenWindowInfo()
         setupViews()
+        bindServices()
+    }
 
+    private fun bindServices(){
         bindService(intent<WorkerService>(), serviceConnection, BIND_AUTO_CREATE)
         bindService(intent<RemoteService>(), serviceConnection, BIND_AUTO_CREATE)
     }
