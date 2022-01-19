@@ -1,6 +1,7 @@
 package com.genlz.jetpacks
 
 import android.annotation.SuppressLint
+import android.app.ActivityThread
 import android.app.Application
 import android.content.Context
 import android.util.Log
@@ -22,6 +23,7 @@ class App : Application() {
         super.onCreate()
         _INSTANCE = this
 
+        Log.d(TAG, "onCreate: ${ActivityThread.currentProcessName()}")
     }
 
     override fun attachBaseContext(base: Context) {

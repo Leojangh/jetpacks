@@ -49,6 +49,7 @@
             android:name=".ui.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:exported="true"
+            android:excludeFromRecents="true"
             android:label="@string/app_name"
             android:theme="@style/EdgeToEdge.NewSplash">
 

@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity(),
         bindServices()
     }
 
-    private fun bindServices(){
+    private fun bindServices() {
         bindService(intent<WorkerService>(), serviceConnection, BIND_AUTO_CREATE)
         bindService(intent<RemoteService>(), serviceConnection, BIND_AUTO_CREATE)
     }
