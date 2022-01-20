@@ -26,6 +26,7 @@ class ProcessMonitorService : Service() {
         scope.launch {
             ProcessMonitorManager.getInstance(applicationContext).topInfoFlow().collectLatest {
                 val (topProcess, topTask) = it
+
                 Log.d(TAG, "onStartCommand: ${topTask.topActivity}")
                 Log.d(TAG, "onStartCommand: ${topProcess.processName}")
             }

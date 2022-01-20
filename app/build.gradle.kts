@@ -31,28 +31,42 @@ android {
         }
     }
 
-    flavorDimensions += "env"
+    val device = "device"
+    val region = "region"
+    flavorDimensions += listOf(region, device)
 
     productFlavors {
 
-        create("alpha") {
-            isDefault = true
-            versionNameSuffix = "-$name"
-            buildConfigField("String", "ENV", """"$name"""")
-        }
-        create("beta") {
-//            dimension = "env" //only one dimension,optional
-            versionNameSuffix = "-$name"
-            buildConfigField("String", "ENV", """"$name"""")
+        create("cn") {
+            dimension = region
+            buildConfigField("boolean", "IS_GLOBAL", "false")
         }
 
-        create("rc") {
-            buildConfigField("String", "ENV", """"$name"""")
-            versionNameSuffix = "-$name"
+        create("global") {
+            dimension = region
+            buildConfigField("boolean", "IS_GLOBAL", "true")
         }
 
-        create("stable") {
-            buildConfigField("String", "ENV", """"$name"""")
+        create("phone") {
+            dimension = device //Optional if there is only one dimension.
+            buildConfigField("String", "DEVICE", """"$name"""")
+        }
+
+        create("pad") {
+            dimension = device //Optional if there is only one dimension.
+            buildConfigField("String", "DEVICE", """"$name"""")
+        }
+    }
+
+    androidComponents {
+        beforeVariants {
+            // To check for a certain build type, use variantBuilder.buildType == "<buildType>"
+
+//            //No globalAlpha
+//            if (it.productFlavors.containsAll(listOf("version" to "alpha", "region" to "global"))) {
+//                // Gradle ignores any variants that satisfy the conditions above.
+//                it.enabled = false
+//            }
         }
     }
 
@@ -85,11 +99,6 @@ android {
         }
     }
 
-    androidComponents {
-        beforeVariants {
-            //filter some combinations
-        }
-    }
 
     tasks.assemble.configure {
         dependsOn += ":javascript:copyCompiledJs2app"
