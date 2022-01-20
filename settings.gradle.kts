@@ -32,6 +32,7 @@ rootProject.name = "jetpacks"
 // A kebab case formatting is when all letters lowercase,
 // words separated with a dash (‘-’) character (e.g.kebab-case-formatting)
 include(":app")
+include(":activity-monitor")
 include(":share")
 include(":webview")
 include(":javascript")
