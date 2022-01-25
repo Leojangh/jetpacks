@@ -8,6 +8,7 @@ import androidx.annotation.RequiresPermission
 import com.genlz.jetpacks.di.ApplicationScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,12 +25,15 @@ class ProcessMonitorService : Service() {
     @RequiresPermission("android.permission.SET_ACTIVITY_WATCHER")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         scope.launch {
-            ProcessMonitorManager.getInstance(applicationContext).topInfoFlow().collectLatest {
-                val (topProcess, topTask) = it
-
-                Log.d(TAG, "onStartCommand: ${topTask.topActivity}")
-                Log.d(TAG, "onStartCommand: ${topProcess.processName}")
-            }
+            ProcessMonitorManager.getInstance(applicationContext)
+                .topInfoFlow()
+                .catch {
+                    //ignore
+                }.collect {
+                    val (topProcess, topTask) = it
+                    Log.d(TAG, "onStartCommand: ${topTask.topActivity}")
+                    Log.d(TAG, "onStartCommand: ${topProcess.processName}")
+                }
         }
         return START_STICKY_COMPATIBILITY
     }
