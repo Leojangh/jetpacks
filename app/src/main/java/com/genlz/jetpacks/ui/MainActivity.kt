@@ -1,10 +1,7 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
-import android.content.ComponentCallbacks2
-import android.content.ComponentName
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.*

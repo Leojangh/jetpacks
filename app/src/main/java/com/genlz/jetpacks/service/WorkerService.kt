@@ -1,20 +1,43 @@
 package com.genlz.jetpacks.service
 
 import android.app.Service
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.*
+import android.telephony.TelephonyManager
 import android.util.Log
+import android.widget.Toast
+import androidx.core.os.LocaleListCompat
 import com.genlz.jetpacks.di.ApplicationScope
+import com.genlz.share.util.appcompat.getSystemService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class WorkerService : Service() {
 
     private val clients = mutableListOf<Messenger>()
+
+    private val receivers = mutableListOf(
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                Toast.makeText(applicationContext, "locale changed", Toast.LENGTH_SHORT).show()
+            }
+        } to Intent.ACTION_LOCALE_CHANGED,
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                Toast.makeText(
+                    applicationContext,
+                    "config changed",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        } to Intent.ACTION_CONFIGURATION_CHANGED
+    )
 
     @Inject
     @ApplicationScope
@@ -43,13 +66,17 @@ class WorkerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND)
-        scope.launch {
-            while (true) {
-                delay(1000L)
-            }
+        receivers.forEach {
+            registerReceiver(it.first, IntentFilter(it.second))
         }
         return START_STICKY_COMPATIBILITY
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        receivers.forEach {
+            unregisterReceiver(it.first)
+        }
     }
 
     companion object {

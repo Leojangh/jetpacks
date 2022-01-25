@@ -10,8 +10,6 @@ import com.genlz.activitymonitor.databinding.FloatingWindowBinding
 import com.genlz.share.util.appcompat.getSystemService
 import com.genlz.share.util.appcompat.lazyNoneSafe
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
 
 class ProcessMonitorService : Service() {
 
@@ -36,7 +34,6 @@ class ProcessMonitorService : Service() {
             0,
             0
         )
-        Log.d(TAG, "onStartCommand: ${Thread.currentThread()}")
         if (!binding.root.isAttachedToWindow) {
             windowManager.addView(binding.root, params)
         }
@@ -44,13 +41,11 @@ class ProcessMonitorService : Service() {
             ProcessMonitorManager.getInstance(applicationContext)
                 .topInfoFlow()
                 .collect {
-                    if (it != null) {
-                        val (_, topTask) = it
-                        Log.d(TAG, "onStartCommand: ${topTask.topActivity}")
-                        withContext(Dispatchers.Main) {
-                            binding.activity.text =
-                                topTask.topActivity?.packageName + "/" + topTask.topActivity?.className
-                        }
+                    val (_, topTask) = it
+                    Log.d(TAG, "onStartCommand: ${topTask.topActivity}")
+                    withContext(Dispatchers.Main) {
+                        binding.activity.text =
+                            topTask.topActivity?.packageName + "/" + topTask.topActivity?.className
                     }
                 }
         }
