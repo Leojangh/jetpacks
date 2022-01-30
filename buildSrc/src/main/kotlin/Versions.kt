@@ -1,4 +1,4 @@
-const val HILT = "2.40.3"
+const val HILT = "2.40.5"
 const val NAVIGATION = "2.4.0"
 const val AGP = "7.0.4"
 const val min_sdk = 21
