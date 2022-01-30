@@ -31,7 +31,7 @@ gradlePlugin {
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle-api:7.0.4")
+    implementation("com.android.tools.build:gradle-api:7.1.0")
     gradleApi()
     gradleKotlinDsl()
 }

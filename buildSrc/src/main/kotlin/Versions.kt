@@ -1,6 +1,8 @@
 const val HILT = "2.40.5"
-const val NAVIGATION = "2.4.0"
-const val AGP = "7.0.4"
+// Update AGP to 7.1.0,but incompatible with navigation 2.4.0
+// https://stackoverflow.com/questions/70857476/unable-to-load-class-androidcomponentsextension-after-upgrading-the-android-grad/70857477
+const val NAVIGATION = "2.5.0-alpha01"
+const val AGP = "7.1.0"
 const val min_sdk = 21
 const val target_sdk = 31
 const val java_version = "11"

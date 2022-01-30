@@ -45,9 +45,9 @@ android {
         }
     }
 
-    lint {
-        isAbortOnError = false
-    }
+//    lint {
+//        isAbortOnError = false
+//    }
 }
 
 dependencies {

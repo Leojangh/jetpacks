@@ -121,11 +121,12 @@ android {
         dataBinding = true
     }
 
-    lint {
-        // if true, only report errors.
-        isIgnoreWarnings = true
-        isCheckDependencies = true
-    }
+    // The lint closure is deprecated in AGP 7.1.0
+//    lint {
+//        // if true, only report errors.
+//        isIgnoreWarnings = true
+//        isCheckDependencies = true
+//    }
 }
 
 ksp {
