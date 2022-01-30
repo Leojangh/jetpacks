@@ -1,6 +1,9 @@
 plugins {
     `kotlin-dsl`
 }
+/**
+ * [getRootProject] is buildSrc,instead of jetpacks.
+ * */
 
 kotlin {
     jvmToolchain {

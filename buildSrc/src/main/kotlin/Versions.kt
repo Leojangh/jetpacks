@@ -1,5 +1,5 @@
 const val HILT = "2.40.3"
-const val NAVIGATION = "2.4.0-rc01"
+const val NAVIGATION = "2.4.0"
 const val AGP = "7.0.4"
 const val min_sdk = 21
 const val target_sdk = 31
