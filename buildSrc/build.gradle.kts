@@ -14,6 +14,8 @@ kotlin {
     tasks.compileKotlin {
         kotlinOptions {
             jvmTarget = "11"
+            sourceCompatibility = "11"
+            targetCompatibility = "11"
         }
     }
 }
@@ -31,7 +33,7 @@ gradlePlugin {
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle-api:7.1.0")
+    implementation("com.android.tools.build:gradle-api:7.1.1")
     gradleApi()
     gradleKotlinDsl()
 }

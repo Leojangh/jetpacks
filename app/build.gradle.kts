@@ -181,10 +181,6 @@ dependencies {
     // Preferences DataStore (SharedPreferences like APIs)
     implementation("androidx.datastore:datastore-preferences:$datastore")
     implementation("androidx.startup:startup-runtime:$startup")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines")
 
     implementation("androidx.room:room-ktx:$room")
     ksp("androidx.room:room-compiler:$room")
@@ -207,10 +203,7 @@ dependencies {
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
-    implementation("androidx.core:core-ktx:$coreKtx")
-    implementation("androidx.appcompat:appcompat:$appcompat")
     implementation("androidx.activity:activity-ktx:$activity")
-    implementation("com.google.android.material:material:$material")
     implementation("androidx.constraintlayout:constraintlayout:$constraintLayout")
     implementation("androidx.navigation:navigation-fragment-ktx:$NAVIGATION")
     implementation("androidx.navigation:navigation-ui-ktx:$NAVIGATION")

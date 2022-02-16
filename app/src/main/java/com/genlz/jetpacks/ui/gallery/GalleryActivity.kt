@@ -16,9 +16,7 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
 import coil.memory.MemoryCache
 import com.genlz.jetpacks.ui.common.FullscreenController
-import com.genlz.share.util.appcompat.intent
-import com.genlz.share.util.appcompat.setDecorFitsSystemWindowsExt
-import com.genlz.share.util.appcompat.transitionNameExt
+import com.genlz.share.util.appcompat.*
 import com.genlz.share.util.postponeEnterTransitionUtilDraw
 
 /**
@@ -26,11 +24,8 @@ import com.genlz.share.util.postponeEnterTransitionUtilDraw
  */
 class GalleryActivity : AppCompatActivity(), FullscreenController {
 
-    private val windowInsetsController by lazy {
-        WindowInsetsControllerCompat(
-            window,
-            window.decorView
-        )
+    private val windowInsetsController by lazyNoneSafe {
+        window.decorView.windowInsetsControllerExt ?: error("Not attached to a window yet!")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

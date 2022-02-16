@@ -75,8 +75,9 @@ class MainActivity : AppCompatActivity(),
         supportFragmentManager.findFragmentById(R.id.content_main) as NavHostFragment
     }
 
+    //Constructor WindowInsetsControllerCompat(Window, View)' is deprecated since version 1.8.0
     private val windowInsetsController by lazyNoneSafe {
-        WindowInsetsControllerCompat(window, window.decorView)
+        window.decorView.windowInsetsControllerExt ?: error("Not attached to a window yet!")
     }
 
     @Inject

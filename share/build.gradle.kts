@@ -46,6 +46,7 @@ dependencies {
     api("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle")
     api("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle")
     api("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines")
 
     api("androidx.core:core-ktx:$coreKtx")
     api("androidx.appcompat:appcompat:$appcompat")
