@@ -35,9 +35,7 @@ import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
 import com.genlz.jetpacks.di.ApplicationScope
-import com.genlz.jetpacks.service.IRemoteService
-import com.genlz.jetpacks.service.RemoteService
-import com.genlz.jetpacks.service.WorkerService
+import com.genlz.jetpacks.service.*
 import com.genlz.jetpacks.ui.common.ActionBarCustomizer
 import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
@@ -113,8 +111,11 @@ class MainActivity : AppCompatActivity(),
 
     private var remoteService: IRemoteService? = null
 
+    private var locationService: ILocationService? = null
+
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            Log.d(TAG, "onServiceConnected: $name")
             when (name.className) {
                 WorkerService::class.java.name -> serverMessenger = Messenger(service).apply {
                     Message.obtain(null, WorkerService.MSG_REGISTER_CLIENT).apply {
@@ -124,6 +125,10 @@ class MainActivity : AppCompatActivity(),
 
                 RemoteService::class.java.name ->
                     remoteService = IRemoteService.Stub.asInterface(service)
+
+                LocationService::class.java.name -> {
+                    locationService = ILocationService.Stub.asInterface(service)
+                }
             }
         }
 
@@ -132,6 +137,8 @@ class MainActivity : AppCompatActivity(),
                 WorkerService::class.java.name -> serverMessenger = null
 
                 RemoteService::class.java.name -> remoteService = null
+
+                LocationService::class.java.name -> locationService = null
             }
         }
     }
@@ -146,11 +153,18 @@ class MainActivity : AppCompatActivity(),
         listenWindowInfo()
         setupViews()
         bindServices()
+
+        binding.root.post {
+            Log.d(TAG, "onCreate service: $locationService")
+            val location = locationService?.requestLocation(40.0, 116.0)
+            Log.d(TAG, "onCreate location: $location")
+        }
     }
 
     private fun bindServices() {
         bindService(intent<WorkerService>(), serviceConnection, BIND_AUTO_CREATE)
         bindService(intent<RemoteService>(), serviceConnection, BIND_AUTO_CREATE)
+        bindService(intent<LocationService>(), serviceConnection, BIND_AUTO_CREATE)
     }
 
     override fun onDestroy() {

@@ -39,6 +39,10 @@
         <meta-data
             android:name="android.allow_multiple_resumed_activities"
             android:value="true" />
+
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="7db59010136690dbb3ace82796d63d28" />
         <!--
                     It's default options for activity
                     android:resizeableActivity="true"
@@ -48,8 +52,8 @@
         <activity
             android:name=".ui.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout"
-            android:exported="true"
             android:excludeFromRecents="true"
+            android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/EdgeToEdge.NewSplash">
 
@@ -91,6 +95,12 @@
 
         <service
             android:name=".service.WorkerService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":worker" />
+
+        <service
+            android:name=".service.LocationService"
             android:enabled="true"
             android:exported="true"
             android:process=":worker" />

@@ -6,15 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.*
-import android.telephony.TelephonyManager
 import android.util.Log
 import android.widget.Toast
-import androidx.core.os.LocaleListCompat
 import com.genlz.jetpacks.di.ApplicationScope
-import com.genlz.share.util.appcompat.getSystemService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
