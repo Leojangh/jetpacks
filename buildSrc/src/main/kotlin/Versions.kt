@@ -16,7 +16,7 @@ const val coroutines = "1.6.0"
 const val appcompat = "1.4.1"
 const val activity = "1.4.0"
 const val material = "1.5.0"
-const val room = "2.4.0" //kapt for Apple silicon since 2.4.0-beta01.
+const val room = "2.4.1" //kapt for Apple silicon since 2.4.0-beta01.
 const val startup = "1.1.0"
 const val datastore = "1.0.0"
 const val palette = "1.0.0"
@@ -27,9 +27,8 @@ const val work = "2.7.1" //for targeting S+ since 2.7.0
 const val browser = "1.4.0"
 const val webkit = "1.4.0"
 
-//Dynamic version
-const val window = "1.0.0-rc01"
-const val splash = "1.0.0-alpha02"
+const val window = "1.0.0"
+const val splash = "1.0.0-beta01"
 
 //Third party
 const val retrofit = "2.9.0"
