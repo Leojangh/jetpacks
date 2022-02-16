@@ -455,7 +455,7 @@ class MainActivity : AppCompatActivity(),
      * Must be invoked before [setContentView].
      */
     private fun waitForReady() {
-        splashScreen.setKeepVisibleCondition {
+        splashScreen.setKeepOnScreenCondition {
             !viewModel.ready.value
         }
     }
