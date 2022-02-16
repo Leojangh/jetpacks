@@ -35,9 +35,7 @@ class LocationService : Service() {
                     GeocodeSearch.GPS
                 )
                 val location: RegeocodeAddress = geocodeSearch.getFromLocation(query)
-
-//                geocodeSearch.getFromLocationAsyn(query)
-                return "location.city"
+                return location.city
             }
         }
     }

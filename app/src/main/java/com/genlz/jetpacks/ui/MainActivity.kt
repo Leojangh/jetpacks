@@ -115,7 +115,6 @@ class MainActivity : AppCompatActivity(),
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            Log.d(TAG, "onServiceConnected: $name")
             when (name.className) {
                 WorkerService::class.java.name -> serverMessenger = Messenger(service).apply {
                     Message.obtain(null, WorkerService.MSG_REGISTER_CLIENT).apply {
@@ -155,9 +154,13 @@ class MainActivity : AppCompatActivity(),
         bindServices()
 
         binding.root.post {
-            Log.d(TAG, "onCreate service: $locationService")
-            val location = locationService?.requestLocation(40.0, 116.0)
-            Log.d(TAG, "onCreate location: $location")
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    Log.d(TAG, "onCreate service: $locationService")
+                    val location = locationService?.requestLocation(40.0, 116.0)
+                    Log.d(TAG, "onCreate location: $location")
+                }
+            }
         }
     }
 
