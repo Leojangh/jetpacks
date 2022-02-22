@@ -3,11 +3,13 @@ package com.genlz.jetpacks.service
 import android.app.ActivityManager
 import android.app.IProcessObserver
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import com.genlz.share.util.appcompat.getSystemService
-import com.genlz.share.util.call
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import org.lsposed.hiddenapibypass.HiddenApiBypass
 
 class ProcessMonitorManager private constructor(
     context: Context,
@@ -16,6 +18,7 @@ class ProcessMonitorManager private constructor(
     private val activityManager = context.getSystemService<ActivityManager>()
 
     @RequiresPermission("android.permission.SET_ACTIVITY_WATCHER")
+    @RequiresApi(Build.VERSION_CODES.P)
     fun topInfoFlow() = callbackFlow {
         val cb = object : IProcessObserver.Stub() {
             override fun onForegroundActivitiesChanged(
@@ -42,23 +45,11 @@ class ProcessMonitorManager private constructor(
             }
         }
         val iActivityManager =
-            call<Any>(clazz = ActivityManager::class.java, methodName = "getService")
+            HiddenApiBypass.invoke(ActivityManager::class.java, null, "getService")
         val clazz = Class.forName("android.app.IActivityManager")
-        call<Unit>(
-            clazz = clazz,
-            methodName = "registerProcessObserver",
-            target = iActivityManager,
-            params = arrayOf(cb),
-            paramTypes = arrayOf(IProcessObserver::class.java)
-        )
+        HiddenApiBypass.invoke(clazz, iActivityManager, "registerProcessObserver", cb)
         awaitClose {
-            call<Unit>(
-                clazz = clazz,
-                methodName = "unregisterProcessObserver",
-                target = iActivityManager,
-                params = arrayOf(cb),
-                paramTypes = arrayOf(IProcessObserver::class.java)
-            )
+            HiddenApiBypass.invoke(clazz, iActivityManager, "unregisterProcessObserver", cb)
         }
     }
 

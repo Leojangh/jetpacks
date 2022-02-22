@@ -155,8 +155,7 @@ dependencies {
     implementation(project(":app-widgets"))
     compileOnly(project(":pseudo-android"))//escape non-public API restriction
 
-    implementation("com.amap.api:search:latest.integration")
-
+    implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
     implementation("org.ow2.asm:asm:$asm")
     // The core module is used by all other components
     implementation("com.github.topjohnwu.libsu:core:$libsu")
