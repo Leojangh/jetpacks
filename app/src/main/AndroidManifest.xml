@@ -100,12 +100,6 @@
             android:process=":worker" />
 
         <service
-            android:name=".service.LocationService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":worker" />
-
-        <service
             android:name=".service.RemoteService"
             android:enabled="true"
             android:exported="true"

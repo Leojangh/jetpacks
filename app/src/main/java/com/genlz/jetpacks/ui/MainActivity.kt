@@ -4,8 +4,11 @@ import android.Manifest
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Geocoder
+import android.location.LocationManager
 import android.os.*
 import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import android.view.MotionEvent
 import android.view.animation.AnticipateInterpolator
@@ -47,6 +50,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.io.File
+import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.inject.Inject
 
@@ -111,8 +115,6 @@ class MainActivity : AppCompatActivity(),
 
     private var remoteService: IRemoteService? = null
 
-    private var locationService: ILocationService? = null
-
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             when (name.className) {
@@ -124,10 +126,6 @@ class MainActivity : AppCompatActivity(),
 
                 RemoteService::class.java.name ->
                     remoteService = IRemoteService.Stub.asInterface(service)
-
-                LocationService::class.java.name -> {
-                    locationService = ILocationService.Stub.asInterface(service)
-                }
             }
         }
 
@@ -136,8 +134,6 @@ class MainActivity : AppCompatActivity(),
                 WorkerService::class.java.name -> serverMessenger = null
 
                 RemoteService::class.java.name -> remoteService = null
-
-                LocationService::class.java.name -> locationService = null
             }
         }
     }
@@ -153,21 +149,21 @@ class MainActivity : AppCompatActivity(),
         setupViews()
         bindServices()
 
-        binding.root.post {
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    Log.d(TAG, "onCreate service: $locationService")
-                    val location = locationService?.requestLocation(40.0, 116.0)
-                    Log.d(TAG, "onCreate location: $location")
-                }
-            }
-        }
+//        val locationManager: LocationManager = getSystemService()
+//        val geocoder = Geocoder(this)
+
+        val s = "time=13alksdjfklasjfklasjflkaslnlksangblajtlasj&sign=l2k3jrljldfggssdfg".toByteArray()
+        val andDecode = Base64.encode(s, 0)
+        val jD = java.util.Base64.getEncoder().encode(s)
+        Log.d(TAG, "onCreate: ${andDecode.toString(StandardCharsets.UTF_8)}")
+        Log.d(TAG, "onCreate: ${jD.toString(StandardCharsets.UTF_8)}")
+
+
     }
 
     private fun bindServices() {
         bindService(intent<WorkerService>(), serviceConnection, BIND_AUTO_CREATE)
         bindService(intent<RemoteService>(), serviceConnection, BIND_AUTO_CREATE)
-        bindService(intent<LocationService>(), serviceConnection, BIND_AUTO_CREATE)
     }
 
     override fun onDestroy() {
