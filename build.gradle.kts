@@ -28,12 +28,6 @@ plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin>
 }
 
 allprojects {
-
-    repositories {
-        google()
-        mavenCentral()
-    }
-
     configurations.all {
 
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
@@ -42,10 +36,5 @@ allprojects {
             cacheDynamicVersionsFor(10, "minutes")
             cacheChangingModulesFor(4, "hours")
         }
-    }
-}
-buildscript {
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
     }
 }

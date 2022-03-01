@@ -149,16 +149,6 @@ class MainActivity : AppCompatActivity(),
         setupViews()
         bindServices()
 
-//        val locationManager: LocationManager = getSystemService()
-//        val geocoder = Geocoder(this)
-
-        val s = "time=13alksdjfklasjfklasjflkaslnlksangblajtlasj&sign=l2k3jrljldfggssdfg".toByteArray()
-        val andDecode = Base64.encode(s, 0)
-        val jD = java.util.Base64.getEncoder().encode(s)
-        Log.d(TAG, "onCreate: ${andDecode.toString(StandardCharsets.UTF_8)}")
-        Log.d(TAG, "onCreate: ${jD.toString(StandardCharsets.UTF_8)}")
-
-
     }
 
     private fun bindServices() {

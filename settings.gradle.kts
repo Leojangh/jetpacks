@@ -11,19 +11,20 @@ pluginManagement {
     resolutionStrategy {
 
         eachPlugin {
-            //agp
-            if (requested.id.namespace == "com.android") {
-                useModule("com.android.tools.build:gradle:${requested.version}")
-            }
             //hilt
             if (requested.id.namespace == "dagger.hilt.android") {
                 useModule("com.google.dagger:hilt-android-gradle-plugin:${requested.version}")
             }
-            //navigation
-            if (requested.id.namespace == "androidx.navigation.safeargs") {
-                useModule("androidx.navigation:navigation-safe-args-gradle-plugin:${requested.version}")
-            }
         }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://www.jitpack.io")
     }
 }
 

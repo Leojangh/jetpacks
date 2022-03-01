@@ -143,10 +143,6 @@ kapt {
     correctErrorTypes = true
 }
 
-repositories {
-    maven("https://www.jitpack.io")
-}
-
 dependencies {
 
     implementation(project(":share"))
