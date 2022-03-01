@@ -28,6 +28,9 @@ dependencyResolutionManagement {
     }
 }
 
+//Guiding:https://proandroiddev.com/using-type-safe-project-dependencies-on-gradle-493ab7337aa
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+//snake case:some_module_api
 rootProject.name = "jetpacks"
 // Use kebab case formatting for all project names:
 // A kebab case formatting is when all letters lowercase,

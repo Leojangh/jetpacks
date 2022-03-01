@@ -145,11 +145,11 @@ kapt {
 
 dependencies {
 
-    implementation(project(":share"))
-    implementation(project(":webview"))
-    implementation(project(":native"))
-    implementation(project(":app-widgets"))
-    compileOnly(project(":pseudo-android"))//escape non-public API restriction
+    implementation(projects.share)
+    implementation(projects.webview)
+    implementation(projects.native)
+    implementation(projects.appWidgets)
+    compileOnly(projects.pseudoAndroid)//escape non-public API restriction
 
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
     implementation("org.ow2.asm:asm:$asm")
