@@ -407,7 +407,7 @@ class MainActivity : AppCompatActivity(),
         // 因此，在上图中，应用在单屏模式下运行时，WindowLayoutInfo 为空。
         lifecycleScope.launch {
             WindowInfoTracker.getOrCreate(
-                applicationContext
+                this@MainActivity
             ).windowLayoutInfo(this@MainActivity).launchAndCollectIn(this@MainActivity) {
                 for (displayFeature in it.displayFeatures) {
                     if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.NONE) {
