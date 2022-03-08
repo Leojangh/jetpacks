@@ -97,6 +97,10 @@ android {
             manifestPlaceholders["sharedUserId"] =
                 if (signingConfig?.name == "platform") "android.uid.system" else ""
         }
+        create("benchmark") {
+            signingConfig = signingConfigs["debug"]
+            isDebuggable = false
+        }
     }
 
 
@@ -150,6 +154,8 @@ dependencies {
     implementation(projects.native)
     implementation(projects.appWidgets)
     compileOnly(projects.pseudoAndroid)//escape non-public API restriction
+
+    implementation("androidx.profileinstaller:profileinstaller:1.2.0-alpha01")
 
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
     implementation("org.ow2.asm:asm:$asm")
