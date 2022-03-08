@@ -157,6 +157,7 @@ dependencies {
     compileOnly(projects.pseudoAndroid)//escape non-public API restriction
 
     implementation("androidx.profileinstaller:profileinstaller:1.2.0-alpha01")
+    implementation("androidx.tracing:tracing-ktx:1.0.0")
 
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
     implementation("org.ow2.asm:asm:$asm")

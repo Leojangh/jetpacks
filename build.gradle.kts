@@ -13,6 +13,7 @@ plugins {
     id("androidx.navigation.safeargs.kotlin") version NAVIGATION apply false
     id("com.google.devtools.ksp") version KSP apply false
     id("org.jetbrains.dokka") version DOKKA apply false
+    id("androidx.benchmark") version "1.1.0-alpha13" apply false
 }
 
 //Enable kapt cache
