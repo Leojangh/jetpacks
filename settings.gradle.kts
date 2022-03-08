@@ -48,4 +48,4 @@ include(":pseudo-android")
 
 include(":javascript-bridge-compiler")
 include(":javascript-bridge")
-include(":app:benchmark")
+include(":app:macrobenchmark")

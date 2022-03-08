@@ -97,7 +97,8 @@ android {
             manifestPlaceholders["sharedUserId"] =
                 if (signingConfig?.name == "platform") "android.uid.system" else ""
         }
-        create("benchmark") {
+
+        create("macrobenchmark") {
             signingConfig = signingConfigs["debug"]
             isDebuggable = false
         }
