@@ -143,6 +143,11 @@ android {
         ignoreWarnings = true
         checkDependencies = true
     }
+
+    testFixtures {
+        enable = true
+
+    }
 }
 
 ksp {
