@@ -1,14 +1,14 @@
 const val HILT = "2.40.5"
 // Update AGP to 7.1.0,but incompatible with navigation 2.4.0
 // https://stackoverflow.com/questions/70857476/unable-to-load-class-androidcomponentsextension-after-upgrading-the-android-grad/70857477
-const val NAVIGATION = "2.5.0-alpha01"
+const val NAVIGATION = "2.5.0-rc01"
 const val AGP = "7.1.2"
 const val min_sdk = 21
 const val target_sdk = 31
 const val java_version = "11"
-const val KOTLIN = "1.6.10"
-const val KSP = "$KOTLIN-1.0.2"
-const val DOKKA = "1.6.10"
+const val KOTLIN = "1.6.21"
+const val KSP = "$KOTLIN-1.0.6"
+const val DOKKA = KOTLIN
 
 const val coreKtx = "1.7.0"
 const val lifecycle = "2.4.0"

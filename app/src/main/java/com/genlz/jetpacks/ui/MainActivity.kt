@@ -4,11 +4,8 @@ import android.Manifest
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.Geocoder
-import android.location.LocationManager
 import android.os.*
 import android.provider.MediaStore
-import android.util.Base64
 import android.util.Log
 import android.view.MotionEvent
 import android.view.animation.AnticipateInterpolator
@@ -50,7 +47,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.io.File
-import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.inject.Inject
 

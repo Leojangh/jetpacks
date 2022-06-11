@@ -93,9 +93,16 @@ android {
         debug {
             applicationIdSuffix = ".$name"
             // I can't create a new build type for follow configurations
-            signingConfig = signingConfigs["platform"]
+//            signingConfig = signingConfigs["platform"]
             manifestPlaceholders["sharedUserId"] =
                 if (signingConfig?.name == "platform") "android.uid.system" else ""
+        }
+
+        // It has same signature with system.
+        create("platformDebug") {
+            applicationIdSuffix = ".debug"
+            signingConfig = signingConfigs["platform"]
+            manifestPlaceholders["sharedUserId"] = "android.uid.system"
         }
 
         create("macrobenchmark") {
@@ -156,7 +163,7 @@ dependencies {
     implementation(projects.appWidgets)
     compileOnly(projects.pseudoAndroid)//escape non-public API restriction
 
-    implementation("androidx.profileinstaller:profileinstaller:1.2.0-alpha01")
+    implementation("androidx.profileinstaller:profileinstaller:1.2.0-beta03")
     implementation("androidx.tracing:tracing-ktx:1.0.0")
 
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
