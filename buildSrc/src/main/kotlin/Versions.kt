@@ -1,8 +1,8 @@
 const val HILT = "2.42"
 const val NAVIGATION = "2.5.0-rc01"
-const val AGP = "7.1.2"
+const val AGP = "7.2.1" //upgrade the dependency of gradle api simultaneously
 const val min_sdk = 21
-const val target_sdk = 31
+const val target_sdk = 32
 const val java_version = "11"
 const val KOTLIN = "1.7.0"
 const val KSP = "$KOTLIN-1.0.6"

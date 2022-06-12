@@ -61,11 +61,6 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
         inflater.inflate(R.menu.menu_community, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        return super.onOptionsItemSelected(item)
-    }
-
     companion object {
         private const val TAG = "CommunityFragment"
     }

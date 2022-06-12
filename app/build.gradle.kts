@@ -125,7 +125,10 @@ android {
 
     kotlinOptions {
         jvmTarget = java_version
-        freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
+        freeCompilerArgs = listOf(
+            "-opt-in=kotlin.RequiresOptIn",
+//            "-Xuse-k2"
+        )
     }
 
     buildFeatures {
