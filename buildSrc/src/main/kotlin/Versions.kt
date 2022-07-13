@@ -25,7 +25,7 @@ const val work = "2.7.1" //for targeting S+ since 2.7.0
 const val browser = "1.4.0"
 const val webkit = "1.4.0"
 
-const val window = "1.0.0"
+const val window = "1.1.0-alpha02"
 const val splash = "1.0.0-rc01"
 
 //Third party

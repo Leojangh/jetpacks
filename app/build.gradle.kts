@@ -78,6 +78,13 @@ android {
                 file("$rootDir/platform.debug.keystore")
             storePassword = "android"
         }
+
+        register("aosp") {
+            keyAlias = "android"
+            keyPassword = "android"
+            storeFile = file("aosp.jks")
+            storePassword = "android"
+        }
     }
 
     buildTypes {

@@ -42,7 +42,6 @@ import com.genlz.jetpacks.ui.common.FullscreenController
 import com.genlz.jetpacks.ui.common.ReSelectable
 import com.genlz.share.util.appcompat.*
 import com.genlz.share.util.launchAndCollectIn
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -230,7 +229,7 @@ class MainActivity : AppCompatActivity(),
         // Because update padding has no impact for it's parent,aka the view parent,
         // view group no need to requestLayout.Recursive occurs in this listener if
         // update margins.
-        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { abl, offset ->
+        binding.appBarLayout.addOnOffsetChangedListener { abl, offset ->
             // It seems that the ABL.ScrollViewBehavior can automatically adjust paddings.
             // Control status bar appearance.
             val collapse = -offset + statusBarHeight >= abl.height
@@ -238,7 +237,7 @@ class MainActivity : AppCompatActivity(),
             window.statusBarColor =
                 if (collapse) getColorExt(R.color.statusBarColor) else Color.TRANSPARENT
             windowInsetsController.isAppearanceLightNavigationBars = !collapse
-        })
+        }
         /**
          * Although the menu item id is as same as fragment node in navigation graph,but in fact
          * the fragment id is the fragment container's id at runtime.
@@ -248,14 +247,7 @@ class MainActivity : AppCompatActivity(),
         }
 
         binding.fab.setOnClickListener {
-//            val uri =
-//                "https://mp.weixin.qq.com/s?__biz=Mzk0NDIwMTExNw==&mid=2247502282&idx=1&sn=ed9fe9ab8c3f03499e4a6766e53287de&chksm=c32ac538f45d4c2e2803933233dc191a8216914c462aecf817fe7c7d5e9b88a5835d7b32c64b&scene=0&subscene=91&sessionid=1636875512&clicktime=1636875524&enterid=1636875524&ascene=7&devicetype=android-30&version=2800103b&nettype=WIFI&abtest_cookie=AAACAA%3D%3D&lang=zh_CN&exportkey=A2m99ii%2FhukReN80W6g3A6M%3D&pass_ticket=UrTCnLOw4r%2BY093kmNUyx4K49UfzdEUnzd%2BUgbJ8sX0pWLcZu3aTHX5Wgn2UcdLP&wx_header=1"
-//            navController.navigate(
-//                WebFragmentDirections.web(uri),
-//            )
-            val msg = Message.obtain(null, WorkerService.MSG_HELLO, null)
-            serverMessenger?.send(msg)
-            remoteService?.basicTypes(0, 0L, false, 0f, .0, "")
+
         }
 
         val fm = navHostFragment.childFragmentManager
