@@ -10,7 +10,6 @@ plugins {
 
 android {
     compileSdk = target_sdk
-    buildToolsVersion = "32.0.0"
 
     defaultConfig {
         applicationId = "com.genlz.jetpacks"
@@ -22,6 +21,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
+
+        manifestPlaceholders["sharedUserId"] = ""
     }
 
     sourceSets {
@@ -71,7 +72,7 @@ android {
     }
 
     signingConfigs {
-        register("platform") {
+        register("miui_platform") {
             keyAlias = "platform_key"
             keyPassword = "android"
             storeFile =
@@ -79,17 +80,17 @@ android {
             storePassword = "android"
         }
 
-        register("aosp") {
+        register("aosp_platform") {
             keyAlias = "android"
             keyPassword = "android"
-            storeFile = file("aosp.jks")
+            storeFile = file("$rootDir/aosp.jks")
             storePassword = "android"
         }
     }
 
     buildTypes {
-        release {
 
+        release {
             isMinifyEnabled = true
             isShrinkResources = true
 
@@ -97,19 +98,13 @@ android {
             proguardFiles("proguard-rules.pro")
         }
 
-        debug {
-            applicationIdSuffix = ".$name"
-            // I can't create a new build type for follow configurations
-//            signingConfig = signingConfigs["platform"]
-            manifestPlaceholders["sharedUserId"] =
-                if (signingConfig?.name == "platform") "android.uid.system" else ""
+        create("platform") {
+            signingConfig = signingConfigs["aosp_platform"]
+            manifestPlaceholders["sharedUserId"] = "android.uid.system"
         }
 
-        // It has same signature with system.
-        create("platformDebug") {
-            applicationIdSuffix = ".debug"
-            signingConfig = signingConfigs["platform"]
-            manifestPlaceholders["sharedUserId"] = "android.uid.system"
+        debug {
+            applicationIdSuffix = ".$name"
         }
 
         create("macrobenchmark") {

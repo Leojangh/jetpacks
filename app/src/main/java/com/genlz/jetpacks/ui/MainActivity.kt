@@ -1,7 +1,10 @@
 package com.genlz.jetpacks.ui
 
 import android.Manifest
-import android.content.*
+import android.content.ComponentCallbacks2
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.*
@@ -17,9 +20,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.content.contentValuesOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.*
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.CONSUMED
 import androidx.core.view.WindowInsetsCompat.Type
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
@@ -35,7 +41,9 @@ import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
 import com.genlz.jetpacks.di.ApplicationScope
-import com.genlz.jetpacks.service.*
+import com.genlz.jetpacks.service.IRemoteService
+import com.genlz.jetpacks.service.RemoteService
+import com.genlz.jetpacks.service.WorkerService
 import com.genlz.jetpacks.ui.common.ActionBarCustomizer
 import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
@@ -44,9 +52,9 @@ import com.genlz.share.util.appcompat.*
 import com.genlz.share.util.launchAndCollectIn
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.io.File
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -74,7 +82,7 @@ class MainActivity : AppCompatActivity(),
 
     //Constructor WindowInsetsControllerCompat(Window, View)' is deprecated since version 1.8.0
     private val windowInsetsController by lazyNoneSafe {
-        window.decorView.windowInsetsControllerExt ?: error("Not attached to a window yet!")
+        WindowInsetsControllerCompat(window, window.decorView)
     }
 
     @Inject
@@ -567,11 +575,11 @@ class MainActivity : AppCompatActivity(),
         binding.searchBar.editText.clearFocus()
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
+//    override fun onNewIntent(intent: Intent?) {
+//        super.onNewIntent(intent)
 //        if launch mode is not standard,handle it manually like this
 //        navController.handleDeepLink(intent)
-    }
+//    }
 
     companion object {
         private const val TAG = "MainActivity"

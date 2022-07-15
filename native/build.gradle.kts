@@ -34,7 +34,7 @@ android {
             sourceCompatibility(java_version)
         }
 
-        ndkVersion = "23.1.7779620"
+        ndkVersion = "25.0.8775105"
         ndk {
             abiFilters += listOf("arm64-v8a")
         }

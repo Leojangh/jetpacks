@@ -43,7 +43,7 @@ fun <T> get(
 @Throws(SecurityException::class, NoSuchMethodException::class)
 private inline fun Class<*>.withMethod(
     name: String,
-    paramTypes: Array<Class<*>?> = emptyArray()
+    paramTypes: Array<Class<*>?> = emptyArray(),
 ) = getDeclaredMethod(name, *paramTypes).apply { isAccessible = true }
 
 /**
@@ -51,14 +51,14 @@ private inline fun Class<*>.withMethod(
  */
 @Throws(SecurityException::class, NoSuchFieldException::class)
 private inline fun Class<*>.withField(
-    name: String
+    name: String,
 ) = getDeclaredField(name).apply { isAccessible = true }
 
 /**
  * Same as [Array.map],but this return a array type.
  */
 inline fun <T, reified R> Array<out T>.mapAsArray(
-    transformer: (T) -> R
+    transformer: (T) -> R,
 ) = Array(size) { transformer(this[it]) }
 
 /**

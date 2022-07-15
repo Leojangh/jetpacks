@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    compileSdk = 32
+    compileSdk = target_sdk
 
     compileOptions {
         sourceCompatibility(java_version)

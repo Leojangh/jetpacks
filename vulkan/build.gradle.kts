@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = target_sdk
 
     // When building this project with with SDK build tools of version earlier than 31.0.0, and
     // minSdkVersion 29+, the RenderScript compiler will fail with the following error message:
@@ -12,11 +12,10 @@ android {
     //     error: target API level '29' is out of range ('11' - '24')
     //
     // This issue has been fixed in SDK build tools 31.0.0.
-    buildToolsVersion = "32.0.0"
 
     defaultConfig {
         minSdk = 28
-        targetSdk = 31
+        targetSdk = target_sdk
         ndkVersion = "22.0.7026061"
         renderscriptTargetApi = 24
 
