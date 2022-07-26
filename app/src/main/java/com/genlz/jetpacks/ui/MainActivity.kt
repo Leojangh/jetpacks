@@ -37,6 +37,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
+import com.genlz.android.rpc.ServerStub
+import com.genlz.android.rpc.testMethod
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
@@ -55,6 +57,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.concurrent.CompletableFuture
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -150,8 +153,15 @@ class MainActivity : AppCompatActivity(),
         setupNavigation()
         listenWindowInfo()
         setupViews()
-        bindServices()
+//        bindServices()
 
+        val stub = ServerStub(this)
+        stub.call(testMethod.id, callback = ServerStub.Callback<Bundle> {
+            it?.get("result")
+        })
+        repeat(10) {
+
+        }
     }
 
     private fun bindServices() {
@@ -161,7 +171,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        unbindService(serviceConnection)
+//        unbindService(serviceConnection)
     }
 
     @RequiresApi(Build.VERSION_CODES.S)

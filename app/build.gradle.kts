@@ -167,17 +167,20 @@ kapt {
 
 dependencies {
 
+    implementation(projects.androidRpc)
     implementation(projects.share)
     implementation(projects.webview)
     implementation(projects.native)
     implementation(projects.appWidgets)
     compileOnly(projects.pseudoAndroid)//escape non-public API restriction
 
+    implementation("com.google.guava:guava:$guava")
     implementation("androidx.profileinstaller:profileinstaller:1.2.0-beta03")
     implementation("androidx.tracing:tracing-ktx:1.0.0")
 
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
     implementation("org.ow2.asm:asm:$asm")
+    implementation("org.ow2.asm:asm-util:$asm")
     // The core module is used by all other components
     implementation("com.github.topjohnwu.libsu:core:$libsu")
 
