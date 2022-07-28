@@ -26,14 +26,14 @@ repositories {
 }
 
 gradlePlugin {
-    plugins.register("AndroidNativePlugin") {
-        id = "android-native"
-        implementationClass = "plugin.AndroidNativePlugin"
-    }
+//    plugins.register("AndroidNativePlugin") {
+//        id = "android-native"
+//        implementationClass = "plugin.AndroidNativePlugin"
+//    }
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle-api:7.2.1")
+//    implementation("com.android.tools.build:gradle-api:7.2.1")
     gradleApi()
     gradleKotlinDsl()
 }

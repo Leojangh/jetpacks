@@ -94,18 +94,6 @@
         </provider>
 
         <service
-            android:name=".service.WorkerService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":worker" />
-
-        <service
-            android:name=".service.RemoteService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":remote" />
-
-        <service
             android:name=".service.ProcessMonitorService"
             android:enabled="true"
             android:exported="true"

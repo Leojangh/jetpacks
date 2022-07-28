@@ -2,9 +2,7 @@ package com.genlz.jetpacks.ui
 
 import android.Manifest
 import android.content.ComponentCallbacks2
-import android.content.ComponentName
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.*
@@ -37,15 +35,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
-import com.genlz.android.rpc.ServerStub
-import com.genlz.android.rpc.testMethod
 import com.genlz.android.viewbinding.viewBinding
 import com.genlz.jetpacks.R
 import com.genlz.jetpacks.databinding.ActivityMainBinding
 import com.genlz.jetpacks.di.ApplicationScope
-import com.genlz.jetpacks.service.IRemoteService
-import com.genlz.jetpacks.service.RemoteService
-import com.genlz.jetpacks.service.WorkerService
 import com.genlz.jetpacks.ui.common.ActionBarCustomizer
 import com.genlz.jetpacks.ui.common.FabSetter
 import com.genlz.jetpacks.ui.common.FullscreenController
@@ -57,7 +50,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
-import java.util.concurrent.CompletableFuture
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -104,46 +96,6 @@ class MainActivity : AppCompatActivity(),
         )
     )
 
-    /**
-     * The messenger between [clientMessenger] and [WorkerService].
-     */
-    private var serverMessenger: Messenger? = null
-
-    private val clientMessenger = Messenger(object : Handler(Looper.getMainLooper()) {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                WorkerService.MSG_REGISTER_SUCCESS -> {
-                    Log.d(TAG, "handleMessage: success")
-                }
-            }
-        }
-    })
-
-    private var remoteService: IRemoteService? = null
-
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            when (name.className) {
-                WorkerService::class.java.name -> serverMessenger = Messenger(service).apply {
-                    Message.obtain(null, WorkerService.MSG_REGISTER_CLIENT).apply {
-                        replyTo = clientMessenger
-                    }.let(::send)
-                }
-
-                RemoteService::class.java.name ->
-                    remoteService = IRemoteService.Stub.asInterface(service)
-            }
-        }
-
-        override fun onServiceDisconnected(name: ComponentName) {
-            when (name.className) {
-                WorkerService::class.java.name -> serverMessenger = null
-
-                RemoteService::class.java.name -> remoteService = null
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         waitForReady()
@@ -153,25 +105,8 @@ class MainActivity : AppCompatActivity(),
         setupNavigation()
         listenWindowInfo()
         setupViews()
-//        bindServices()
 
-        val stub = ServerStub(this)
-        stub.call(testMethod.id, callback = ServerStub.Callback<Bundle> {
-            it?.get("result")
-        })
-        repeat(10) {
-
-        }
-    }
-
-    private fun bindServices() {
-        bindService(intent<WorkerService>(), serviceConnection, BIND_AUTO_CREATE)
-        bindService(intent<RemoteService>(), serviceConnection, BIND_AUTO_CREATE)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-//        unbindService(serviceConnection)
+        Log.d(TAG, "onCreate: ...")
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -494,7 +429,7 @@ class MainActivity : AppCompatActivity(),
         // view.setSystemUiVisibility(LAYOUT_STABLE | LAYOUT_FULLSCREEN | LAYOUT_HIDE_NAVIGATION)
         window.setDecorFitsSystemWindowsExt(false)
         //fit status bar
-        animateInsets()
+//        animateInsets()
         binding.toolbarLayout.setOnApplyWindowInsetsListener { v, i, ip ->
             val statusBarHeight = i.statusBarInsets.top
             v.updatePadding(top = statusBarHeight + ip.top)
