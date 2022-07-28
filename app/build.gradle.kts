@@ -166,7 +166,7 @@ kapt {
 }
 
 dependencies {
-
+    implementation(projects.viewBinding)
     implementation(projects.androidRpc)
     implementation(projects.share)
     implementation(projects.webview)
