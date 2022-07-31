@@ -136,6 +136,17 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = COMPOSE_COMPILER
+    }
+
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 
     /**
@@ -235,6 +246,32 @@ dependencies {
     implementation(fileTree("libs") {
         include("*.aar", "*.jar")
     })
+    //Compose
+    implementation("androidx.compose.ui:ui:$COMPOSE")
+    // Tooling support (Previews, etc.)
+    implementation("androidx.compose.ui:ui-tooling-preview:$COMPOSE")
+    // When using a MDC theme
+    implementation ("com.google.android.material:compose-theme-adapter:1.1.15")
+    implementation("androidx.compose.foundation:foundation:$COMPOSE")
+    // Material Design
+    implementation("androidx.compose.material:material:$COMPOSE")
+    // Material design icons
+    implementation("androidx.compose.material:material-icons-core:$COMPOSE")
+    implementation("androidx.compose.material:material-icons-extended:$COMPOSE")
+    // Integration with activities
+    implementation("androidx.activity:activity-compose:1.5.1")
+    // Integration with ViewModels
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
+    // Integration with observables
+    implementation("androidx.compose.runtime:runtime-livedata:$COMPOSE")
+    implementation("androidx.compose.runtime:runtime-rxjava2:$COMPOSE")
+    // Animations
+    implementation("androidx.compose.animation:animation:$COMPOSE")
+    // UI Tests
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$COMPOSE")
+    debugImplementation("androidx.compose.ui:ui-tooling:$COMPOSE")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:$COMPOSE")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
