@@ -25,13 +25,6 @@ android {
         manifestPlaceholders["sharedUserId"] = ""
     }
 
-    sourceSets {
-        val dir = project(":javascript-bridge").projectDir
-        getByName("main") {
-            kotlin.srcDir("$dir/src/main/kotlin")
-        }
-    }
-
     val device = "device"
     val region = "region"
     flavorDimensions += listOf(region, device)
@@ -56,18 +49,6 @@ android {
         create("pad") {
             dimension = device //Optional if there is only one dimension.
             buildConfigField("String", "DEVICE", """"$name"""")
-        }
-    }
-
-    androidComponents {
-        beforeVariants {
-            // To check for a certain build type, use variantBuilder.buildType == "<buildType>"
-
-//            //No globalAlpha
-//            if (it.productFlavors.containsAll(listOf("version" to "alpha", "region" to "global"))) {
-//                // Gradle ignores any variants that satisfy the conditions above.
-//                it.enabled = false
-//            }
         }
     }
 
@@ -113,11 +94,6 @@ android {
         }
     }
 
-
-    tasks.assemble.configure {
-        dependsOn += ":javascript:copyCompiledJs2app"
-    }
-
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
 
@@ -134,8 +110,6 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
-        dataBinding = true
         compose = true
     }
 
@@ -162,7 +136,6 @@ android {
 
     testFixtures {
         enable = true
-
     }
 }
 
@@ -177,7 +150,7 @@ kapt {
 }
 
 dependencies {
-    implementation(projects.viewBinding)
+//    implementation(projects.viewBinding)
     implementation(projects.androidRpc)
     implementation(projects.share)
     implementation(projects.webview)
@@ -186,8 +159,8 @@ dependencies {
     compileOnly(projects.pseudoAndroid)//escape non-public API restriction
 
     implementation("com.google.guava:guava:$guava")
-    implementation("androidx.profileinstaller:profileinstaller:1.2.0-beta03")
-    implementation("androidx.tracing:tracing-ktx:1.0.0")
+    implementation("androidx.profileinstaller:profileinstaller:1.2.0")
+    implementation("androidx.tracing:tracing-ktx:1.1.0")
 
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
     implementation("org.ow2.asm:asm:$asm")
@@ -195,15 +168,9 @@ dependencies {
     // The core module is used by all other components
     implementation("com.github.topjohnwu.libsu:core:$libsu")
 
-    implementation("androidx.browser:browser:$browser")
-
     implementation("androidx.palette:palette:$palette")
 
-    implementation("com.github.chrisbanes:PhotoView:$photoView")
-
     implementation("androidx.paging:paging-runtime-ktx:$paging")
-
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:$swiperRefreshLayout")
 
     implementation("androidx.window:window:$window")
     androidTestImplementation("androidx.window:window-testing:$window")
@@ -239,7 +206,6 @@ dependencies {
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
-    implementation("androidx.activity:activity-ktx:$activity")
     implementation("androidx.constraintlayout:constraintlayout:$constraintLayout")
     implementation("androidx.navigation:navigation-fragment-ktx:$NAVIGATION")
     implementation("androidx.navigation:navigation-ui-ktx:$NAVIGATION")
@@ -248,6 +214,8 @@ dependencies {
     })
     //Compose
     implementation("androidx.compose.ui:ui:$COMPOSE")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.26.0-alpha")
+
     // Tooling support (Previews, etc.)
     implementation("androidx.compose.ui:ui-tooling-preview:$COMPOSE")
     // When using a MDC theme

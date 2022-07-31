@@ -33,6 +33,6 @@ android {
 }
 
 dependencies {
-    api(project(":share"))
+    api(projects.share)
     implementation("androidx.webkit:webkit:$webkit")
 }

@@ -33,5 +33,5 @@ android {
 }
 
 dependencies {
-    api(project(":share"))
+    api(projects.share)
 }
