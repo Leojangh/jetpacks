@@ -48,7 +48,7 @@ class RemoteProcessRegistry private constructor() {
 val testMethod = object : IRemoteProcess<Bundle> {
 
     override fun invoke(arg1: Int, arg2: Int, obj: Parcelable?): Bundle {
-//        throw RuntimeException("test")
+        throw RuntimeException("test")
         Log.d("RemoteProcessRegistry", "invoke: ......${Thread.currentThread()}")
         return bundleOf("result" to "Hello form server side.")
     }

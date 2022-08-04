@@ -5,8 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.*
-import android.util.Log
 import androidx.collection.ArrayMap
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.concurrent.LinkedBlockingQueue
 
 class ServerStub(private val ctx: Context) {
@@ -20,22 +21,28 @@ class ServerStub(private val ctx: Context) {
     private val messages = LinkedBlockingQueue<Message>()
 
     private val handler = Handler(
-        Looper.myLooper()
-            ?: throw IllegalStateException("Current thread has no associated looper!")
+        Looper.myLooper() ?: throw IllegalStateException("Current thread has no associated looper!")
     ) { msg ->
         if (messages.isEmpty()) {
             messages += Message.obtain().apply { what = STOP_SEND }
         }
         callbacks[msg.what]?.let {
             if (msg.errorOccurs) {
-                val cause = msg.data["cause"] as String
-                it.onException(RemoteException(cause))
-                Log.d(TAG, "error 1: $cause")
+                it.onException(readException(msg))
             } else {
                 it.onSuccess(msg.obj as? Parcelable)
             }
             true
         } ?: false
+    }
+
+    private fun readException(msg: Message): Exception {
+        val cause = msg.data["cause"] as String
+        return when (msg.data.getInt("type", 0)) {
+            1 -> IllegalStateException(cause)
+            2 -> IllegalArgumentException(cause)
+            else/*0*/ -> RemoteException(cause)
+        }
     }
 
     private val senderThread: Thread = Thread {
@@ -63,9 +70,12 @@ class ServerStub(private val ctx: Context) {
         ctx.bindService(getTargetService(ctx), conn, Context.BIND_AUTO_CREATE)
     }
 
+    /**
+     * 异步调用远程服务器中的方法，结果通过[callback]回调传回，它在发起者的线程中执行，异常也是。
+     */
     @JvmOverloads
     @Suppress("UNCHECKED_CAST")
-    fun call(
+    fun callAsync(
         method: Int,
         arg1: Int = 0,
         arg2: Int = 0,
@@ -82,6 +92,34 @@ class ServerStub(private val ctx: Context) {
             this.data = data
         }
     }
+
+    /**
+     * 由协程驱动的[callAsync]方法
+     */
+    @OptIn(InternalCoroutinesApi::class)
+    suspend fun <R : Parcelable> call(
+        method: Int,
+        arg1: Int = 0,
+        arg2: Int = 0,
+        obj: Parcelable? = null,
+        data: Bundle? = null,
+    ) = suspendCancellableCoroutine {
+        callAsync(method, arg1, arg2, obj, data, object : Callback<R> {
+
+            override fun onSuccess(result: R?) {
+                it.tryResume(result)?.let { token ->
+                    it.completeResume(token)
+                }
+            }
+
+            override fun onException(e: Exception) {
+                it.tryResumeWithException(e)?.let { token ->
+                    it.completeResume(token)
+                }
+            }
+        })
+    }
+
 
     companion object {
 

@@ -4,12 +4,8 @@ import android.app.Service
 import android.content.Intent
 import android.os.*
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
-import com.genlz.share.sugar4kt.CompletableFutureEx
-import com.genlz.share.sugar4kt.CompletableFutureEx.Companion.thenAcceptAsyncKt
 import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadFactory
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
@@ -21,10 +17,9 @@ var Message.errorOccurs: Boolean
         arg2 = if (value) 1 else 0
     }
 
-@RequiresApi(Build.VERSION_CODES.N)
 class Skeleton : Service() {
 
-    private val handlerThread = HandlerThread("Skeleton-dedicated-service")
+    private val dispatcher = HandlerThread("Skeleton-dedicated-service")
 
     private val registry = RemoteProcessRegistry.getInstance()
 
@@ -34,38 +29,37 @@ class Skeleton : Service() {
         10L,
         TimeUnit.SECONDS,
         LinkedBlockingQueue(),
-        object : ThreadFactory {
-            private var i = 0
-            override fun newThread(r: Runnable?) = Thread(r, "Skeleton-thread-pool-${i++}")
-        }
     )
 
     private lateinit var messenger: Messenger
 
     /**
-     * Workaround:Using Guava ListenableFuture
+     * 这个回调方法会在[dispatcher]中执行，[dispatcher]仅仅是将调用任务分发至[poolExecutor]中执行
      */
     private val callback = Handler.Callback { msg ->
         val f = registry.functions[msg.what] ?: return@Callback false
         val client = msg.replyTo
-        val what = msg.what
-        val reply = Message.obtain()
-        CompletableFutureEx.supplyAsync(poolExecutor) {
-            f(msg.arg1, msg.arg2, msg.obj as? Parcelable)
-        }.exceptionally {
-            reply.errorOccurs = true
-            reply.data = bundleOf(
-                "cause" to it.message
-            )
-            null
-        }.thenAcceptAsyncKt({ handler.post(it) }) {
-            reply.what = what
+        val reply = Message.obtain().apply {
+            what = msg.what
+        }
+        //问题1：msg.replyTo的作用域到这里就停止了？在execute lambda中msg.replyTo为null
+        //必须像上面的方式一样用client重新保存一下才能在execute的lambda中使用？msg.what也是如此
+        poolExecutor.execute {
             try {
-                reply.obj = it
-            } catch (e: Exception) {
+                reply.obj = f(msg.arg1, msg.arg2, msg.obj as? Parcelable)
+            } catch (t: Throwable) {
+                /**
+                 * 在这里传递一些关键的异常信息给客户端，就像[Binder]的异常处理一样
+                 */
                 reply.errorOccurs = true
                 reply.data = bundleOf(
-                    "cause" to e.message
+                    "cause" to t.message,
+                    "type" to when (t) {
+                        is IllegalStateException -> 1
+                        is IllegalArgumentException -> 2
+                        //etc.
+                        else -> 0
+                    }
                 )
             }
             client.send(reply)
@@ -77,8 +71,8 @@ class Skeleton : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        handlerThread.start()
-        handler = Handler(handlerThread.looper, callback)
+        dispatcher.start()
+        handler = Handler(dispatcher.looper, callback)
         messenger = Messenger(handler)
     }
 
@@ -86,7 +80,7 @@ class Skeleton : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        handlerThread.quit()
+        dispatcher.quit()
         poolExecutor.shutdown()
         Log.i(TAG, "SkeletonServer destroyed.")
     }
