@@ -20,6 +20,13 @@ class MainActivityViewModel @Inject constructor(
     private val _splash = MutableStateFlow<UiState<Drawable>>(Loading)
     val splash = _splash.asStateFlow()
 
+    private val _currentScreenIndex = MutableStateFlow(0)
+    val currentScreenIndex = _currentScreenIndex.asStateFlow()
+
+    fun onNewScreenSelected(screenIndex: Int) {
+        _currentScreenIndex.update { screenIndex }
+    }
+
     /**
      * A hot flow,no need to activate.
      * A detail：[LiveData] must observe it to activate.

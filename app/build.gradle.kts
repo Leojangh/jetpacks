@@ -215,7 +215,7 @@ dependencies {
     //Compose
     implementation("androidx.compose.ui:ui:$COMPOSE")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.26.0-alpha")
-
+    implementation("com.google.accompanist:accompanist-webview:0.26.0-alpha")
     // Tooling support (Previews, etc.)
     implementation("androidx.compose.ui:ui-tooling-preview:$COMPOSE")
     // When using a MDC theme
