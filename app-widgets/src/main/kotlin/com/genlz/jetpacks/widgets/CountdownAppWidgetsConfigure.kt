@@ -1,12 +1,8 @@
 package com.genlz.jetpacks.widgets
 
-import android.appwidget.AppWidgetManager
-import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.widget.RemoteViews
 import androidx.appcompat.app.AppCompatActivity
-import com.genlz.jetpacks.R
 
 class CountdownAppWidgetsConfigure : AppCompatActivity() {
 

@@ -1,6 +1,5 @@
 package com.genlz.jetpacks.ui
 
-import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.layout.size
@@ -17,15 +16,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.genlz.jetpacks.R
-import com.genlz.jetpacks.ui.components.WebScreen
+import com.genlz.jetpacks.ui.components.*
 import com.genlz.jetpacks.ui.theme.JetpacksTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private const val TAG = "ComposeApp"
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ComposeApp(viewModel: MainActivityViewModel) {
+fun ComposeApp(
+    viewModel: MainActivityViewModel,
+    vm: CommunityScreenViewModel,
+) {
     val ctx = LocalContext.current
     val destinations = listOf(
         ctx.getString(R.string.community) to R.drawable.ic_baseline_fiber_new_24,
@@ -86,9 +87,13 @@ fun ComposeApp(viewModel: MainActivityViewModel) {
                     Icon(Icons.Filled.Add, contentDescription = "Add")
                 }
             }
-        ) {
+        ) { padding ->
             when (screenIndex) {
-                0 -> WebScreen()
+                0 -> CommunityScreen(padding, vm)
+
+                1 -> ProductsScreen()
+                2 -> ServiceScreen()
+                3 -> VipScreen()
             }
         }
     }

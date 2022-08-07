@@ -9,7 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.RemoteViews
-import com.genlz.jetpacks.R
+import com.genlz.android.widget.R
 import com.genlz.share.util.appcompat.intent
 
 /**

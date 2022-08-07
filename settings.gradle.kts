@@ -47,6 +47,8 @@ include(":app-host")
 include(":pseudo-android")
 include(":android-rpc")
 include(":view-binding")
+//include(":fcm-android")
+//include(":fcm-server")
 
 include(":javascript-bridge-compiler")
 include(":javascript-bridge")

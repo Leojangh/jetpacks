@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.genlz.jetpacks">
+    package="com.genlz.android.widget">
 
     <application>
         <service
-            android:name=".widgets.CountdownService"
+            android:name="com.genlz.jetpacks.widgets.CountdownService"
             android:enabled="true"
             android:exported="false" />
 
         <activity
-            android:name=".widgets.CountdownAppWidgetsConfigure"
+            android:name="com.genlz.jetpacks.widgets.CountdownAppWidgetsConfigure"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
@@ -17,7 +17,7 @@
         </activity>
 
         <receiver
-            android:name=".widgets.CountdownAppWidgetsProvider"
+            android:name="com.genlz.jetpacks.widgets.CountdownAppWidgetsProvider"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

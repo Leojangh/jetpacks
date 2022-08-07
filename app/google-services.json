@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "807089432877",
+    "project_id": "jetpacks-f02b8",
+    "storage_bucket": "jetpacks-f02b8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807089432877:android:a4d092359224bf5af3cba4",
+        "android_client_info": {
+          "package_name": "com.genlz.jetpacks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "807089432877-cm1d5gvncdrohnangfcaa5n0noh9etum.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANIYFffHAvnAXVTZBsIqfj4aUbAq1kv6Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "807089432877-cm1d5gvncdrohnangfcaa5n0noh9etum.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807089432877:android:556b5b5699e6a30ff3cba4",
+        "android_client_info": {
+          "package_name": "com.genlz.jetpacks.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "807089432877-cm1d5gvncdrohnangfcaa5n0noh9etum.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANIYFffHAvnAXVTZBsIqfj4aUbAq1kv6Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "807089432877-cm1d5gvncdrohnangfcaa5n0noh9etum.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,7 +3,10 @@ package com.genlz.jetpacks
 import android.annotation.SuppressLint
 import android.app.ActivityThread
 import android.app.Application
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
 import com.genlz.jetpacks.utility.ForegroundTracker
 import com.genlz.libnative.functionInNative
@@ -22,6 +25,12 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         _INSTANCE = this
+
+        registerReceiver(object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+
+            }
+        }, IntentFilter("fcm.test"))
 
         Log.d(TAG, "onCreate: ${ActivityThread.currentProcessName()}")
     }

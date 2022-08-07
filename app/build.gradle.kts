@@ -6,6 +6,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("androidx.navigation.safeargs.kotlin")
     id("org.jetbrains.dokka")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -33,22 +34,18 @@ android {
 
         create("cn") {
             dimension = region
-            buildConfigField("boolean", "IS_GLOBAL", "false")
         }
 
         create("global") {
             dimension = region
-            buildConfigField("boolean", "IS_GLOBAL", "true")
         }
 
         create("phone") {
             dimension = device //Optional if there is only one dimension.
-            buildConfigField("String", "DEVICE", """"$name"""")
         }
 
         create("pad") {
             dimension = device //Optional if there is only one dimension.
-            buildConfigField("String", "DEVICE", """"$name"""")
         }
     }
 
@@ -79,13 +76,9 @@ android {
             proguardFiles("proguard-rules.pro")
         }
 
-        create("platform") {
-            signingConfig = signingConfigs["aosp_platform"]
-            manifestPlaceholders["sharedUserId"] = "android.uid.system"
-        }
-
         debug {
-            applicationIdSuffix = ".$name"
+//            applicationIdSuffix = ".$name"
+            signingConfig = signingConfigs["aosp_platform"]
         }
 
         create("macrobenchmark") {
@@ -150,6 +143,7 @@ kapt {
 }
 
 dependencies {
+//    implementation(projects.fcmAndroid)
 //    implementation(projects.viewBinding)
     implementation(projects.androidRpc)
     implementation(projects.share)
@@ -157,6 +151,9 @@ dependencies {
     implementation(projects.native)
     implementation(projects.appWidgets)
     compileOnly(projects.pseudoAndroid)//escape non-public API restriction
+    implementation(platform("com.google.firebase:firebase-bom:$firebase"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
 
     implementation("com.google.guava:guava:$guava")
     implementation("androidx.profileinstaller:profileinstaller:1.2.0")
@@ -219,7 +216,7 @@ dependencies {
     // Tooling support (Previews, etc.)
     implementation("androidx.compose.ui:ui-tooling-preview:$COMPOSE")
     // When using a MDC theme
-    implementation ("com.google.android.material:compose-theme-adapter:1.1.15")
+    implementation("com.google.android.material:compose-theme-adapter:1.1.15")
     implementation("androidx.compose.foundation:foundation:$COMPOSE")
     // Material Design
     implementation("androidx.compose.material:material:$COMPOSE")

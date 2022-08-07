@@ -1,24 +1,26 @@
 package com.genlz.jetpacks.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.genlz.jetpacks.di.ApplicationScope
+import com.genlz.jetpacks.ui.components.CommunityScreenViewModel
 import com.genlz.share.util.appcompat.animateExt
 import com.genlz.share.util.appcompat.doOnEnd
 import com.genlz.share.util.appcompat.lazyNoneSafe
 import com.genlz.share.util.appcompat.setDecorFitsSystemWindowsExt
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<MainActivityViewModel>()
+    private val vm by viewModels<CommunityScreenViewModel>()
 
     private val splashScreen by lazyNoneSafe { installSplashScreen() }
 
@@ -30,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         window.setDecorFitsSystemWindowsExt(false)
 
         setContent {
-            ComposeApp(viewModel)
+            ComposeApp(viewModel,vm)
         }
     }
 
