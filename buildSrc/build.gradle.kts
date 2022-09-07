@@ -5,21 +5,6 @@ plugins {
  * [getRootProject] is buildSrc,instead of jetpacks.
  * */
 
-kotlin {
-    jvmToolchain {
-        with(this as JavaToolchainSpec) {
-            languageVersion.set(JavaLanguageVersion.of(11))
-        }
-    }
-    tasks.compileKotlin {
-        kotlinOptions {
-            jvmTarget = "11"
-            sourceCompatibility = "11"
-            targetCompatibility = "11"
-        }
-    }
-}
-
 repositories {
     google()
     mavenCentral()

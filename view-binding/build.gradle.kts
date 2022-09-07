@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-    api ("androidx.lifecycle:lifecycle-common-java8:2.5.1")
-    compileOnly ("androidx.appcompat:appcompat:1.4.2")
+    implementation ("androidx.lifecycle:lifecycle-common-java8:$lifecycle")
+    compileOnly ("androidx.appcompat:appcompat:$appcompat")
     compileOnly ("androidx.databinding:databinding-runtime:$AGP")
 }

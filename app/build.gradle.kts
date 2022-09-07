@@ -154,6 +154,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:$firebase"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("androidx.preference:preference-ktx:1.2.0")
 
     implementation("com.google.guava:guava:$guava")
     implementation("androidx.profileinstaller:profileinstaller:1.2.0")
