@@ -22,39 +22,13 @@ import javax.inject.Inject
 @Composable
 fun CommunityScreen(
     paddingValues: PaddingValues,
-    vm: CommunityScreenViewModel,
 ) {
     Box(modifier = Modifier
         .fillMaxSize()
         .padding(paddingValues)
     ) {
-        val data = when (val it = vm.allData.collectAsState(initial = Loading).value) {
-            is Loading -> listOf()
-            is Success -> it.data
-            is Fail -> listOf("出错啦！${it.throwable}")
-        }
-        LazyColumn {
-            for (it in data) item {
-                Text(text = it)
-            }
-        }
+
     }
 }
 
 private const val TAG = "CommunityScreen"
-
-@HiltViewModel
-class CommunityScreenViewModel @Inject constructor(
-    repo: CommunityRepository,
-) : ViewModel() {
-
-    val allData = flowOf(ArrayList<String>()).combine(
-        repo.getFcm()
-    ) { history, latest ->
-        history += latest
-        //type inferring has bug??
-        Success(history.toList()) as UiState<List<String>>
-    }.catch {
-        emit(Fail(it))
-    }
-}

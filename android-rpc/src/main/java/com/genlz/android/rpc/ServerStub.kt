@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.*
 import androidx.collection.ArrayMap
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -37,7 +38,7 @@ class ServerStub(private val ctx: Context) {
     }
 
     private fun readException(msg: Message): Exception {
-        val cause = msg.data["cause"] as String
+        val cause = msg.data.getString("cause", "unknown")
         return when (msg.data.getInt("type", 0)) {
             1 -> IllegalStateException(cause)
             2 -> IllegalArgumentException(cause)

@@ -25,7 +25,6 @@ private const val TAG = "ComposeApp"
 @Composable
 fun ComposeApp(
     viewModel: MainActivityViewModel,
-    vm: CommunityScreenViewModel,
 ) {
     val ctx = LocalContext.current
     val destinations = listOf(
@@ -89,8 +88,7 @@ fun ComposeApp(
             }
         ) { padding ->
             when (screenIndex) {
-                0 -> CommunityScreen(padding, vm)
-
+                0 -> CommunityScreen(padding)
                 1 -> ProductsScreen()
                 2 -> ServiceScreen()
                 3 -> VipScreen()
