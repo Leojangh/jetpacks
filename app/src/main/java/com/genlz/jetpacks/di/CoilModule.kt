@@ -3,6 +3,7 @@ package com.genlz.jetpacks.di
 import android.content.Context
 import coil.Coil
 import coil.ImageLoader
+import coil.disk.DiskCache
 import coil.util.CoilUtils
 import dagger.Module
 import dagger.Provides
@@ -27,8 +28,11 @@ object CoilModule {
         return ImageLoader.Builder(context)
             .okHttpClient {
                 // Create a disk cache with "unlimited" size. Don't do this in production.
-                // To create the an optimized Coil disk cache, use CoilUtils.createDefaultCache(context).
-                val cache = CoilUtils.createDefaultCache(context)
+                // To create an optimized Coil disk cache, use CoilUtils.createDefaultCache(context).
+//                val cache = ImageLoader.Builder(context).diskCache {
+//                    DiskCache.Builder()
+//                        .build()
+//                }
                 // Rewrite the Cache-Control header to cache all responses for a year.
 
                 // Don't limit concurrent network requests by host.
@@ -36,7 +40,7 @@ object CoilModule {
 
                 // Lazily create the OkHttpClient that is used for network operations.
                 OkHttpClient.Builder()
-                    .cache(cache)
+//                    .cache(cache)
                     .dispatcher(dispatcher)
                     .build()
             }

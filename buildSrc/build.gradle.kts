@@ -6,11 +6,6 @@ plugins {
  * */
 
 kotlin {
-    jvmToolchain {
-        with(this as JavaToolchainSpec) {
-            languageVersion.set(JavaLanguageVersion.of(11))
-        }
-    }
     tasks.compileKotlin {
         kotlinOptions {
             jvmTarget = "11"
@@ -33,7 +28,7 @@ gradlePlugin {
 }
 
 dependencies {
-//    implementation("com.android.tools.build:gradle-api:7.2.1")
+//    implementation("com.android.tools.build:gradle-api:7.2.2")
     gradleApi()
     gradleKotlinDsl()
 }

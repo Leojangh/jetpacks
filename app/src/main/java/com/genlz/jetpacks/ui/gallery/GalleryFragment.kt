@@ -274,7 +274,7 @@ private class PagerAdapter(
             // because an arbitrary number of items share that layout. A unique transition name
             // must be assigned so that the transition animation uses the correct view.
             img.transitionNameExt = "hero_image_$position"
-            val cache = img.context.imageLoader.memoryCache[cacheKey]
+            val cache = img.context.imageLoader.memoryCache?.get(cacheKey)
             val builder: ImageRequest.Builder.() -> Unit = {
                 placeholderMemoryCacheKey(cacheKey)
                 allowHardware(false)

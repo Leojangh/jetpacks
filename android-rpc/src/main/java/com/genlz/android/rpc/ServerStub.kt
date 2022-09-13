@@ -28,7 +28,7 @@ class ServerStub(private val ctx: Context) {
         }
         callbacks[msg.what]?.let {
             if (msg.errorOccurs) {
-                val cause = msg.data["cause"] as String
+                val cause = msg.data.getString("cause")
                 it.onException(RemoteException(cause))
                 Log.d(TAG, "error 1: $cause")
             } else {
