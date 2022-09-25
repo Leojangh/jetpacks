@@ -1,22 +1,16 @@
 package com.genlz.jetpacks.ui
 
 import android.os.Bundle
-import android.view.Window
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
-import com.genlz.jetpacks.preference.MainPreferenceFragment
 import com.genlz.share.util.appcompat.animateExt
 import com.genlz.share.util.appcompat.doOnEnd
 import com.genlz.share.util.appcompat.lazyNoneSafe
 import com.genlz.share.util.appcompat.setDecorFitsSystemWindowsExt
-import com.genlz.share.util.getValue
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.ref.SoftReference
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -31,13 +25,9 @@ class MainActivity : AppCompatActivity() {
         customExitAnimation()
 
         window.setDecorFitsSystemWindowsExt(false)
-
-        supportFragmentManager.commit {
-            replace<MainPreferenceFragment>(Window.ID_ANDROID_CONTENT)
+        setContent {
+            ComposeApp(viewModel)
         }
-//        setContent {
-//            ComposeApp(viewModel,vm)
-//        }
     }
 
     /**

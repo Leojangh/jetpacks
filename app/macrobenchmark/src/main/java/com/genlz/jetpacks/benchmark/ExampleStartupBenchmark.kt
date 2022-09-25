@@ -30,7 +30,7 @@ class ExampleStartupBenchmark {
     fun startup() = benchmarkRule.measureRepeated(
         packageName = "com.genlz.jetpacks.debug",
         metrics = listOf(StartupTimingMetric()),
-        compilationMode = CompilationMode.SpeedProfile(),
+        compilationMode = CompilationMode.DEFAULT,
         iterations = 3,
         startupMode = StartupMode.COLD
     ) {

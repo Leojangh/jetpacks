@@ -2,6 +2,9 @@
 
 package com.genlz.share.util
 
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.Proxy
+
 /**
  * This method maybe escapes from black list lint,so
  * handle the exception correctly.
@@ -60,6 +63,12 @@ private inline fun Class<*>.withField(
 inline fun <T, reified R> Array<out T>.mapAsArray(
     transformer: (T) -> R,
 ) = Array(size) { transformer(this[it]) }
+
+inline fun <reified T> newProxyInstance(
+    cls: Class<T> = T::class.java,
+    classLoader: ClassLoader? = cls.classLoader,
+    handler: InvocationHandler
+) = Proxy.newProxyInstance(classLoader, arrayOf(cls), handler) as T
 
 /**
  * Return the class of the qualifier represents.
