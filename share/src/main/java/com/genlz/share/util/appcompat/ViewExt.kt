@@ -380,6 +380,10 @@ inline fun View.computeSystemWindowInsets(insets: WindowInsetsCompat, outLocalIn
 /**
  * @see ViewCompat.getWindowInsetsController
  */
+@Deprecated(message = "Use WindowCompat instead.",
+    replaceWith = ReplaceWith("WindowCompat.getInsetsController(window, view)",
+        "androidx.core.view.WindowCompat"))
+@Suppress("DEPRECATION")
 inline val View.windowInsetsControllerExt get() = ViewCompat.getWindowInsetsController(this)
 
 /**

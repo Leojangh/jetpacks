@@ -7,6 +7,13 @@ dependencies {
     implementation("com.google.devtools.ksp:symbol-processing-api:$KSP")
 }
 
+kotlinOptions {
+    freeCompilerArgs = listOf(
+        "-opt-in=kotlin.RequiresOptIn",
+        "-Xuse-k2"
+    )
+}
+
 repositories {
     mavenCentral()
 }

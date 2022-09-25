@@ -31,7 +31,7 @@ android {
     }
     externalNativeBuild {
         cmake {
-            version = "3.18.1"
+            version = "3.22.1"
             path("src/main/cpp/CMakeLists.txt")
         }
     }
@@ -42,6 +42,14 @@ android {
                 srcDirs("$android.ndkDirectory/sources/third_party/vulkan/src/build-android/jniLibs")
             }
         }
+    }
+
+    kotlinOptions {
+        jvmTarget = java_version
+        freeCompilerArgs = listOf(
+            "-opt-in=kotlin.RequiresOptIn",
+            "-Xuse-k2"
+        )
     }
 
     lint {
