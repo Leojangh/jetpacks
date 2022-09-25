@@ -126,6 +126,7 @@ android {
         ignoreWarnings = true
         checkDependencies = true
     }
+    namespace = "com.genlz.jetpacks"
 
     testFixtures {
         enable = true

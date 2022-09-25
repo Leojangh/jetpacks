@@ -57,4 +57,5 @@ android {
             manifest.srcFile("src/androidMain/AndroidManifest.xml")
         }
     }
+    namespace = "com.genlz.libnative"
 }

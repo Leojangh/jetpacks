@@ -40,6 +40,7 @@ android {
             isDefault = true
         }
     }
+    namespace = "com.genlz.jetpackts.microbenchmark"
 }
 
 dependencies {

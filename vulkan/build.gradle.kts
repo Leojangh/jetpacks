@@ -1,5 +1,5 @@
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     kotlin("android")
 }
 
@@ -55,6 +55,7 @@ android {
     lint {
         abortOnError = false
     }
+    namespace = "com.android.example.rsmigration"
 }
 
 dependencies {

@@ -37,6 +37,7 @@ android {
     }
 
     targetProjectPath = ":app"
+    namespace = "com.genlz.jetpacks.benchmark"
     experimentalProperties["android.experimental.self-instrumenting"] = true
 }
 

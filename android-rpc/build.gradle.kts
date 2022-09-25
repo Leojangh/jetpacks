@@ -34,6 +34,7 @@ android {
             "-Xuse-k2"
         )
     }
+    namespace = "com.genlz.android.rpc"
 }
 
 dependencies {

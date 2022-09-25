@@ -33,6 +33,7 @@ android {
             "-Xuse-k2"
         )
     }
+    namespace = "com.genlz.android.viewbinding"
 }
 
 dependencies {

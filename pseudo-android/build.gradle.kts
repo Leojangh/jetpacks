@@ -25,4 +25,5 @@ android {
         sourceCompatibility(java_version)
         targetCompatibility(java_version)
     }
+    namespace = "pseudo.android"
 }
