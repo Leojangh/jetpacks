@@ -1,5 +1,5 @@
 plugins {
-    id("com.android.library")
+    id("com.android.application")
     kotlin("android")
 }
 
@@ -16,7 +16,7 @@ android {
     defaultConfig {
         minSdk = 28
         targetSdk = target_sdk
-        ndkVersion = "22.0.7026061"
+        ndkVersion = "25.1.8937393"
         renderscriptTargetApi = 24
 
         externalNativeBuild {
