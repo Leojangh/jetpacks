@@ -226,7 +226,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core:$COMPOSE")
     implementation("androidx.compose.material:material-icons-extended:$COMPOSE")
     // Integration with activities
-    implementation("androidx.activity:activity-compose:1.5.1")
+    implementation("androidx.activity:activity-compose:$activity")
     // Integration with ViewModels
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
     // Integration with observables

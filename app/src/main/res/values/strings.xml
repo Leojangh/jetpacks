@@ -1,55 +1,5 @@
 <resources>
     <string name="app_name">JetPacks</string>
     <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-
-    <string name="skip">Skip</string>
-    <string name="act">Act</string>
-    <string name="good">Good</string>
-    <string name="bad">Bad</string>
-    <string name="toast">Toast</string>
-
-    <string name="bottom_dialog_shortcut_label">Look</string>
-    <string name="bottom_dialog_shortcut_label_long">Have a look</string>
-    <string name="bottom_dialog_shortcuts_message">Open bottom sheet dialog</string>
-
-    <string name="products_fragment_shortcut_label">@string/products_fragment</string>
-    <string name="products_fragment_shortcut_label_long">@string/products_fragment</string>
-    <string name="products_fragment_shortcuts_message">This shortcut has already disabled</string>
-
-    <!--Bottom navigation menu title-->
-    <string name="community">Community</string>
-    <string name="products">Products</string>
-    <string name="service">Service</string>
-    <string name="vip">VIP</string>
-    <string name="recommend">Recommend</string>
-    <string name="follow">Follow</string>
-    <string name="post_thumbnail">post thumbnail</string>
-    <string name="avatar">avatar</string>
-    <string name="long_text">
-        要显示非默认屏幕滑动动画，请实现 ViewPager2.PageTransformer 接口并将其提供给 ViewPager2 对象。该接口只会公开一个方法 transformPage()。在屏幕切换的每个点，系统会针对每个可见页面（通常只有一个可见页面）和刚刚离开屏幕的相邻页面调用此方法。 例如，如果第 3 页可见且用户拖向第 4 页，则在手势的每个步骤，会针对第 2 页、第 3 页和第 4 页调用 transformPage()。
-然后在您的 transformPage() 实现中，您可以根据页面在屏幕上的位置确定需要切换哪些页面，从而创建自定义滑动动画。页面位置取自 transformPage() 方法的 position 参数。
-    </string>
-    <string name="mock_leojangh">Leojangh</string>
-    <string name="mock_device">小米10 至尊纪念版</string>
-    <string name="moment">动态</string>
-    <string name="great">666</string>
-    <string name="views">浏览1.7万+</string>
-    <string name="mock_time">2021–09–01</string>
-    <string name="mock_thumbs">9.3万+</string>
-    <string name="mock_title">标题</string>
-
-    <string name="image_placeholder_uri" translatable="false">android.resource://com.genlz.jetpacks/%d</string>
-    <string name="gallery_fragment">Gallery Fragment</string>
-    <string name="thumb_up">Good</string>
-    <string name="comment">Comment</string>
-    <string name="products_fragment">ProductsFragment</string>
-    <string name="community_fragment">CommunityFragment</string>
-    <string name="service_fragment">ServiceFragment</string>
-    <string name="vip_fragment">VipFragment</string>
-    <string name="speed_dial">Speed dial</string>
-    <string name="web_fragment">WebFragment</string>
 
 </resources>

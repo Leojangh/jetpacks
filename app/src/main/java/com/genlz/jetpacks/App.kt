@@ -26,12 +26,6 @@ class App : Application() {
         super.onCreate()
         _INSTANCE = this
 
-        registerReceiver(object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-
-            }
-        }, IntentFilter("fcm.test"))
-
         Log.d(TAG, "onCreate: ${ActivityThread.currentProcessName()}")
     }
 

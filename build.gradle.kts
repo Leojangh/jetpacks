@@ -13,7 +13,7 @@ plugins {
     id("androidx.navigation.safeargs.kotlin") version NAVIGATION apply false
     id("com.google.devtools.ksp") version KSP apply false
     id("org.jetbrains.dokka") version DOKKA apply false
-    id("androidx.benchmark") version "1.1.0-alpha13" apply false
+    id("androidx.benchmark") version BENCHMARK apply false
     id("com.google.gms.google-services") version FCM apply false
 }
 
@@ -32,9 +32,6 @@ plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin>
 
 allprojects {
     configurations.all {
-
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
-
         resolutionStrategy {
             cacheDynamicVersionsFor(10, "minutes")
             cacheChangingModulesFor(4, "hours")

@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         window.setDecorFitsSystemWindowsExt(false)
         setContent {
-            ComposeApp(viewModel)
+            ComposeApp()
         }
     }
 

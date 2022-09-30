@@ -25,13 +25,13 @@ class MainActivityViewModel @Inject constructor(
      * A detail：[LiveData] must observe it to activate.
      */
     val ready = flow {
-//        adRepository.loadSplash().collect {
-//            _splash.emit(it)
-//            delay(MainActivity.SPLASH_DISPLAY_TIME)
-//            emit(true)
-//        }
-        delay(MainActivity.SPLASH_DISPLAY_TIME)
-        emit(true)
+        adRepository.loadSplash().collect {
+            _splash.emit(it)
+            delay(MainActivity.SPLASH_DISPLAY_TIME)
+            emit(true)
+        }
+//        delay(MainActivity.SPLASH_DISPLAY_TIME)
+//        emit(true)
     }.catch { t ->
         t.printStackTrace()
         emit(true)

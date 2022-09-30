@@ -5,8 +5,6 @@ import androidx.compose.runtime.Composable
 private const val TAG = "ComposeApp"
 
 @Composable
-fun ComposeApp(
-    viewModel: MainActivityViewModel,
-) {
+fun ComposeApp() {
 
 }

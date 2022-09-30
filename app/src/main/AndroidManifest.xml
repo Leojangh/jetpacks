@@ -38,10 +38,6 @@
         <meta-data
             android:name="android.allow_multiple_resumed_activities"
             android:value="true" />
-
-        <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="7db59010136690dbb3ace82796d63d28" />
         <!--
                     It's default options for activity
                     android:resizeableActivity="true"
@@ -55,12 +51,6 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/EdgeToEdge.NewSplash">
-
-<!--            <nav-graph android:value="@navigation/main" />-->
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -97,14 +87,6 @@
             android:enabled="true"
             android:exported="true"
             android:process=":remote" />
-
-        <service
-            android:name=".service.MyFirebaseService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
 
     </application>
 
