@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.genlz.jetpacks"
-        minSdk = min_sdk //vulkan requisites
+        minSdk = min_sdk
         targetSdk = target_sdk
         versionCode = 1
         versionName = "1.0"
