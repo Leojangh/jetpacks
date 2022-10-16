@@ -1,25 +1,28 @@
 package com.genlz.android.rpc
 
+import android.os.Binder
 import android.os.Bundle
+import android.os.IBinder
 import android.os.Parcelable
-import android.util.Log
-import androidx.annotation.IntDef
-import androidx.collection.ArrayMap
-import androidx.core.os.bundleOf
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 /**
  * Singleton can't across processes.
  */
 class RemoteProcessRegistry private constructor() {
 
-    internal val functions = ArrayMap<Int, IRemoteProcess<out Parcelable>>()
+    internal val functions: ConcurrentMap<Int, IRemoteProcess<*>> = ConcurrentHashMap()
 
-    fun register(f: IRemoteProcess<out Parcelable>) {
+    internal val binders = ConcurrentHashMap<String, IBinder>()
+
+    fun register(f: IRemoteProcess<*>) {
         functions[f.id] = f
     }
 
     init {
         register(testMethod)
+        binders["testBinder"] = TestBinder()
     }
 
     companion object {
@@ -45,11 +48,16 @@ class RemoteProcessRegistry private constructor() {
     }
 }
 
-val testMethod = object : IRemoteProcess<Bundle> {
+val testMethod = object : IRemoteProcess<List<String>> {
 
-    override fun invoke(arg1: Int, arg2: Int, obj: Parcelable?): Bundle {
-        return bundleOf("result" to "Hello form server side.")
+    override fun invoke(arg1: Int, arg2: Int, obj: Parcelable?, data: Bundle?): List<String> {
+        return listOf("Hello")
     }
 
     override val id: Int = 1
+}
+
+class TestBinder : Binder() {
+
+    fun test() = listOf("Test")
 }

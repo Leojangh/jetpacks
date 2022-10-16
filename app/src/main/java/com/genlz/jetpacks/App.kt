@@ -3,14 +3,16 @@ package com.genlz.jetpacks
 import android.annotation.SuppressLint
 import android.app.ActivityThread
 import android.app.Application
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.util.Log
+import com.genlz.android.rpc.ServerStub
+import com.genlz.jetpacks.di.ApplicationScope
 import com.genlz.jetpacks.utility.ForegroundTracker
 import com.genlz.libnative.functionInNative
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import java.util.concurrent.Executors
+import javax.inject.Inject
 
 /**
  * * System will create different application instance for processes.
@@ -22,11 +24,33 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class App : Application() {
 
+    enum class Process(val processName: String) {
+        MAIN(INSTANCE.packageName),
+        RPC("${INSTANCE.packageName}:rpc"),
+        REMOTE("${INSTANCE.packageName}:remote")
+    }
+
+    @Inject
+    @ApplicationScope
+    internal lateinit var appScope: CoroutineScope
+
     override fun onCreate() {
         super.onCreate()
         _INSTANCE = this
 
-        Log.d(TAG, "onCreate: ${ActivityThread.currentProcessName()}")
+        if (ActivityThread.currentProcessName() == Process.MAIN.processName) {
+            val stub = ServerStub(this)
+            val pool = Executors.newFixedThreadPool(10)
+            repeat(10) {
+                pool.execute {
+                    Log.d(TAG, "onCreate: $it")
+                    stub.callAsync(1) { r: List<String> ->
+                        Log.d(TAG, "onCreate $it: $r")
+                    }
+                }
+            }
+        }
+
     }
 
     override fun attachBaseContext(base: Context) {
@@ -42,7 +66,6 @@ class App : Application() {
 
         init {
             System.loadLibrary("jetpacks")
-            Log.d(TAG, ": ${androidJni()}")
             functionInNative()
         }
 
