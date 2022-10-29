@@ -7,7 +7,7 @@ import kotlin.io.path.absolutePathString
 
 val actionId = "jump2CurrentActivitySourceFile"
 
-val sdkDir: String = Properties().run {
+val sdkDir: String = run {
     val properties = Properties()
     try {
         properties.load(
