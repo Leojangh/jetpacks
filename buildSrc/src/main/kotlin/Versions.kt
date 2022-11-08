@@ -1,11 +1,11 @@
-const val HILT = "2.44"
+const val HILT = "2.44.2"
 const val NAVIGATION = "2.6.0-alpha03"
 const val BENCHMARK = "1.2.0-alpha04"
 const val AGP = "7.3.1" //upgrade the dependency of gradle api simultaneously
 const val min_sdk = 21
 const val target_sdk = 33
 const val java_version = "11"
-const val KOTLIN = "1.7.20"
+const val KOTLIN = "1.7.21"
 const val KSP = "$KOTLIN-1.0.8"
 const val DOKKA = "1.7.10"
 const val COMPOSE = "1.3.0"

@@ -14,6 +14,7 @@ plugins {
     id("com.google.devtools.ksp") version KSP apply false
     id("org.jetbrains.dokka") version DOKKA apply false
     id("androidx.benchmark") version BENCHMARK apply false
+    id("org.mozilla.rust-android-gradle.rust-android") version "0.9.3" apply false
 }
 
 //Enable kapt cache

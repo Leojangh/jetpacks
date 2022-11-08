@@ -3,9 +3,10 @@ package com.genlz.jetpacks
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import com.genlz.jetpacks.di.ApplicationScope
+import NativeApi
 import com.genlz.jetpacks.utility.ForegroundTracker
-import com.genlz.libnative.functionInNative
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
@@ -33,6 +34,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         _INSTANCE = this
+        val test = NativeApi.test()
+        Log.d(TAG, "onCreate: $test")
 
     }
 
@@ -49,7 +52,7 @@ class App : Application() {
 
         init {
             System.loadLibrary("jetpacks")
-            functionInNative()
+            System.loadLibrary("rust")
         }
 
         /**

@@ -121,8 +121,6 @@ android {
      * @see com.android.build.api.dsl.Lint
      */
     lint {
-        // if true, only report errors.
-        ignoreWarnings = true
         checkDependencies = true
     }
     namespace = "com.genlz.jetpacks"
@@ -143,8 +141,6 @@ kapt {
 }
 
 dependencies {
-//    implementation(projects.fcmAndroid)
-//    implementation(projects.viewBinding)
     implementation(projects.androidRpc)
     implementation(projects.share)
     implementation(projects.webview)
@@ -214,7 +210,7 @@ dependencies {
     // Tooling support (Previews, etc.)
     implementation("androidx.compose.ui:ui-tooling-preview:$COMPOSE")
     // When using a MDC theme
-    implementation("com.google.android.material:compose-theme-adapter:1.1.15")
+    implementation("com.google.android.material:compose-theme-adapter:1.1.21")
     implementation("androidx.compose.foundation:foundation:$COMPOSE")
     // Material Design
     implementation("androidx.compose.material:material:$COMPOSE")

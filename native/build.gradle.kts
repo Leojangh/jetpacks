@@ -1,29 +1,25 @@
 plugins {
     id("com.android.library")
-    kotlin("multiplatform")
+    kotlin("android")
+    id("org.mozilla.rust-android-gradle.rust-android")
 }
 
-kotlin {
+cargo {
+    module = "src/main/rust"
+    libname = "rust"
+    targets = listOf("arm64")
+    prebuiltToolchains = true
+    profile = "release"
+}
 
-    android()
-    androidNativeArm64()
-    sourceSets {
-
-        val androidMain by getting {
-            dependencies {
-                api("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle")
-                api("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle")
-                api("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle")
-
-                api("androidx.core:core-ktx:$coreKtx")
-                api("androidx.appcompat:appcompat:$appcompat")
-                api("com.google.android.material:material:$material")
-            }
-        }
+tasks.whenTaskAdded {
+    if ((name == "javaPreCompileDebug" || name == "javaPreCompileRelease")) {
+        dependsOn("cargoBuild")
     }
 }
 
 android {
+    namespace = "com.genlz.jetpacks.libnative"
     compileSdk = target_sdk
     defaultConfig {
         minSdk = min_sdk
@@ -48,14 +44,19 @@ android {
     externalNativeBuild {
         cmake {
             version = "3.22.1"
-            path = file("src/androidMain/cpp/CMakeLists.txt")
+            path = file("src/main/cpp/CMakeLists.txt")
         }
     }
 
-    sourceSets {
-        getByName("main") {
-            manifest.srcFile("src/androidMain/AndroidManifest.xml")
-        }
+    kotlinOptions {
+        jvmTarget = java_version
+        freeCompilerArgs = listOf(
+            "-opt-in=kotlin.RequiresOptIn",
+            "-Xuse-k2"
+        )
     }
-    namespace = "com.genlz.libnative"
+}
+
+dependencies {
+    implementation(kotlin("stdlib"))
 }
