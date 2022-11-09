@@ -1,17 +1,13 @@
 package com.genlz.jetpacks
 
 import android.annotation.SuppressLint
-import android.app.ActivityThread
 import android.app.Application
 import android.content.Context
-import android.util.Log
-import com.genlz.android.rpc.ServerStub
 import com.genlz.jetpacks.di.ApplicationScope
 import com.genlz.jetpacks.utility.ForegroundTracker
 import com.genlz.libnative.functionInNative
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
-import java.util.concurrent.Executors
 import javax.inject.Inject
 
 /**
@@ -37,19 +33,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         _INSTANCE = this
-
-        if (ActivityThread.currentProcessName() == Process.MAIN.processName) {
-            val stub = ServerStub(this)
-            val pool = Executors.newFixedThreadPool(10)
-            repeat(10) {
-                pool.execute {
-                    Log.d(TAG, "onCreate: $it")
-                    stub.callAsync(1) { r: List<String> ->
-                        Log.d(TAG, "onCreate $it: $r")
-                    }
-                }
-            }
-        }
 
     }
 

@@ -14,7 +14,6 @@ plugins {
     id("com.google.devtools.ksp") version KSP apply false
     id("org.jetbrains.dokka") version DOKKA apply false
     id("androidx.benchmark") version BENCHMARK apply false
-    id("com.google.gms.google-services") version FCM apply false
 }
 
 //Enable kapt cache
