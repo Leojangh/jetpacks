@@ -6,7 +6,6 @@ plugins {
     id("com.google.devtools.ksp")
     id("androidx.navigation.safeargs.kotlin")
     id("org.jetbrains.dokka")
-    id("com.google.gms.google-services")
 }
 
 android {
@@ -210,8 +209,8 @@ dependencies {
     })
     //Compose
     implementation("androidx.compose.ui:ui:$COMPOSE")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.26.0-alpha")
-    implementation("com.google.accompanist:accompanist-webview:0.26.0-alpha")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
+    implementation("com.google.accompanist:accompanist-webview:0.27.0")
     // Tooling support (Previews, etc.)
     implementation("androidx.compose.ui:ui-tooling-preview:$COMPOSE")
     // When using a MDC theme
@@ -225,7 +224,7 @@ dependencies {
     // Integration with activities
     implementation("androidx.activity:activity-compose:$activity")
     // Integration with ViewModels
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle")
     // Integration with observables
     implementation("androidx.compose.runtime:runtime-livedata:$COMPOSE")
     implementation("androidx.compose.runtime:runtime-rxjava2:$COMPOSE")
