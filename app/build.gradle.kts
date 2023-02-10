@@ -9,10 +9,11 @@ plugins {
 }
 
 android {
+    namespace = "com.genlz.jetpacks"
     compileSdk = target_sdk
 
     defaultConfig {
-        applicationId = "com.genlz.jetpacks"
+        applicationId = namespace
         minSdk = min_sdk
         targetSdk = target_sdk
         versionCode = 1
@@ -71,8 +72,10 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
 
-            proguardFiles += getDefaultProguardFile("proguard-android-optimize.txt")
-            proguardFiles("proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
 
         debug {
@@ -98,6 +101,8 @@ android {
         freeCompilerArgs = listOf(
             "-opt-in=kotlin.RequiresOptIn",
 //            "-Xuse-k2"
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=$KOTLIN"
         )
     }
 
@@ -123,7 +128,6 @@ android {
     lint {
         checkDependencies = true
     }
-    namespace = "com.genlz.jetpacks"
 
     testFixtures {
         enable = true
@@ -195,7 +199,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$HILT")
     kapt("com.google.dagger:hilt-android-compiler:$HILT")
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
 
     implementation("androidx.constraintlayout:constraintlayout:$constraintLayout")
     implementation("androidx.navigation:navigation-fragment-ktx:$NAVIGATION")

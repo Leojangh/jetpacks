@@ -7,17 +7,20 @@ description =
 
 android {
     compileSdk = target_sdk
+    namespace = "pseudo.android"
 
     defaultConfig {
         minSdk = min_sdk
-        targetSdk = targetSdk
+        targetSdk = target_sdk
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles += getDefaultProguardFile("proguard-android-optimize.txt")
-            proguardFiles("proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -25,5 +28,4 @@ android {
         sourceCompatibility(java_version)
         targetCompatibility(java_version)
     }
-    namespace = "pseudo.android"
 }
