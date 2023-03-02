@@ -1,5 +1,6 @@
 plugins {
     id("com.android.library")
+    kotlin("android")
     id("org.mozilla.rust-android-gradle.rust-android")
 }
 
@@ -30,7 +31,7 @@ android {
             sourceCompatibility(java_version)
         }
 
-        ndkVersion = "25.2.9519653"
+        ndkVersion = ndk_version
         ndk {
             abiFilters += listOf("arm64-v8a")
         }
@@ -39,6 +40,14 @@ android {
                 cppFlags += listOf("")
             }
         }
+    }
+
+    kotlinOptions {
+        jvmTarget = java_version
+        freeCompilerArgs = listOf(
+            "-opt-in=kotlin.RequiresOptIn",
+            "-Xuse-k2"
+        )
     }
 
     externalNativeBuild {

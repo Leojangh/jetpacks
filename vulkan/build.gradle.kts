@@ -16,7 +16,7 @@ android {
     defaultConfig {
         minSdk = 28
         targetSdk = target_sdk
-        ndkVersion = "25.1.8937393"
+        ndkVersion = ndk_version
         renderscriptTargetApi = 24
 
         externalNativeBuild {
@@ -42,6 +42,11 @@ android {
                 srcDirs("$android.ndkDirectory/sources/third_party/vulkan/src/build-android/jniLibs")
             }
         }
+    }
+
+    compileOptions {
+        targetCompatibility(java_version)
+        sourceCompatibility(java_version)
     }
 
     kotlinOptions {
