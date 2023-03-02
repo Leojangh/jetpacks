@@ -5,11 +5,10 @@ use jni::sys::jint;
 use jni::objects::JClass;
 
 #[no_mangle]
-pub extern "system" fn Java_NativeApi_00024Companion_test(
+pub extern "system" fn Java_com_genlz_android_Natives_method(
     _env: JNIEnv,
     _this: JClass,
 ) -> jint {
-    
     3
 }
 
@@ -19,5 +18,6 @@ mod tests {
 
     #[test]
     fn it_works() {
+        print!("Hello")
     }
 }

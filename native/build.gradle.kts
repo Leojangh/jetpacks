@@ -1,6 +1,5 @@
 plugins {
     id("com.android.library")
-    kotlin("android")
     id("org.mozilla.rust-android-gradle.rust-android")
 }
 
@@ -10,10 +9,11 @@ cargo {
     targets = listOf("arm64")
     prebuiltToolchains = true
     profile = "release"
+    pythonCommand = "python3"
 }
 
 tasks.whenTaskAdded {
-    if ((name == "javaPreCompileDebug" || name == "javaPreCompileRelease")) {
+    if ((name == "mergeDebugJniLibFolders" || name == "mergeReleaseJniLibFolders")) {
         dependsOn("cargoBuild")
     }
 }
@@ -30,7 +30,7 @@ android {
             sourceCompatibility(java_version)
         }
 
-        ndkVersion = "25.1.8937393"
+        ndkVersion = "25.2.9519653"
         ndk {
             abiFilters += listOf("arm64-v8a")
         }
@@ -48,15 +48,4 @@ android {
         }
     }
 
-    kotlinOptions {
-        jvmTarget = java_version
-        freeCompilerArgs = listOf(
-            "-opt-in=kotlin.RequiresOptIn",
-            "-Xuse-k2"
-        )
-    }
-}
-
-dependencies {
-    implementation(kotlin("stdlib"))
 }

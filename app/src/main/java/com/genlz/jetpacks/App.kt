@@ -3,9 +3,7 @@ package com.genlz.jetpacks
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import com.genlz.jetpacks.di.ApplicationScope
-import NativeApi
 import com.genlz.jetpacks.utility.ForegroundTracker
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -34,9 +32,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         _INSTANCE = this
-        val test = NativeApi.test()
-        Log.d(TAG, "onCreate: $test")
-
     }
 
     override fun attachBaseContext(base: Context) {
@@ -52,7 +47,6 @@ class App : Application() {
 
         init {
             System.loadLibrary("jetpacks")
-            System.loadLibrary("rust")
         }
 
         /**
