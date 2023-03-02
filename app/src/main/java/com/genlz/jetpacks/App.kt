@@ -3,6 +3,8 @@ package com.genlz.jetpacks
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.widget.Toast
+import com.genlz.jetpacks.libnative.RustNatives
 import com.genlz.jetpacks.di.ApplicationScope
 import com.genlz.jetpacks.utility.ForegroundTracker
 import dagger.hilt.android.HiltAndroidApp
@@ -32,6 +34,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         _INSTANCE = this
+        Toast.makeText(this, RustNatives.hello("Rust"), Toast.LENGTH_SHORT).show()
     }
 
     override fun attachBaseContext(base: Context) {

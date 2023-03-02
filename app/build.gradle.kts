@@ -214,7 +214,7 @@ dependencies {
     // Tooling support (Previews, etc.)
     implementation("androidx.compose.ui:ui-tooling-preview:$COMPOSE")
     // When using a MDC theme
-    implementation("com.google.android.material:compose-theme-adapter:1.1.21")
+    implementation("com.google.android.material:compose-theme-adapter:1.2.1")
     implementation("androidx.compose.foundation:foundation:$COMPOSE")
     // Material Design
     implementation("androidx.compose.material:material:$COMPOSE")
@@ -236,7 +236,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest:$COMPOSE")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 //    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
 }
