@@ -8,6 +8,12 @@ edition = "2021"
 [dependencies]
 jni = "0.21.0"
 
+# This dependency will only be included when targeting Android
+#[target.'cfg(target_os = "android")'.dependencies]
+android_logger = "0.13.0"
+log = "0.4.17"
+core_affinity = "0.8.0"
+
 [lib]
-crate_type = ["cdylib"]
+crate-type = ["lib", "cdylib"]
 name = "rust"

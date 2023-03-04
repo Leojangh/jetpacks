@@ -12,4 +12,6 @@ public final class RustNatives {
     }
 
     public static native String hello(String input);
+
+    public static native void runNative();
 }

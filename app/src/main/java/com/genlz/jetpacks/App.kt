@@ -1,6 +1,7 @@
 package com.genlz.jetpacks
 
 import android.annotation.SuppressLint
+import android.app.ActivityThread
 import android.app.Application
 import android.content.Context
 import android.widget.Toast
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @HiltAndroidApp
 class App : Application() {
 
-    enum class Process(val processName: String) {
+    enum class ProcessName(val processName: String) {
         MAIN(INSTANCE.packageName),
         RPC("${INSTANCE.packageName}:rpc"),
         REMOTE("${INSTANCE.packageName}:remote")
@@ -31,10 +32,19 @@ class App : Application() {
     @ApplicationScope
     internal lateinit var appScope: CoroutineScope
 
+    lateinit var processName: ProcessName
+
     override fun onCreate() {
         super.onCreate()
         _INSTANCE = this
-        Toast.makeText(this, RustNatives.hello("Rust"), Toast.LENGTH_SHORT).show()
+        processName = ProcessName.values()
+            .find { it.processName == ActivityThread.currentProcessName() }
+            ?: error("")
+
+        if (processName == ProcessName.MAIN) {
+            Toast.makeText(this, RustNatives.hello("Rust"), Toast.LENGTH_SHORT).show()
+            RustNatives.runNative()
+        }
     }
 
     override fun attachBaseContext(base: Context) {
