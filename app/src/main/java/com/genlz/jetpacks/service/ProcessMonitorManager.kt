@@ -2,23 +2,24 @@ package com.genlz.jetpacks.service
 
 import android.app.ActivityManager
 import android.app.IProcessObserver
-import android.content.Context
+import android.app.TaskInfo
+import android.content.ComponentName
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
-import com.genlz.share.util.appcompat.getSystemService
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 
-class ProcessMonitorManager private constructor(
-    context: Context,
-) {
+@RequiresApi(Build.VERSION_CODES.Q)
+class ProcessMonitorManager private constructor() {
 
-    private val activityManager = context.getSystemService<ActivityManager>()
+    private val clazzIActivityManager = Class.forName("android.app.IActivityManager")
+
+    private val iActivityManager =
+        HiddenApiBypass.invoke(ActivityManager::class.java, null, "getService")
 
     @RequiresPermission("android.permission.SET_ACTIVITY_WATCHER")
-    @RequiresApi(Build.VERSION_CODES.P)
     fun topInfoFlow() = callbackFlow {
         val cb = object : IProcessObserver.Stub() {
             override fun onForegroundActivitiesChanged(
@@ -35,21 +36,30 @@ class ProcessMonitorManager private constructor(
                 refreshTopInfo()
             }
 
-            @Suppress("DEPRECATION")
             private fun refreshTopInfo() {
-                val topTask =
-                    activityManager.getRunningTasks(1)?.get(0) ?: error("No task running!")
-                val topProcess =
-                    activityManager.runningAppProcesses?.get(0) ?: error("No process running!")
-                trySend(topProcess to topTask)
+                val rootTaskInfos = HiddenApiBypass.invoke(
+                    clazzIActivityManager,
+                    iActivityManager,
+                    "getAllRootTaskInfos"/*Android S*/
+                ) as List<*>
+                val topActivity =
+                    TaskInfo::class.java.getField("topActivity")[rootTaskInfos[0]] as ComponentName
+                trySend(topActivity.flattenToString())
             }
         }
-        val iActivityManager =
-            HiddenApiBypass.invoke(ActivityManager::class.java, null, "getService")
-        val clazz = Class.forName("android.app.IActivityManager")
-        HiddenApiBypass.invoke(clazz, iActivityManager, "registerProcessObserver", cb)
+        HiddenApiBypass.invoke(
+            clazzIActivityManager,
+            iActivityManager,
+            "registerProcessObserver",
+            cb
+        )
         awaitClose {
-            HiddenApiBypass.invoke(clazz, iActivityManager, "unregisterProcessObserver", cb)
+            HiddenApiBypass.invoke(
+                clazzIActivityManager,
+                iActivityManager,
+                "unregisterProcessObserver",
+                cb
+            )
         }
     }
 
@@ -60,11 +70,11 @@ class ProcessMonitorManager private constructor(
         private var INSTANCE: ProcessMonitorManager? = null
 
         @JvmStatic
-        fun getInstance(context: Context): ProcessMonitorManager {
+        fun getInstance(): ProcessMonitorManager {
             if (INSTANCE == null) {
                 synchronized(ProcessMonitorManager::class.java) {
                     if (INSTANCE == null)
-                        INSTANCE = ProcessMonitorManager(context.applicationContext)
+                        INSTANCE = ProcessMonitorManager()
                 }
             }
             return INSTANCE!!

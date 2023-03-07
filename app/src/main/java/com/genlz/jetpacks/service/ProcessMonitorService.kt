@@ -11,7 +11,6 @@ import com.genlz.jetpacks.di.ApplicationScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,17 +24,15 @@ class ProcessMonitorService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     @RequiresPermission("android.permission.SET_ACTIVITY_WATCHER")
-    @RequiresApi(Build.VERSION_CODES.P)
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         scope.launch {
-            ProcessMonitorManager.getInstance(applicationContext)
+            ProcessMonitorManager.getInstance()
                 .topInfoFlow()
                 .catch {
                     //ignore
                 }.collect {
-                    val (topProcess, topTask) = it
-                    Log.d(TAG, "onStartCommand: ${topTask.topActivity}")
-                    Log.d(TAG, "onStartCommand: ${topProcess.processName}")
+                    Log.d(TAG, "onStartCommand: $it")
                 }
         }
         return START_STICKY_COMPATIBILITY
