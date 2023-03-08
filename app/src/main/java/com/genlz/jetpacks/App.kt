@@ -9,11 +9,14 @@ import android.widget.Toast
 import com.genlz.jetpacks.di.ApplicationScope
 import com.genlz.jetpacks.libnative.CppNatives
 import com.genlz.jetpacks.libnative.RustNatives
-import com.genlz.jetpacks.threadaffinity.AffinityExecutorService
 import com.genlz.jetpacks.threadaffinity.CpuLayout
+import com.genlz.jetpacks.threadaffinity.ThreadAffinities.affinity
 import com.genlz.jetpacks.utility.ForegroundTracker
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
@@ -51,13 +54,15 @@ class App : Application() {
             RustNatives.runNative()
             val cores = CpuLayout.getImpl().cores()
             Log.d(TAG, "onCreate: cores:$cores")
-            val executor = AffinityExecutorService.newAffinityExecutor(
-                affinity = intArrayOf(4, 5, 6),
-                delegate = Executors.newSingleThreadExecutor()
-            )
-            executor.execute {
+            CoroutineScope(Dispatchers.Default.affinity(intArrayOf(4, 5, 6))).launch {
                 while (true) {
-                    Log.d(TAG, "onCreate: ${CppNatives.whereAmIRunning()}")
+                    Log.d(TAG, "coroutine is running on: ${CppNatives.whereAmIRunning()}")
+                    delay(1000)
+                }
+            }
+            Executors.newSingleThreadExecutor().affinity(intArrayOf(4, 5, 6)).execute {
+                while (true) {
+                    Log.d(TAG, "thread is running on: ${CppNatives.whereAmIRunning()}")
                     Thread.sleep(1000)
                 }
             }

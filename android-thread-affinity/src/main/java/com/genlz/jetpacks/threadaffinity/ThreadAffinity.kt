@@ -1,56 +1,29 @@
 package com.genlz.jetpacks.threadaffinity
 
 import com.genlz.jetpacks.libnative.CppNatives
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Runnable
 import java.util.concurrent.*
+import kotlin.coroutines.CoroutineContext
 
 /**
  * A kind of [ExecutorService],the internal thread has thread affinity.
  */
-interface AffinityExecutorService : ExecutorService, ThreadAffinity {
+internal interface AffinityExecutorService : ExecutorService, ThreadAffinity
 
-    companion object {
-
-        /**
-         * Instantiate a [AffinityExecutorService] using passed params.
-         *
-         * @see ThreadPoolExecutor
-         */
-        @JvmStatic
-        fun newAffinityExecutor(
-            affinity: IntArray = intArrayOf(),
-            corePoolSize: Int = Runtime.getRuntime().availableProcessors(),
-            maximumPoolSize: Int = Runtime.getRuntime().availableProcessors(),
-            keepAliveTime: Long = 1L,
-            unit: TimeUnit = TimeUnit.SECONDS,
-            workQueue: BlockingQueue<Runnable> = LinkedBlockingQueue(),
-            threadFactory: ThreadFactory = Executors.defaultThreadFactory(),
-            handler: RejectedExecutionHandler = ThreadPoolExecutor.AbortPolicy(),
-        ): AffinityExecutorService = AffinityThreadPoolExecutor(
-            affinity,
-            corePoolSize,
-            maximumPoolSize,
-            keepAliveTime,
-            unit,
-            workQueue,
-            threadFactory,
-            handler
-        )
-
-        /**
-         * Create an [AffinityExecutorService] from an [ExecutorService].
-         */
-        @JvmStatic
-        fun newAffinityExecutor(
-            affinity: IntArray = intArrayOf(),
-            delegate: ExecutorService,
-        ): AffinityExecutorService =
-            if (delegate is AffinityExecutorService) delegate
-            else AffinityDecorator(affinity, delegate)
-    }
+internal interface ThreadAffinity {
+    val affinity: IntArray
 }
 
-interface ThreadAffinity {
-    val affinity: IntArray
+/**
+ * Maybe wrong.
+ */
+internal class AffinityCoroutineDispatcherDecorator(
+    override val affinity: IntArray,
+    private val delegate: CoroutineDispatcher,
+) : CoroutineDispatcher(), ThreadAffinity {
+    override fun dispatch(context: CoroutineContext, block: Runnable) =
+        delegate.dispatch(context, AffinityRunnableWrapper(affinity, block))
 }
 
 internal class AffinityRunnableWrapper(
@@ -92,7 +65,7 @@ internal class AffinityThreadPoolExecutor(
     }, handler
 ), AffinityExecutorService
 
-internal class AffinityDecorator(
+internal class AffinityExecutorServiceDecorator(
     override val affinity: IntArray,
     private val delegate: ExecutorService,
 ) : ExecutorService by delegate, AffinityExecutorService {
