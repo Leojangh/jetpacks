@@ -1,6 +1,9 @@
 #include <jni.h>
 #include "libnative_api.h"
 #include "sched.h"
+#include "sys/prctl.h"
+#include "sys/resource.h"
+#include "syscall.h"
 #include <cerrno>
 #include <iostream>
 #include "android/log.h"
@@ -24,16 +27,15 @@ Java_com_genlz_jetpacks_libnative_CppNatives_setAffinity(JNIEnv *env, jclass cla
                                                          jintArray cpus) {
     cpu_set_t mask;
     CPU_ZERO(&mask);
-    jsize len = env->GetArrayLength(cpus);
-    for (int i = 0; i < len; ++i) {
-        jint *e = env->GetIntArrayElements(cpus, nullptr);
-        CPU_SET(*e, &mask);
-        env->ReleaseIntArrayElements(cpus, e, JNI_COMMIT);
+    jint *arr = env->GetIntArrayElements(cpus, nullptr);
+    for (int i = 0; i < env->GetArrayLength(cpus); ++i) {
+        CPU_SET(arr[i], &mask);
     }
+    env->ReleaseIntArrayElements(cpus, arr, JNI_COMMIT);
     int r = sched_setaffinity(tid, sizeof(cpu_set_t), &mask);
     if (r != 0) {
-        auto cls = env->FindClass("java/lang/RuntimeException");
-        env->ThrowNew(cls, strerror(errno));
+        env->ThrowNew(env->FindClass("java/lang/RuntimeException"), strerror(errno));
+        return r;
     }
     return 0;
 }
