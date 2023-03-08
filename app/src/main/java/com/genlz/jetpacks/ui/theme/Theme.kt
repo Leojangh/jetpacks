@@ -13,7 +13,6 @@ fun JetpacksTheme(
 ) {
 
     val systemUiController = rememberSystemUiController()
-    systemUiController
     SideEffect {
 
     }

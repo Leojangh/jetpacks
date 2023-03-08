@@ -145,6 +145,10 @@ kapt {
     correctErrorTypes = true
 }
 
+kotlin {
+    jvmToolchain(java_version.toInt())
+}
+
 dependencies {
     implementation(projects.androidRpc)
     implementation(projects.share)

@@ -4,13 +4,16 @@ import android.annotation.SuppressLint
 import android.app.ActivityThread
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import com.genlz.jetpacks.di.ApplicationScope
+import com.genlz.jetpacks.libnative.CppNatives
 import com.genlz.jetpacks.libnative.RustNatives
 import com.genlz.jetpacks.utility.ForegroundTracker
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 /**
  * * System will create different application instance for processes.
@@ -44,6 +47,13 @@ class App : Application() {
         if (processName == ProcessName.MAIN) {
             Toast.makeText(this, RustNatives.hello("Rust"), Toast.LENGTH_SHORT).show()
             RustNatives.runNative()
+            thread {
+                CppNatives.setAffinity()
+                while (true) {
+                    Log.d(TAG, "onCreate: ${CppNatives.whereAmIRunning()}")
+                    Thread.sleep(1000)
+                }
+            }
         }
     }
 

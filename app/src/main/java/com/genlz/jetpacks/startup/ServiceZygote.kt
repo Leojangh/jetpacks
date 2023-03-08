@@ -8,7 +8,7 @@ import com.genlz.share.util.appcompat.intent
 class ServiceZygote : Initializer<Unit> {
 
     override fun create(context: Context) {
-        context.startService(context.intent<ProcessMonitorService>())
+//        context.startService(context.intent<ProcessMonitorService>())
     }
 
     override fun dependencies(): MutableList<Class<out Initializer<*>>> {

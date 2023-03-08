@@ -8,5 +8,10 @@ class CppNatives {
 
         @JvmStatic
         external fun androidJni(): Int
+
+        @JvmStatic
+        external fun setAffinity(tid: Int = 0)
+
+        @JvmStatic external fun whereAmIRunning():Int
     }
 }
