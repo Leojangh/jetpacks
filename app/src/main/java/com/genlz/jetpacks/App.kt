@@ -19,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 /**
  * * System will create different application instance for processes.
@@ -66,6 +67,13 @@ class App : Application() {
                     Thread.sleep(1000)
                 }
             }
+            Thread {
+                while (true) {
+                    Log.d(TAG, "thread 0 is running on: ${CppNatives.whereAmIRunning()}")
+                    Thread.sleep(1000)
+                }
+            }.affinity(intArrayOf(4, 5, 6))
+                .start()
         }
     }
 

@@ -13,10 +13,18 @@ internal interface AffinityExecutorService : ExecutorService, ThreadAffinity
 
 internal interface ThreadAffinity {
     val affinity: IntArray
+
+    fun setAffinity() {
+        if (affinity.isNotEmpty()) {
+            CppNatives.setAffinity(cpus = affinity)
+        }
+    }
 }
 
 /**
  * Maybe wrong.
+ *
+ * bug:Invalid argument
  */
 internal class AffinityCoroutineDispatcherDecorator(
     override val affinity: IntArray,
@@ -31,9 +39,7 @@ internal class AffinityRunnableWrapper(
     private val command: Runnable,
 ) : Runnable, ThreadAffinity {
     override fun run() {
-        if (affinity.isNotEmpty()) {
-            CppNatives.setAffinity(cpus = affinity)
-        }
+        setAffinity()
         command.run()
     }
 }
@@ -43,9 +49,7 @@ internal class AffinityCallableWrapper<V>(
     private val task: Callable<V>,
 ) : Callable<V>, ThreadAffinity {
     override fun call(): V {
-        if (affinity.isNotEmpty()) {
-            CppNatives.setAffinity(cpus = affinity)
-        }
+        setAffinity()
         return task.call()
     }
 }
