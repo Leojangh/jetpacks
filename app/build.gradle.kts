@@ -150,6 +150,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(projects.androidThreadAffinity)
     implementation(projects.androidRpc)
     implementation(projects.share)
     implementation(projects.webview)

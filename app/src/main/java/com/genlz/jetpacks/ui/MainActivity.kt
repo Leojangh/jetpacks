@@ -1,16 +1,27 @@
 package com.genlz.jetpacks.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.compose.setContent
+import androidx.activity.contextaware.withContextAvailable
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
+import com.genlz.jetpacks.App
+import com.genlz.jetpacks.threadaffinity.CpuFrequencyMonitor
 import com.genlz.share.util.appcompat.animateExt
 import com.genlz.share.util.appcompat.doOnEnd
 import com.genlz.share.util.appcompat.lazyNoneSafe
 import com.genlz.share.util.appcompat.setDecorFitsSystemWindowsExt
+import com.topjohnwu.superuser.Shell
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.io.path.Path
+import kotlin.io.path.readText
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -28,6 +39,15 @@ class MainActivity : AppCompatActivity() {
         setContent {
             ComposeApp()
         }
+        Shell.cmd("su").exec()
+        lifecycleScope.launch {
+//            withContext(Dispatchers.IO) {
+//                val s =
+//                    Path("/sys/devices/system/cpu/cpu7/cpufreq/cpuinfo_cur_freq").readText()
+//                Log.d(TAG, "onCreate: $s")
+//            }
+        }
+
     }
 
     /**

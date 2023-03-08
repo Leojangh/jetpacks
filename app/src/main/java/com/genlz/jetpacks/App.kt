@@ -9,11 +9,13 @@ import android.widget.Toast
 import com.genlz.jetpacks.di.ApplicationScope
 import com.genlz.jetpacks.libnative.CppNatives
 import com.genlz.jetpacks.libnative.RustNatives
+import com.genlz.jetpacks.threadaffinity.AffinityExecutorService
+import com.genlz.jetpacks.threadaffinity.CpuLayout
 import com.genlz.jetpacks.utility.ForegroundTracker
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
+import java.util.concurrent.Executors
 import javax.inject.Inject
-import kotlin.concurrent.thread
 
 /**
  * * System will create different application instance for processes.
@@ -47,17 +49,15 @@ class App : Application() {
         if (processName == ProcessName.MAIN) {
             Toast.makeText(this, RustNatives.hello("Rust"), Toast.LENGTH_SHORT).show()
             RustNatives.runNative()
-            thread {
-                CppNatives.setAffinity(cpus = intArrayOf(0,1))
+            val cores = CpuLayout.getImpl().cores()
+            Log.d(TAG, "onCreate: cores:$cores")
+            val executor = AffinityExecutorService.newAffinityExecutor(
+                affinity = intArrayOf(4, 5, 6),
+                delegate = Executors.newSingleThreadExecutor()
+            )
+            executor.execute {
                 while (true) {
-                    Log.d(TAG, "Thread 0 is running on: ${CppNatives.whereAmIRunning()}")
-                    Thread.sleep(1000)
-                }
-            }
-            thread {
-                CppNatives.setAffinity(cpus = intArrayOf(0,1))
-                while (true) {
-                    Log.d(TAG, "Thread 1 is running on: ${CppNatives.whereAmIRunning()}")
+                    Log.d(TAG, "onCreate: ${CppNatives.whereAmIRunning()}")
                     Thread.sleep(1000)
                 }
             }
