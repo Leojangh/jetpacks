@@ -19,19 +19,23 @@ Java_com_genlz_jetpacks_libnative_CppNatives_androidJni(JNIEnv *env, jclass claz
 }
 
 extern "C"
-JNIEXPORT void JNICALL
-Java_com_genlz_jetpacks_libnative_CppNatives_setAffinity(JNIEnv *env, jclass clazz, jint tid) {
+JNIEXPORT jint JNICALL
+Java_com_genlz_jetpacks_libnative_CppNatives_setAffinity(JNIEnv *env, jclass clazz, jint tid,
+                                                         jintArray cpus) {
     cpu_set_t mask;
     CPU_ZERO(&mask);
-    CPU_SET(0, &mask);
-    CPU_SET(1, &mask);
-    CPU_SET(2, &mask);
-    CPU_SET(3, &mask);
+    jsize len = env->GetArrayLength(cpus);
+    for (int i = 0; i < len; ++i) {
+        jint *e = env->GetIntArrayElements(cpus, nullptr);
+        CPU_SET(*e, &mask);
+        env->ReleaseIntArrayElements(cpus, e, JNI_COMMIT);
+    }
     int r = sched_setaffinity(tid, sizeof(cpu_set_t), &mask);
     if (r != 0) {
-        LOG_D("%s", strerror(errno));
+        auto cls = env->FindClass("java/lang/RuntimeException");
+        env->ThrowNew(cls, strerror(errno));
     }
-    LOG_I("set affinity done");
+    return 0;
 }
 
 

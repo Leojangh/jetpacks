@@ -9,9 +9,18 @@ class CppNatives {
         @JvmStatic
         external fun androidJni(): Int
 
+        /**
+         * Set thread affinity for [tid],0 represents the current thread.
+         *
+         *
+         */
         @JvmStatic
-        external fun setAffinity(tid: Int = 0)
+        external fun setAffinity(tid: Int = 0, cpus: IntArray): Int
 
-        @JvmStatic external fun whereAmIRunning():Int
+        /**
+         * Get which cpu is the current thread running on.
+         */
+        @JvmStatic
+        external fun whereAmIRunning(): Int
     }
 }

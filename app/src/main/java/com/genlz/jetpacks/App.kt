@@ -48,7 +48,7 @@ class App : Application() {
             Toast.makeText(this, RustNatives.hello("Rust"), Toast.LENGTH_SHORT).show()
             RustNatives.runNative()
             thread {
-                CppNatives.setAffinity()
+                CppNatives.setAffinity(cpus = intArrayOf(7))
                 while (true) {
                     Log.d(TAG, "onCreate: ${CppNatives.whereAmIRunning()}")
                     Thread.sleep(1000)
