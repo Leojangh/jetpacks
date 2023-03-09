@@ -1,17 +1,27 @@
 package com.genlz.jetpacks.threadaffinity
 
+import androidx.annotation.Size
 import com.genlz.jetpacks.libnative.CppNatives
 import kotlinx.coroutines.CoroutineDispatcher
-import java.util.concurrent.*
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Future
+import java.util.concurrent.RejectedExecutionHandler
+import java.util.concurrent.ThreadFactory
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
 /**
  * A kind of [ExecutorService],the internal thread has thread affinity.
  */
-internal interface AffinityExecutorService : ExecutorService, ThreadAffinity
+interface AffinityExecutorService : ExecutorService, ThreadAffinity
 
-internal interface ThreadAffinity {
-    val affinity: IntArray
+interface ThreadAffinity {
+    @set:Size(min = 1)
+    @get:Size(min = 1)
+    var affinity: IntArray
 }
 
 /**
@@ -20,7 +30,8 @@ internal interface ThreadAffinity {
  * bug:Invalid argument
  */
 internal class AffinityCoroutineDispatcherDecorator(
-    override val affinity: IntArray,
+    @Size(min = 1)
+    override var affinity: IntArray,
     private val delegate: CoroutineDispatcher,
 ) : CoroutineDispatcher(), ThreadAffinity {
     override fun dispatch(context: CoroutineContext, block: Runnable) =
@@ -28,7 +39,8 @@ internal class AffinityCoroutineDispatcherDecorator(
 }
 
 internal class AffinityRunnableWrapper(
-    override val affinity: IntArray,
+    @Size(min = 1)
+    override var affinity: IntArray,
     private val command: Runnable,
 ) : Runnable, AbsAffinityWrapper {
     override fun run() {
@@ -40,14 +52,13 @@ internal class AffinityRunnableWrapper(
 @JvmDefaultWithoutCompatibility
 internal interface AbsAffinityWrapper : ThreadAffinity {
     fun setAffinity() {
-        if (affinity.isNotEmpty()) {
-            CppNatives.setAffinity(cpus = affinity)
-        }
+        CppNatives.setAffinity(cpus = affinity)
     }
 }
 
 internal class AffinityCallableWrapper<V>(
-    override val affinity: IntArray,
+    @Size(min = 1)
+    override var affinity: IntArray,
     private val task: Callable<V>,
 ) : Callable<V>, AbsAffinityWrapper {
     override fun call(): V {
@@ -57,7 +68,8 @@ internal class AffinityCallableWrapper<V>(
 }
 
 internal class AffinityThreadPoolExecutor(
-    override val affinity: IntArray,
+    @Size(min = 1)
+    override var affinity: IntArray,
     corePoolSize: Int,
     maximumPoolSize: Int,
     keepAliveTime: Long,
@@ -66,13 +78,20 @@ internal class AffinityThreadPoolExecutor(
     threadFactory: ThreadFactory,
     handler: RejectedExecutionHandler,
 ) : ThreadPoolExecutor(
-    corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, {
+    corePoolSize,
+    maximumPoolSize,
+    keepAliveTime,
+    unit,
+    workQueue,
+    if (affinity.isEmpty()) threadFactory else ThreadFactory {
         threadFactory.newThread(AffinityRunnableWrapper(affinity, it))
-    }, handler
+    },
+    handler
 ), AffinityExecutorService
 
 internal class AffinityExecutorServiceDecorator(
-    override val affinity: IntArray,
+    @Size(min = 1)
+    override var affinity: IntArray,
     private val delegate: ExecutorService,
 ) : ExecutorService by delegate, AffinityExecutorService {
     override fun execute(command: Runnable) =

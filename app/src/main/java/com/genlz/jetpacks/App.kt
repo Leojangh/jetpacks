@@ -14,6 +14,7 @@ import com.genlz.jetpacks.threadaffinity.ThreadAffinities.affinity
 import com.genlz.jetpacks.utility.ForegroundTracker
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
+import java.util.concurrent.Executors
 import javax.inject.Inject
 
 /**
@@ -50,12 +51,15 @@ class App : Application() {
             RustNatives.runNative()
             val cores = CpuLayout.cores()
             Log.d(TAG, "onCreate: cores:$cores")
-            Thread {
-                while (true) {
-                    Log.d(TAG, "thread 0 is running on: ${CppNatives.whereAmIRunning()}")
-                    Thread.sleep(1000)
+            Executors.newSingleThreadExecutor()
+                .affinity(intArrayOf(0, 2))
+                .affinity(intArrayOf(5))
+                .execute {
+                    while (true) {
+                        Log.d(TAG, "thread 0 is running on: ${CppNatives.whereAmIRunning()}")
+                        Thread.sleep(1000)
+                    }
                 }
-            }.affinity().start()
         }
     }
 
