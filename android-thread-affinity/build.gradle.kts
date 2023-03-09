@@ -31,7 +31,8 @@ android {
         jvmTarget = java_version
         freeCompilerArgs = listOf(
             "-opt-in=kotlin.RequiresOptIn",
-            "-Xuse-k2"
+            "-Xuse-k2",
+            "-Xjvm-default=all",
         )
     }
     externalNativeBuild {
@@ -47,7 +48,7 @@ dependencies {
     implementation("androidx.core:core-ktx:$coreKtx")
     implementation("com.github.topjohnwu.libsu:core:$libsu")
     implementation("com.github.topjohnwu.libsu:nio:$libsu")
-    implementation ("com.github.topjohnwu.libsu:service:$libsu")
+    implementation("com.github.topjohnwu.libsu:service:$libsu")
     implementation("commons-io:commons-io:2.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")

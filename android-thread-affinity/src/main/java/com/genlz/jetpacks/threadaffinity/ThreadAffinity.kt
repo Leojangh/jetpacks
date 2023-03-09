@@ -2,7 +2,6 @@ package com.genlz.jetpacks.threadaffinity
 
 import com.genlz.jetpacks.libnative.CppNatives
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Runnable
 import java.util.concurrent.*
 import kotlin.coroutines.CoroutineContext
 
@@ -13,12 +12,6 @@ internal interface AffinityExecutorService : ExecutorService, ThreadAffinity
 
 internal interface ThreadAffinity {
     val affinity: IntArray
-
-    fun setAffinity() {
-        if (affinity.isNotEmpty()) {
-            CppNatives.setAffinity(cpus = affinity)
-        }
-    }
 }
 
 /**
@@ -37,17 +30,26 @@ internal class AffinityCoroutineDispatcherDecorator(
 internal class AffinityRunnableWrapper(
     override val affinity: IntArray,
     private val command: Runnable,
-) : Runnable, ThreadAffinity {
+) : Runnable, AbsAffinityWrapper {
     override fun run() {
         setAffinity()
         command.run()
     }
 }
 
+@JvmDefaultWithoutCompatibility
+internal interface AbsAffinityWrapper : ThreadAffinity {
+    fun setAffinity() {
+        if (affinity.isNotEmpty()) {
+            CppNatives.setAffinity(cpus = affinity)
+        }
+    }
+}
+
 internal class AffinityCallableWrapper<V>(
     override val affinity: IntArray,
     private val task: Callable<V>,
-) : Callable<V>, ThreadAffinity {
+) : Callable<V>, AbsAffinityWrapper {
     override fun call(): V {
         setAffinity()
         return task.call()

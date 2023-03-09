@@ -55,24 +55,12 @@ class App : Application() {
             RustNatives.runNative()
             val cores = CpuLayout.getImpl().cores()
             Log.d(TAG, "onCreate: cores:$cores")
-            CoroutineScope(Dispatchers.Default.affinity(intArrayOf(4, 5, 6))).launch {
-                while (true) {
-                    Log.d(TAG, "coroutine is running on: ${CppNatives.whereAmIRunning()}")
-                    delay(1000)
-                }
-            }
-            Executors.newSingleThreadExecutor().affinity(intArrayOf(4, 5, 6)).execute {
-                while (true) {
-                    Log.d(TAG, "thread is running on: ${CppNatives.whereAmIRunning()}")
-                    Thread.sleep(1000)
-                }
-            }
             Thread {
                 while (true) {
                     Log.d(TAG, "thread 0 is running on: ${CppNatives.whereAmIRunning()}")
                     Thread.sleep(1000)
                 }
-            }.affinity(intArrayOf(4, 5, 6))
+            }.affinity(intArrayOf(0))
                 .start()
         }
     }
