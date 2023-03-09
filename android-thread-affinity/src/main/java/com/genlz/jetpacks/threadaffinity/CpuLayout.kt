@@ -23,9 +23,6 @@ interface CpuLayout {
 
     fun cores(): List<Core>
 
-    companion object {
-        @JvmStatic
-        fun getImpl(): CpuLayout = CpuLayoutImpl()
-    }
+    companion object Impl : CpuLayout by CpuLayoutImpl()
 }
 

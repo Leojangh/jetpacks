@@ -34,7 +34,8 @@ object ThreadAffinities {
 
     @JvmStatic
     @JvmName("setThreadAffinity")
-    fun Thread.affinity(affinity: IntArray): Thread {
+    fun Thread.affinity(affinity: IntArray = intArrayOf()): Thread {
+        if (affinity.isEmpty()) return this
         if (state != Thread.State.NEW) error("Only state in NEW is supported.")
         @SuppressLint("DiscouragedPrivateApi")
         val field = Thread::class.java.getDeclaredField("target")
