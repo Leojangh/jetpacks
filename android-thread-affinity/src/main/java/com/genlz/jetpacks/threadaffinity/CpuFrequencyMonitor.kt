@@ -31,6 +31,7 @@ class CpuFrequencyMonitor private constructor(private val ctx: Context) {
         latch.await()
         
         val file =
+            //https://www.kernel.org/doc/Documentation/cpu-freq/user-guide.txt
             fs?.getFile("/sys/devices/system/cpu/cpu$id/cpufreq/cpuinfo_cur_freq") ?: error("")
         emit(file.readText().trim().toInt())
     }.flowOn(Dispatchers.IO)

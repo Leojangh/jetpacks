@@ -16,9 +16,9 @@ import kotlin.coroutines.CoroutineContext
 /**
  * A kind of [ExecutorService],the internal thread has thread affinity.
  */
-interface AffinityExecutorService : ExecutorService, ThreadAffinity
+internal interface AffinityExecutorService : ExecutorService, ThreadAffinity
 
-interface ThreadAffinity {
+internal interface ThreadAffinity {
     @set:Size(min = 1)
     @get:Size(min = 1)
     var affinity: IntArray

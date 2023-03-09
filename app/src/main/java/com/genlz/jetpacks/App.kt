@@ -49,13 +49,11 @@ class App : Application() {
         if (processName == ProcessName.MAIN) {
             Toast.makeText(this, RustNatives.hello("Rust"), Toast.LENGTH_SHORT).show()
             RustNatives.runNative()
-            val cores = CpuLayout.cores()
-            Log.d(TAG, "onCreate: cores:$cores")
             Executors.newSingleThreadExecutor()
-                .affinity(intArrayOf(0, 2))
-                .affinity(intArrayOf(5))
+                .affinity(CpuLayout.bigCores())
                 .execute {
                     while (true) {
+                        Log.d(TAG, "onCreate: cores:${CpuLayout.cores()}")
                         Log.d(TAG, "thread 0 is running on: ${CppNatives.whereAmIRunning()}")
                         Thread.sleep(1000)
                     }

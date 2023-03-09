@@ -71,7 +71,7 @@ object ThreadAffinities {
      */
     @JvmStatic
     @JvmName("newAffinityExecutorService")
-    fun ExecutorService.affinity(@Size(min = 1) affinity: IntArray): AffinityExecutorService {
+    fun ExecutorService.affinity(@Size(min = 1) affinity: IntArray): ExecutorService {
         require(affinity.isNotEmpty())
         return if (this is AffinityExecutorService) {
             this.affinity = affinity;this
