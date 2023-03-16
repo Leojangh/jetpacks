@@ -9,7 +9,7 @@ plugins {
     kotlin("kapt") version KOTLIN apply false
     kotlin("multiplatform") version KOTLIN apply false
     kotlin("js") version KOTLIN apply false
-    id("dagger.hilt.android.plugin") version HILT apply false
+    id("com.google.dagger.hilt.android") version HILT apply false
     id("androidx.navigation.safeargs.kotlin") version NAVIGATION apply false
     id("com.google.devtools.ksp") version KSP apply false
     id("org.jetbrains.dokka") version DOKKA apply false

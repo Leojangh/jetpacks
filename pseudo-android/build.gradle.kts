@@ -24,6 +24,10 @@ android {
         }
     }
 
+    buildFeatures {
+        aidl = true
+    }
+
     compileOptions {
         sourceCompatibility(java_version)
         targetCompatibility(java_version)

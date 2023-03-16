@@ -27,6 +27,18 @@ android {
         }
     }
 
+    buildTypes {
+
+        release {
+            isMinifyEnabled = true
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
     kotlinOptions {
         jvmTarget = java_version
         freeCompilerArgs = listOf(

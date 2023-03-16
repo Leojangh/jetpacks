@@ -1,7 +1,7 @@
 const val HILT = "2.45"
 const val NAVIGATION = "2.6.0-alpha04"
 const val BENCHMARK = "1.2.0-alpha09"
-const val AGP = "7.4.2" //upgrade the dependency of gradle api simultaneously
+const val AGP = "8.0.0-beta05" //upgrade the dependency of gradle api simultaneously
 const val min_sdk = 21
 const val target_sdk = 33
 const val java_version = "11"
