@@ -10,7 +10,7 @@ import com.genlz.jetpacks.di.ApplicationScope
 import com.genlz.jetpacks.libnative.CppNatives
 import com.genlz.jetpacks.libnative.RustNatives
 import com.genlz.jetpacks.threadaffinity.CpuLayout
-import com.genlz.jetpacks.threadaffinity.ThreadAffinities.affinity
+import com.genlz.jetpacks.threadaffinity.ThreadAffinities.affiliate
 import com.genlz.jetpacks.utility.ForegroundTracker
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -50,7 +50,7 @@ class App : Application() {
             Toast.makeText(this, RustNatives.hello("Rust"), Toast.LENGTH_SHORT).show()
             RustNatives.runNative()
             Executors.newSingleThreadExecutor()
-                .affinity(CpuLayout.bigCores())
+                .affiliate(CpuLayout.bigCores())
                 .execute {
                     while (true) {
                         Log.d(TAG, "onCreate: cores:${CpuLayout.cores()}")

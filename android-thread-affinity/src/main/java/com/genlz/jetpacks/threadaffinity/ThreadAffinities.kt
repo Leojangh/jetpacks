@@ -40,7 +40,7 @@ object ThreadAffinities {
      */
     @JvmStatic
     @JvmName("setThreadAffinity")
-    fun Thread.affinity(@Size(min = 1) affinity: IntArray): Thread {
+    fun Thread.affiliate(@Size(min = 1) affinity: IntArray): Thread {
         require(affinity.isNotEmpty())
         if (state != Thread.State.NEW) error("Only state in NEW is supported.")
         @SuppressLint("DiscouragedPrivateApi")
@@ -59,7 +59,7 @@ object ThreadAffinities {
      */
     @JvmStatic
     @JvmName("newAffinityDispatcher")
-    fun CoroutineDispatcher.affinity(@Size(min = 1) affinity: IntArray): CoroutineDispatcher {
+    fun CoroutineDispatcher.affiliate(@Size(min = 1) affinity: IntArray): CoroutineDispatcher {
         require(affinity.isNotEmpty())
         return if (this is ThreadAffinity) {
             this.affinity = affinity;this
@@ -71,12 +71,18 @@ object ThreadAffinities {
      */
     @JvmStatic
     @JvmName("newAffinityExecutorService")
-    fun ExecutorService.affinity(@Size(min = 1) affinity: IntArray): ExecutorService {
+    fun ExecutorService.affiliate(@Size(min = 1) affinity: IntArray): ExecutorService {
         require(affinity.isNotEmpty())
         return if (this is AffinityExecutorService) {
             this.affinity = affinity;this
         } else AffinityExecutorServiceDecorator(affinity, this)
     }
+
+    @JvmStatic
+    @JvmName("getBaseExecutorService")
+    fun ExecutorService.unaffiliate(): ExecutorService =
+        if (this is AffinityExecutorServiceDecorator) delegate
+        else error("This is ExecutorService is not an affinity wrapper:$javaClass")
 }
 
 

@@ -92,7 +92,7 @@ internal class AffinityThreadPoolExecutor(
 internal class AffinityExecutorServiceDecorator(
     @Size(min = 1)
     override var affinity: IntArray,
-    private val delegate: ExecutorService,
+    internal val delegate: ExecutorService,
 ) : ExecutorService by delegate, AffinityExecutorService {
     override fun execute(command: Runnable) =
         delegate.execute(AffinityRunnableWrapper(affinity, command))

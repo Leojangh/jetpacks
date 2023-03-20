@@ -2,6 +2,8 @@ plugins {
     id("com.android.library")
     kotlin("android")
     id("org.jetbrains.dokka")
+//    id("com.jfrog.artifactory")
+    `maven-publish`
 }
 
 android {
@@ -39,7 +41,45 @@ android {
         viewBinding = true
     }
     namespace = "com.genlz.share"
+
+
+    publishing {
+        singleVariant("release")
+//        multipleVariants()
+    }
 }
+
+
+publishing {
+
+    publications {
+        register<MavenPublication>("release") {
+            groupId = "com.genlz.jetpacks"
+            artifactId = "share"
+            version = "0.0.1"
+            artifact(buildDir) {
+                classifier = "platform"
+                extension = "aar"
+            }
+            afterEvaluate {
+//                from(components["release"])
+            }
+        }
+    }
+}
+
+//val artifactoryPassword: String by gradleLocalProperties(rootDir)
+//val artifactoryUsername: String by gradleLocalProperties(rootDir)
+//
+//artifactory {
+//    publishing {
+//        setContextUrl("")
+//        distribute {
+//            username = artifactoryUsername
+//            password = artifactoryPassword
+//        }
+//    }
+//}
 
 dependencies {
 
@@ -57,6 +97,6 @@ dependencies {
     api("com.google.android.material:material:$material")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }

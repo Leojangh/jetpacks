@@ -15,6 +15,7 @@ plugins {
     id("org.jetbrains.dokka") version DOKKA apply false
     id("androidx.benchmark") version BENCHMARK apply false
     id("org.mozilla.rust-android-gradle.rust-android") version "0.9.3" apply false
+    id("com.jfrog.artifactory") version "4.29.3" apply false
 }
 
 //Enable kapt cache
