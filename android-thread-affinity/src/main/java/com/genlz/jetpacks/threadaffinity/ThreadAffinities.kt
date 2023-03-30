@@ -1,9 +1,11 @@
 package com.genlz.jetpacks.threadaffinity
 
 import android.annotation.SuppressLint
+import android.os.Build
 import androidx.annotation.Size
 import kotlinx.coroutines.CoroutineDispatcher
 import java.util.concurrent.*
+import java.util.function.Predicate
 
 @Suppress("unused")
 object ThreadAffinities {
@@ -14,7 +16,7 @@ object ThreadAffinities {
      * @see ThreadPoolExecutor
      */
     @JvmStatic
-    fun newAffinityExecutorService(
+    fun newAffinityThreadPool(
         @Size(min = 1)
         affinity: IntArray,
         corePoolSize: Int = Runtime.getRuntime().availableProcessors(),
@@ -73,16 +75,66 @@ object ThreadAffinities {
     @JvmName("newAffinityExecutorService")
     fun ExecutorService.affiliate(@Size(min = 1) affinity: IntArray): ExecutorService {
         require(affinity.isNotEmpty())
-        return if (this is AffinityExecutorService) {
-            this.affinity = affinity;this
-        } else AffinityExecutorServiceDecorator(affinity, this)
+        return if (this is AffinityExecutorService) setAffinity(affinity)
+        else AffinityExecutorServiceDecorator(affinity, this)
     }
 
     @JvmStatic
     @JvmName("getBaseExecutorService")
     fun ExecutorService.unaffiliate(): ExecutorService =
-        if (this is AffinityExecutorServiceDecorator) delegate
-        else error("This is ExecutorService is not an affinity wrapper:$javaClass")
+        when (this) {
+            is AffinityExecutorServiceDecorator -> delegate
+            is AffinityThreadPoolExecutor ->
+                //modify affinity to all
+                setAffinity(IntArray(Runtime.getRuntime().availableProcessors(), Int::toInt))
+
+            else -> this
+        }
+
+    @JvmStatic
+    @JvmName("newAffinityForkJoinPool")
+    fun newAffinityForkJoinPool(
+        @Size(min = 1)
+        affinity: IntArray,
+        factory: ForkJoinPool.ForkJoinWorkerThreadFactory = ForkJoinPool.defaultForkJoinWorkerThreadFactory,
+        handler: Thread.UncaughtExceptionHandler? = null,
+        asyncMode: Boolean = false,
+        corePoolSize: Int = 0,
+        /**
+         * [java.util.concurrent.ForkJoinPool.MAX_CAP]
+         */
+        maximumPoolSize: Int = 0x7fff,
+        minimumRunnable: Int = 1,
+        saturate: Predicate<in ForkJoinPool>? = null,
+        /**
+         * [java.util.concurrent.ForkJoinPool.DEFAULT_KEEPALIVE]
+         */
+        keepAliveTime: Long = 60000L,
+        unit: TimeUnit = TimeUnit.MILLISECONDS,
+    ): ForkJoinPool {
+        require(affinity.isNotEmpty())
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            AffinityForkJoinPool(
+                affinity,
+                factory,
+                handler,
+                asyncMode,
+                corePoolSize,
+                maximumPoolSize,
+                minimumRunnable,
+                saturate,
+                keepAliveTime,
+                unit
+            )
+        else AffinityForkJoinPool(affinity)
+    }
+
+    /*fun ForkJoinPool.unaffilate(): ForkJoinPool {
+        return if (this is AffinityForkJoinPool) {
+            //Cannot modify parallelism
+            affinity = IntStream.range(0, Runtime.getRuntime().availableProcessors()).toArray();this
+        } else this
+    }*/
 }
 
 

@@ -4,17 +4,10 @@ import android.annotation.SuppressLint
 import android.app.ActivityThread
 import android.app.Application
 import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import com.genlz.jetpacks.di.ApplicationScope
-import com.genlz.jetpacks.libnative.CppNatives
-import com.genlz.jetpacks.libnative.RustNatives
-import com.genlz.jetpacks.threadaffinity.CpuLayout
-import com.genlz.jetpacks.threadaffinity.ThreadAffinities.affiliate
 import com.genlz.jetpacks.utility.ForegroundTracker
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
-import java.util.concurrent.Executors
 import javax.inject.Inject
 
 /**
@@ -47,17 +40,7 @@ class App : Application() {
             ?: error("")
 
         if (processName == ProcessName.MAIN) {
-            Toast.makeText(this, RustNatives.hello("Rust"), Toast.LENGTH_SHORT).show()
-            RustNatives.runNative()
-            Executors.newSingleThreadExecutor()
-                .affiliate(CpuLayout.bigCores())
-                .execute {
-                    while (true) {
-                        Log.d(TAG, "onCreate: cores:${CpuLayout.cores()}")
-                        Log.d(TAG, "thread 0 is running on: ${CppNatives.whereAmIRunning()}")
-                        Thread.sleep(1000)
-                    }
-                }
+
         }
     }
 

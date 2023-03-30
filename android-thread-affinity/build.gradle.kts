@@ -10,6 +10,8 @@ android {
         minSdk = min_sdk
         targetSdk = target_sdk
 
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         compileOptions {
             isCoreLibraryDesugaringEnabled = true
             targetCompatibility(java_version)
@@ -64,4 +66,8 @@ dependencies {
     implementation("commons-io:commons-io:2.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
+
+//    androidTestImplementation("androidx.benchmark:benchmark-junit4:1.1.0-beta05")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
 }
