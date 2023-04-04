@@ -30,7 +30,6 @@ android {
         jvmTarget = java_version
         freeCompilerArgs = listOf(
             "-opt-in=kotlin.RequiresOptIn",
-            "-Xuse-k2"
         )
     }
     namespace = "com.genlz.android.widget"

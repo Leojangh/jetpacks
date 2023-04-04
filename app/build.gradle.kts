@@ -101,7 +101,6 @@ android {
         jvmTarget = java_version
         freeCompilerArgs = listOf(
             "-opt-in=kotlin.RequiresOptIn",
-//            "-Xuse-k2"
             "-P",
             "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=$KOTLIN"
         )
@@ -115,7 +114,7 @@ android {
         kotlinCompilerExtensionVersion = COMPOSE_COMPILER
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -160,7 +159,7 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.0")
 
     implementation("com.google.guava:guava:$guava")
-    implementation("androidx.profileinstaller:profileinstaller:1.2.0")
+    implementation("androidx.profileinstaller:profileinstaller:1.3.0")
     implementation("androidx.tracing:tracing-ktx:1.1.0")
 
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
@@ -205,7 +204,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$HILT")
     kapt("com.google.dagger:hilt-android-compiler:$HILT")
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
 
     implementation("androidx.constraintlayout:constraintlayout:$constraintLayout")
     implementation("androidx.navigation:navigation-fragment-ktx:$NAVIGATION")
@@ -214,32 +213,34 @@ dependencies {
         include("*.aar", "*.jar")
     })
     //Compose
-    implementation("androidx.compose.ui:ui:$COMPOSE")
+
+    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    implementation("androidx.compose.ui:ui")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
     implementation("com.google.accompanist:accompanist-webview:0.27.0")
     // Tooling support (Previews, etc.)
-    implementation("androidx.compose.ui:ui-tooling-preview:$COMPOSE")
+    implementation("androidx.compose.ui:ui-tooling-preview")
     // When using a MDC theme
     implementation("com.google.android.material:compose-theme-adapter:1.2.1")
-    implementation("androidx.compose.foundation:foundation:$COMPOSE")
+    implementation("androidx.compose.foundation:foundation")
     // Material Design
-    implementation("androidx.compose.material:material:$COMPOSE")
+    implementation("androidx.compose.material:material")
     // Material design icons
-    implementation("androidx.compose.material:material-icons-core:$COMPOSE")
-    implementation("androidx.compose.material:material-icons-extended:$COMPOSE")
+    implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.compose.material:material-icons-extended")
     // Integration with activities
     implementation("androidx.activity:activity-compose:$activity")
     // Integration with ViewModels
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle")
     // Integration with observables
-    implementation("androidx.compose.runtime:runtime-livedata:$COMPOSE")
-    implementation("androidx.compose.runtime:runtime-rxjava2:$COMPOSE")
+    implementation("androidx.compose.runtime:runtime-livedata")
+    implementation("androidx.compose.runtime:runtime-rxjava2")
     // Animations
-    implementation("androidx.compose.animation:animation:$COMPOSE")
+    implementation("androidx.compose.animation:animation")
     // UI Tests
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$COMPOSE")
-    debugImplementation("androidx.compose.ui:ui-tooling:$COMPOSE")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:$COMPOSE")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

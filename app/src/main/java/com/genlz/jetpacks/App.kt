@@ -4,10 +4,18 @@ import android.annotation.SuppressLint
 import android.app.ActivityThread
 import android.app.Application
 import android.content.Context
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationManager
+import androidx.core.location.LocationManagerCompat
 import com.genlz.jetpacks.di.ApplicationScope
 import com.genlz.jetpacks.utility.ForegroundTracker
+import com.genlz.share.util.appcompat.getSystemService
+import com.genlz.share.util.appcompat.mainExecutorExt
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
+import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -32,6 +40,7 @@ class App : Application() {
 
     lateinit var processName: ProcessName
 
+    @SuppressLint("MissingPermission")
     override fun onCreate() {
         super.onCreate()
         _INSTANCE = this
@@ -40,7 +49,6 @@ class App : Application() {
             ?: error("")
 
         if (processName == ProcessName.MAIN) {
-
         }
     }
 

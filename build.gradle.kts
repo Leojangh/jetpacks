@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     // Define all plugins required by subprojects,specifying the versions but
     // applying false explicitly,then subproject just apply them without
@@ -38,4 +41,12 @@ allprojects {
             cacheChangingModulesFor(4, "hours")
         }
     }
+//    tasks.withType<KotlinCompile> {
+//        kotlinOptions {
+//            compilerOptions {
+//                jvmTarget.set(JvmTarget.fromTarget(java_version))
+//                languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
+//            }
+//        }
+//    }
 }
