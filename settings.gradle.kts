@@ -25,6 +25,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://www.jitpack.io")
+        maven("https://androidx.dev/storage/compose-compiler/repository/")
     }
 }
 

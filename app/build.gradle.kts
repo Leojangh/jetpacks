@@ -101,8 +101,6 @@ android {
         jvmTarget = java_version
         freeCompilerArgs = listOf(
             "-opt-in=kotlin.RequiresOptIn",
-            "-P",
-            "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=$KOTLIN"
         )
     }
 
@@ -111,7 +109,8 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = COMPOSE_COMPILER
+//        kotlinCompilerExtensionVersion = COMPOSE_COMPILER
+        kotlinCompilerExtensionVersion = "1.4.4-dev-k1.8.20-f6ae19e64ff"
     }
 
     packaging {
