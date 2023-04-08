@@ -3,14 +3,14 @@ plugins {
     kotlin("android")
     id("org.mozilla.rust-android-gradle.rust-android")
 }
-
+//Specifying paths to sub-commands (Python, Cargo, and Rustc) in local.properties
+//https://github.com/mozilla/rust-android-gradle#specifying-paths-to-sub-commands-python-cargo-and-rustc
 cargo {
     module = "src/main/rust"
     libname = "rust"
     targets = listOf("arm64")
     prebuiltToolchains = true
     profile = "release"
-    pythonCommand = "python3"
 }
 
 tasks.whenTaskAdded {
