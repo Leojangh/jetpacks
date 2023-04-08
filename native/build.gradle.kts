@@ -57,3 +57,7 @@ android {
     }
 
 }
+
+dependencies {
+    implementation("androidx.annotation:annotation:1.6.0")
+}

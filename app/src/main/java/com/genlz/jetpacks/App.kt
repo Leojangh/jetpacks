@@ -1,22 +1,24 @@
 package com.genlz.jetpacks
 
 import android.annotation.SuppressLint
-import android.app.ActivityThread
 import android.app.Application
 import android.content.Context
-import android.location.Address
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationManager
-import androidx.core.location.LocationManagerCompat
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.genlz.jetpacks.di.ApplicationScope
+import com.genlz.jetpacks.threadaffinity.CpuFrequencyMonitor
 import com.genlz.jetpacks.utility.ForegroundTracker
-import com.genlz.share.util.appcompat.getSystemService
 import com.genlz.share.util.appcompat.mainExecutorExt
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
-import java.io.IOException
+import java.nio.file.FileSystems
+import java.nio.file.Path
+import java.nio.file.StandardWatchEventKinds
 import javax.inject.Inject
+import kotlin.concurrent.thread
+import kotlin.io.path.Path
+import kotlin.io.path.readText
 
 /**
  * * System will create different application instance for processes.
@@ -38,18 +40,13 @@ class App : Application() {
     @ApplicationScope
     internal lateinit var appScope: CoroutineScope
 
+    @Inject
     lateinit var processName: ProcessName
 
-    @SuppressLint("MissingPermission")
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
-        super.onCreate()
         _INSTANCE = this
-        processName = ProcessName.values()
-            .find { it.processName == ActivityThread.currentProcessName() }
-            ?: error("")
-
-        if (processName == ProcessName.MAIN) {
-        }
+        super.onCreate()
     }
 
     override fun attachBaseContext(base: Context) {

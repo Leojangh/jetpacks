@@ -13,7 +13,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         compileOptions {
-            isCoreLibraryDesugaringEnabled = true
             targetCompatibility(java_version)
             sourceCompatibility(java_version)
         }
@@ -58,15 +57,13 @@ android {
 
 dependencies {
     implementation(projects.native)
+    implementation(projects.share)
     implementation("androidx.core:core-ktx:$coreKtx")
     implementation("com.github.topjohnwu.libsu:core:$libsu")
     implementation("com.github.topjohnwu.libsu:nio:$libsu")
     implementation("com.github.topjohnwu.libsu:service:$libsu")
-    implementation("commons-io:commons-io:2.11.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines")
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
 
-//    androidTestImplementation("androidx.benchmark:benchmark-junit4:1.1.0-beta05")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
 }

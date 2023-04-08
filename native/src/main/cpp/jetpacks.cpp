@@ -7,6 +7,10 @@
 #include <cerrno>
 #include <iostream>
 #include "android/log.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/inotify.h>
 
 #define TAG "CppNatives"
 
@@ -45,4 +49,38 @@ extern "C"
 JNIEXPORT jint JNICALL
 Java_com_genlz_jetpacks_libnative_CppNatives_whereAmIRunning(JNIEnv *env, jclass clazz) {
     return sched_getcpu();
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_genlz_jetpacks_libnative_INotifyBinding_inotifyInit(JNIEnv *env, jobject thiz) {
+    return inotify_init();
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_genlz_jetpacks_libnative_INotifyBinding_inotifyAddWatch(JNIEnv *env, jobject thiz, jint fd,
+                                                                 jstring path, jint mask) {
+    const char *nativeString = env->GetStringUTFChars(path, nullptr);
+    //TODO release string
+    return inotify_add_watch(fd, nativeString, mask);
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_genlz_jetpacks_libnative_INotifyBinding_inotifyRmWatch(JNIEnv *env, jobject thiz, jint fd,
+                                                                jint wm_descriptor) {
+    return inotify_rm_watch(fd, wm_descriptor);
+}
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_com_genlz_jetpacks_libnative_INotifyBinding_take(JNIEnv *env, jobject thiz) {
+    while (1) {
+
+    }
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_genlz_jetpacks_libnative_INotifyBinding_close(JNIEnv *env, jobject thiz) {
+    // TODO: implement close()
 }

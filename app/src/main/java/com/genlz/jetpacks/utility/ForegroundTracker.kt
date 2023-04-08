@@ -1,9 +1,11 @@
 package com.genlz.jetpacks.utility
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 
+@SuppressLint("StaticFieldLeak")
 object ForegroundTracker : Application.ActivityLifecycleCallbacks {
 
     @Volatile

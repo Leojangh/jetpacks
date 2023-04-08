@@ -1,30 +1,31 @@
 package com.genlz.jetpacks.threadaffinity
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.os.*
-import androidx.annotation.RequiresApi
-import androidx.core.content.getSystemService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.isActive
+import kotlin.io.path.Path
+import kotlin.io.path.readText
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
-//TODO not working.
-@RequiresApi(Build.VERSION_CODES.Q)
-class CpuFrequencyMonitor private constructor(private val ctx: Context) {
+class CpuFrequencyMonitor {
 
-    private val s = ctx.getSystemService<HardwarePropertiesManager>()
-
-    companion object {
-
-        private const val TAG = "MainActivity"
-
-        @SuppressLint("StaticFieldLeak")
-        private var INSTANCE: CpuFrequencyMonitor? = null
-        fun getInstance(ctx: Context): CpuFrequencyMonitor {
-            if (null == INSTANCE) {
-                synchronized(CpuFrequencyMonitor::class.java) {
-                    if (null == INSTANCE) INSTANCE = CpuFrequencyMonitor(ctx.applicationContext)
-                }
+    fun poll(cpu: Int, interval: Duration = 1.toDuration(DurationUnit.SECONDS)): Flow<Int> {
+        require(cpu in 0 until Runtime.getRuntime().availableProcessors())
+        return flow {
+            while (currentCoroutineContext().isActive) {
+                emit(
+                    Path("/sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_cur_freq").readText()
+                        .trim()
+                        .toInt()
+                )
+                delay(interval)
             }
-            return INSTANCE!!
-        }
+        }.flowOn(Dispatchers.IO)
     }
 }

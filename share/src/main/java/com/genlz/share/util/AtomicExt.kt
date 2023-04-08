@@ -8,6 +8,15 @@ import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.reflect.KProperty
 
+/*
+* 可能没有卵用的操作，值委托后将没有原子操作
+*
+*
+*
+*
+*
+*/
+
 inline operator fun AtomicBoolean.getValue(
     thisRef: Any,
     property: KProperty<*>
