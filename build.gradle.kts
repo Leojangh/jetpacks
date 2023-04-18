@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -23,7 +24,7 @@ plugins {
 
 //Enable kapt cache
 pluginManager.withPlugin("kotlin-kapt") {
-    configure<org.jetbrains.kotlin.gradle.plugin.KaptExtension> { useBuildCache = true }
+    the<KaptExtension>().useBuildCache = true
 }
 
 plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {

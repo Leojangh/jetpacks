@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         minSdk = min_sdk
-        targetSdk = targetSdk
+        targetSdk = target_sdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")

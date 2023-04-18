@@ -58,7 +58,6 @@ android {
 dependencies {
     implementation(projects.native)
     implementation(projects.share)
-    implementation("androidx.core:core-ktx:$coreKtx")
     implementation("com.github.topjohnwu.libsu:core:$libsu")
     implementation("com.github.topjohnwu.libsu:nio:$libsu")
     implementation("com.github.topjohnwu.libsu:service:$libsu")
