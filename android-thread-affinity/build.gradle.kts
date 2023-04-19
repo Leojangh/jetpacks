@@ -62,6 +62,7 @@ dependencies {
     implementation("com.github.topjohnwu.libsu:nio:$libsu")
     implementation("com.github.topjohnwu.libsu:service:$libsu")
 
+    testImplementation(kotlin("test"))
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
