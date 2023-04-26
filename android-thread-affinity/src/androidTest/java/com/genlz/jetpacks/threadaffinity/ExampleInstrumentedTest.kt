@@ -7,6 +7,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.io.path.Path
+import kotlin.io.path.readText
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -21,7 +23,15 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.genlz.jetpacks.threadaffinity.test", appContext.packageName)
 
-        val hpm = appContext.getSystemService<HardwarePropertiesManager>()!!
-        println(hpm.cpuUsages)
+        val process = ProcessBuilder("inotifyd".split("\\s"))
+            .inheritIO()
+            .start()
+//        process.inputStream.bufferedReader().use {
+//            assertEquals("a", it.readText())
+//        }
+        process.errorStream.bufferedReader().use {
+            assertEquals("a", it.readText())
+        }
+//        println(Path("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq").readText())
     }
 }
