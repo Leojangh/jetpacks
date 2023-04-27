@@ -16,16 +16,6 @@ android {
             targetCompatibility(java_version)
             sourceCompatibility(java_version)
         }
-
-        ndkVersion = ndk_version
-        ndk {
-            abiFilters += listOf("arm64-v8a")
-        }
-        externalNativeBuild {
-            cmake {
-                cppFlags += ""
-            }
-        }
     }
 
     buildTypes {
@@ -46,12 +36,6 @@ android {
             "-opt-in=kotlin.RequiresOptIn",
             "-Xjvm-default=all",
         )
-    }
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.22.1"
-        }
     }
 }
 

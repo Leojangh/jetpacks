@@ -26,6 +26,8 @@ android {
         minSdk = min_sdk
         targetSdk = target_sdk
 
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         compileOptions {
             targetCompatibility(java_version)
             sourceCompatibility(java_version)
@@ -60,4 +62,7 @@ android {
 
 dependencies {
     implementation("androidx.annotation:annotation:1.6.0")
+    testImplementation(kotlin("test"))
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
 }

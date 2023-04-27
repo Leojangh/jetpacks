@@ -70,11 +70,15 @@ pub extern "system" fn Java_com_genlz_jetpacks_libnative_RustNatives_parse<'loca
 }
 
 #[derive(Debug)]
-struct BytePattern {
+struct KmpImpl {
     pattern: Vec<u16>,
 }
 
-impl BytePattern {
+pub trait BytePattern {
+    fn matches(&self, bytes: &Vec<u8>) -> bool;
+}
+
+impl KmpImpl {
     fn new(pattern: &str) -> Self {
         let black = regex::Regex::new(r"\s+").unwrap();
         let bytePattern: Vec<&str> = black.split(pattern.trim()).collect();
@@ -84,15 +88,9 @@ impl BytePattern {
                 u16::from_str_radix(*value, 16).unwrap()
             }
         }
-        BytePattern {
+        KmpImpl {
             pattern
         }
-    }
-
-    pub fn matches(&self, bytes: &Vec<u8>) -> bool {
-        Self::concurrent_match(bytes, &self.pattern)
-        // let len = bytes.len();
-        // return Self::kmp(bytes, 0, len, &self.pattern) != -1;
     }
 
     fn concurrent_match(bytes: &Vec<u8>, pattern: &Vec<u16>) -> bool {
@@ -130,7 +128,7 @@ impl BytePattern {
         return false;
     }
 
-    fn kmp<'a>(bytes: &'a Vec<u8>, from: usize, to: &AtomicUsize, pattern: &'a Vec<u16>) -> i64 {
+    fn kmp(bytes: &Vec<u8>, from: usize, to: &AtomicUsize, pattern: &Vec<u16>) -> i64 {
         let m = pattern.len();
         let mut lps = vec![0; 20];
         let mut j = 0usize;
@@ -176,26 +174,46 @@ impl BytePattern {
     }
 }
 
+impl BytePattern for KmpImpl {
+    fn matches(&self, bytes: &Vec<u8>) -> bool {
+        // Self::concurrent_match(bytes, &self.pattern)
+        let len = bytes.len();
+        return Self::kmp(bytes, 0, &AtomicUsize::new(len), &self.pattern) != -1;
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
+    use std::fs::File;
+    use std::io::{Read, Seek};
     use std::rc::Rc;
     use std::sync::mpsc;
     use std::thread;
-    use std::time::Duration;
+    use std::time::{Duration, Instant, SystemTime};
     use super::*;
 
     #[test]
     fn it_works() {
-        let pattern = BytePattern::new("ca fe ba be");
-        // let mut bytes = vec![0xca, 0xfe, 0xba, 0xbe];
+        let pattern = KmpImpl::new("ca fe ba be");
+        let mut bytes = vec![0xca, 0xfe, 0xba, 0xbe];
+        unsafe {
+            let mut dex = File::open("../../../../sampledata/classes.dex").unwrap();
+            println!("{}", dex.metadata().unwrap().len());
+            let m = std::fs::read("../../../../sampledata/classes.dex").unwrap();
+            // let m = memmap::MmapOptions::new().map(&dex).unwrap().as_ref().to_vec();
+            let now = Instant::now();
+            pattern.matches(&m);
+            print!("{:?}", Instant::now() - now);
+        }
+
         // assert_eq!(pattern.matches(&bytes), true);
         // bytes = vec![0xca, 0xca, 0xfe, 0xba, 0xbe];
         // assert_eq!(pattern.matches(&bytes), true);
         // bytes = vec![0xca, 0xca, 0xfe, 0xba, 0xba];
         // assert_eq!(pattern.matches(&bytes), false);
         //
-        // let p = BytePattern::new("ca ?? ba ??");
+        // let p = KmpImpl::new("ca ?? ba ??");
         // bytes = vec![0xca, 0xfe, 0xba, 0xbe];
         // assert_eq!(pattern.matches(&bytes), true);
         // bytes = vec![0xca, 0xca, 0xfe, 0xba, 0xbe];
