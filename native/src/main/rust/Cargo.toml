@@ -10,12 +10,15 @@ jni = "0.21.1"
 zip = "0.6.4"
 regex = "1.7.3"
 memmap = "0.7.0"
+rand = "0.8.5"
 core_affinity = "0.8.0"
 
 [lib]
 crate-type = ["lib", "cdylib"]
 name = "rust"
 
+#[profile.dev]
+#opt-level = 3
 
 [dev-dependencies]
 criterion = "0.4.0"
