@@ -1,10 +1,13 @@
 package com.genlz.jetpacks.libnative;
 
+import androidx.annotation.Keep;
+
 /**
  * The java native method declarations.
  * <p>
  * Implementations:<a href="{@docRoot}rust/src/lib.rs">lib.rs</a>
  */
+@Keep
 public final class RustNatives {
 
     static {
@@ -13,5 +16,5 @@ public final class RustNatives {
 
     public static native String hello(String input);
 
-    public static native void runNative();
+    public static native boolean search(byte[] bytes, String pattern);
 }

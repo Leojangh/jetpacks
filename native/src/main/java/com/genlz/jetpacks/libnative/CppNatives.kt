@@ -23,7 +23,5 @@ class CppNatives {
         @JvmStatic
         external fun whereAmIRunning(): Int
 
-        @JvmStatic
-        external fun search(target: String, pattern: String): Boolean
     }
 }

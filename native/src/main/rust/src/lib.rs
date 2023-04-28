@@ -4,8 +4,8 @@ extern crate core;
 
 use std::borrow::Borrow;
 use jni::JNIEnv;
-use jni::objects::{JClass, JString};
-use jni::sys::jstring;
+use jni::objects::{JByteArray, JClass, JString};
+use jni::sys::{jboolean, jbyte, jstring};
 
 
 // This keeps Rust from "mangling" the name and making it unique for this
@@ -30,6 +30,21 @@ pub extern "system" fn Java_com_genlz_jetpacks_libnative_RustNatives_hello<'loca
 
     // Finally, extract the raw pointer to return.
     output.into_raw()
+}
+
+#[no_mangle]
+pub extern "system" fn Java_com_genlz_jetpacks_libnative_RustNatives_search<'local>(mut env: JNIEnv<'local>,
+// This is the class that owns our static method. It's not going to be used,
+// but still must be present to match the expected signature of a static
+// native method.
+                                                                                    _class: JClass<'local>,
+                                                                                    bytes: JByteArray<'local>,
+                                                                                    pattern: JString<'local>)
+                                                                                    -> jboolean {
+    let pattern = "06 20 00 00 91 15 00 00 34 e1 96 00 00 10 00 00";
+    let x = std::fs::read("/data/user/0/com.genlz.jetpacks.libnative.test/files/classes.dex").unwrap();
+    println!("Hello");
+    matches(&x, pattern) as jboolean
 }
 
 
@@ -90,6 +105,11 @@ impl BytePattern for BmImpl {
 
 pub trait BytePattern {
     fn matches(&self, bytes: &[u8]) -> bool;
+}
+
+/// Convenient function for only used once.
+pub fn matches(bytes: &[u8], pattern: &str) -> bool {
+    compile(pattern, "bm").matches(bytes)
 }
 
 pub fn compile(pattern: &str, algorithm: &str) -> Box<dyn BytePattern> {
