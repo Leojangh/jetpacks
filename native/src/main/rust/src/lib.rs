@@ -1,12 +1,11 @@
 #![allow(non_snake_case)]
 
+extern crate core;
+
+use std::borrow::Borrow;
 use jni::JNIEnv;
 use jni::objects::{JClass, JString};
 use jni::sys::jstring;
-use std::io::{BufReader};
-use std::path::Path;
-use std::sync::{Arc, Mutex};
-use std::sync::atomic::{AtomicUsize, Ordering};
 
 
 // This keeps Rust from "mangling" the name and making it unique for this
@@ -33,121 +32,93 @@ pub extern "system" fn Java_com_genlz_jetpacks_libnative_RustNatives_hello<'loca
     output.into_raw()
 }
 
-#[derive(Debug)]
-struct KmpImpl {
+
+struct BmImpl {
     pattern: Vec<u16>,
+}
+
+impl BmImpl {
+    fn new(pattern: &str) -> Self {
+        let pattern = compile_pattern_string(pattern);
+        Self { pattern }
+    }
+
+    fn boyer_moore_search(bytes: &[u8], pattern: &[u16]) -> bool {
+        let haystack_len = bytes.len();
+        let needle_len = pattern.len();
+
+        if needle_len == 0 {
+            return true;
+        }
+
+        if needle_len > haystack_len {
+            return false;
+        }
+
+        let mut bad_char_table = [needle_len; 256];
+
+        for (i, &c) in pattern.iter().enumerate().take(needle_len - 1) {
+            bad_char_table[c as usize] = needle_len - i - 1;
+        }
+
+        let mut i = needle_len - 1;
+
+        while i < haystack_len {
+            let mut j = needle_len - 1;
+
+            while bytes[i] == pattern[j] as u8 {
+                if j == 0 {
+                    return true;
+                }
+
+                i -= 1;
+                j -= 1;
+            }
+
+            i += std::cmp::max(bad_char_table[bytes[i] as usize], needle_len - j);
+        }
+
+        false
+    }
+}
+
+impl BytePattern for BmImpl {
+    fn matches(&self, bytes: &[u8]) -> bool {
+        Self::boyer_moore_search(bytes, self.pattern.borrow())
+    }
 }
 
 pub trait BytePattern {
     fn matches(&self, bytes: &[u8]) -> bool;
 }
 
-impl KmpImpl {
-    fn new(pattern: &str) -> Self {
-        let pattern = regex::Regex::new(r"\s+")
-            .unwrap()
-            .split(pattern.trim())
-            .map(|it|
-                u16::from_str_radix(it, 16).expect(format!("Illegal argument: {}", pattern).as_str())
-            ).collect();
-        KmpImpl { pattern }
-    }
-
-    fn match_internal(bytes: &[u8], pattern: &[u16]) -> bool {
-        const CONCURRENCY_THRESHOLD: usize = 400_000;
-        if bytes.len() < CONCURRENCY_THRESHOLD {
-            return Self::kmp(&bytes[..], bytes.len(), pattern) != -1;
+pub fn compile(pattern: &str, algorithm: &str) -> Box<dyn BytePattern> {
+    match algorithm.to_lowercase().as_str() {
+        "bm" => { Box::new(BmImpl::new(pattern)) }
+        unknown => {
+            panic!("{}", format!("No such algorithm:{unknown}"));
         }
-
-        const CONCURRENCY: u8 = 4;
-        let len = bytes.len();
-        let (tx, rx) = std::sync::mpsc::channel();
-        // let (signal_tx, signal_rx) = std::sync::mpsc::channel();
-        std::thread::scope(move |s| {
-            for t in 0..CONCURRENCY {
-                let from = (len as f32 * (t as f32) / CONCURRENCY as f32) as usize;
-                let tx = tx.clone();
-                let h = s.spawn(move || {
-                    let contains = Self::kmp(&bytes[from..], len, &pattern) != -1;
-                    println!("thread: {} start at: {}, result: {}", t, from, contains);
-                    tx.send(contains).unwrap();
-                });
-            }
-        });
-
-        for contains in rx {
-            if contains { return true; }
-        }
-        return false;
-    }
-
-    fn kmp(bytes: &[u8], to: usize, pattern: &[u16]) -> i64 {
-        if bytes.len() < pattern.len() { return -1; }
-        let n = to;
-        let m = pattern.len();
-        let lps = Self::compute_lps(&pattern);
-        let mut j = 0;
-        let mut i = 0;
-        while i < n {
-            if pattern[j] as u8 == bytes[i] {
-                i += 1;
-                j += 1;
-            }
-            if j == m {
-                return (i - j) as i64;
-            } else if i < n && pattern[j] as u8 != bytes[i] {
-                if j != 0 {
-                    j = lps[j - 1];
-                } else {
-                    i += 1;
-                }
-            }
-        }
-        return -1;
-    }
-
-    fn compute_lps(pattern: &[u16]) -> Vec<usize> {
-        let m = pattern.len();
-        let mut lps = vec![0; m];
-        let mut len = 0usize;
-        let mut i = 1usize;
-        while i < m {
-            if pattern[i] == pattern[len] {
-                len += 1;
-                lps[i] = len;
-                i += 1;
-            } else {
-                if len != 0 {
-                    len = lps[len - 1]
-                } else {
-                    lps[i] = 0;
-                    i += 1;
-                }
-            }
-        }
-        return lps;
     }
 }
 
-impl BytePattern for KmpImpl {
-    fn matches(&self, bytes: &[u8]) -> bool {
-        Self::match_internal(bytes, &self.pattern)
-    }
+fn compile_pattern_string(pattern: &str) -> Vec<u16> {
+    regex::Regex::new(r"\s+")
+        .unwrap()
+        .split(pattern.trim())
+        .map(|it|
+            u16::from_str_radix(it, 16).expect(format!("Illegal argument: {}", pattern).as_str())
+        ).collect()
 }
 
 #[cfg(test)]
 mod tests {
-    use rand::distributions::Uniform;
-    use rand::Rng;
     use super::*;
 
     #[test]
     fn it_works() {
-        let pattern = KmpImpl::new("ca fe ba be");
-        let mut rng = rand::thread_rng();
-        // let rds: Vec<u8> = rng.sample_iter(Uniform::from(0..255)).take(10_0_000).collect();
+        let pattern = compile("ca fe ba be", "bm");
 
-        let mut bytes = vec![0xca, 0xfe, 0xba, 0xbe];
+        let bytes = vec![0xca, 0xfe, 0xba, 0xbe];
         assert_eq!(pattern.matches(&bytes), true);
 
         let bytes = vec![0xca, 0xca, 0xfe, 0xba, 0xbe];
@@ -170,9 +141,11 @@ mod tests {
 
     #[test]
     fn test_real_life() {
-        let pattern = KmpImpl::new("06 20 00 00 91 15 00 00 34 e1 96 00 00 10 00 00");
+        let tail = [0x06u16, 0x20, 0x00, 0x00, 0x91, 0x15, 0x00, 0x00, 0x34, 0xe1, 0x96, 0x00, 0x00, 0x10, 0x00, 0x00];
+        let pattern = "06 20 00 00 91 15 00 00 34 e1 96 00 00 10 00 00";
         let f = std::fs::read("../../../../sampledata/classes.dex").unwrap();
-        println!("{}", f.len());
-        println!("{}", pattern.matches(&f));
+        let pattern = compile(pattern, "bm");
+        let b = pattern.matches(f.as_slice());
+        print!("{b}");
     }
 }
