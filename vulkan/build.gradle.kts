@@ -15,7 +15,6 @@ android {
 
     defaultConfig {
         minSdk = 28
-        targetSdk = target_sdk
         ndkVersion = ndk_version
         renderscriptTargetApi = 24
 

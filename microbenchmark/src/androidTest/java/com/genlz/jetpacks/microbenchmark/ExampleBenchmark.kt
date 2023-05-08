@@ -1,4 +1,4 @@
-package com.genlz.jetpackts.microbenchmark
+package com.genlz.jetpacks.microbenchmark
 
 import android.util.Log
 import androidx.benchmark.junit4.BenchmarkRule
