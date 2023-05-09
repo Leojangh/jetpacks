@@ -24,6 +24,8 @@ android {
     compileSdk = target_sdk
     defaultConfig {
         minSdk = min_sdk
+        //test构建仍然需要这个属性
+        targetSdk = target_sdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

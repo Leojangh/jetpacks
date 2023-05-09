@@ -1,17 +1,12 @@
 package com.genlz.jetpacks.threadaffinity
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withTimeout
 import org.junit.Test
+import org.junit.runner.RunWith
 import java.nio.file.FileSystems
-import java.nio.file.Path
-import java.nio.file.StandardWatchEventKinds
-import java.nio.file.WatchEvent
-import kotlin.io.path.Path
-import kotlin.io.path.readText
 
-
+@RunWith(AndroidJUnit4::class)
 class CpuFrequencyMonitorTest {
 
     val appContext = InstrumentationRegistry.getInstrumentation().targetContext

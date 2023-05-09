@@ -1,6 +1,7 @@
 package com.genlz.jetpacks.libnative;
 
 import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 
 /**
  * The java native method declarations.
@@ -16,5 +17,5 @@ public final class RustNatives {
 
     public static native String hello(String input);
 
-    public static native boolean search(byte[] bytes, String pattern);
+    public static native boolean search(@NonNull byte[] bytes, @NonNull String pattern);
 }

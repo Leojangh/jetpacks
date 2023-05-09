@@ -8,8 +8,4 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CppNativesTest {
 
-    @Test
-    fun testSearch() {
-        println(CppNatives.search("", ""))
-    }
 }
