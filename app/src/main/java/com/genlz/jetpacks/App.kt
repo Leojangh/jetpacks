@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.StandardWatchEventKinds
+import java.util.Arrays
 import javax.inject.Inject
 import kotlin.concurrent.thread
 import kotlin.io.path.Path
@@ -43,10 +44,10 @@ class App : Application() {
     @Inject
     lateinit var processName: ProcessName
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         _INSTANCE = this
         super.onCreate()
+        Arrays.mismatch(shortArrayOf(), shortArrayOf())
     }
 
     override fun attachBaseContext(base: Context) {

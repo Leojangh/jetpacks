@@ -27,29 +27,6 @@ android {
         manifestPlaceholders["sharedUserId"] = ""
     }
 
-    val device = "device"
-    val region = "region"
-    flavorDimensions += listOf(region, device)
-
-    productFlavors {
-
-        create("cn") {
-            dimension = region
-        }
-
-        create("global") {
-            dimension = region
-        }
-
-        create("phone") {
-            dimension = device //Optional if there is only one dimension.
-        }
-
-        create("pad") {
-            dimension = device //Optional if there is only one dimension.
-        }
-    }
-
     signingConfigs {
         register("miui_platform") {
             keyAlias = "platform_key"
@@ -110,7 +87,7 @@ android {
 
     composeOptions {
 //        kotlinCompilerExtensionVersion = COMPOSE_COMPILER
-        kotlinCompilerExtensionVersion = "1.4.4-dev-k1.8.20-f6ae19e64ff"
+        kotlinCompilerExtensionVersion = "1.5.0-dev-k1.9.0-6a60475e07f"
     }
 
     packaging {
